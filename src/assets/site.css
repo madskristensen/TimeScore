@@ -18,5 +18,9 @@ ul {
     font-size: .5em;
     margin: 0 auto;
     display: inline-block;
-    color: #666;
+    color: #999;
+}
+
+ul .active {
+    color: #000;
 }

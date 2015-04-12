@@ -16,14 +16,28 @@
     <script>
         var time = document.querySelector("time"),
             score = document.getElementById("score"),
+            rules = document.getElementById("rules"),
             ts = new TimeScore();
 
         function display() {
-            //var result = ts.getScore(new Date());
-            var result = ts.getScore(new Date(2015, 12, 31, 12, 21));
+            var result = ts.getScore(new Date());
+            //var result = ts.getScore(new Date(2015, 12, 31, 9, 9));
 
             time.innerHTML = result.time;
             score.innerHTML = result.score.points;
+
+            var lis = rules.getElementsByTagName("li");
+
+            for (var i = 0; i < lis.length; i++) {
+                li = lis[i];
+                
+                if (result.score.points > 0 && li.innerHTML.lastIndexOf(result.score.rule) > -1) {
+                    li.classList.add("active");
+                }
+                else {
+                    li.classList.remove("active");
+                }
+            }
         }
 
         (function showRules() {
@@ -31,7 +45,8 @@
                 var rule = ts.rules[name];
                 var li = document.createElement("li");
                 li.innerHTML = rule.points + " points - " + rule.rule;
-                document.getElementById("rules").appendChild(li);
+                li.id = name;
+                rules.appendChild(li);
             }
         })();
 

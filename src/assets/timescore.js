@@ -17,7 +17,7 @@
     function normalize(date) {
         var minute = date.getMinutes();
         var hour = date.getHours();
-
+        
         if (minute < 10) {
             _minute = "0" + minute;
         }
@@ -30,20 +30,22 @@
         }
         else if (hour > 12) {
             var imperial = hour - 12;
-
-            if (hour < 10) {
+            
+            if (imperial < 10) {
                 imperial = "0" + imperial;
             }
-
+            
             _hour = imperial.toString();
         }
-
-        _hour = hour.toString();
+        else {
+            _hour = hour.toString();
+        }
+        
     }
 
     function runRules() {
         var reverseMinutes = _minute.split("").reverse().join("");
-        var singleHour = _hour.indexOf("0") == 0 ? _hour.subString(1) : _hour;
+        var singleHour = _hour.indexOf("0") == 0 ? _hour.substr(1) : _hour;
 
         if (_hour === reverseMinutes || singleHour === reverseMinutes) {
             return rules.reverse;
@@ -68,6 +70,12 @@
     }
 
     var rules = {
+
+        sevelEleven: {
+            points: 4,
+            rule: "Thank heaven for 7-Eleven"
+        },
+
         reverse: {
             points: 3,
             rule: "Minutes reversed equals hour"
@@ -82,11 +90,6 @@
             points: 1,
             rule: "Top of the hour"
         },
-
-        sevelEleven: {
-            points: 4,
-            rule: "Thank heaven for 7-Eleven"
-        }
     };
 
     return {
