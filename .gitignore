@@ -1,2 +1,7 @@
-*.suo
+# Folders
 .vs
+
+# Files
+*.suo
+*.publishproj
+*.pubxml
