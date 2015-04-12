@@ -7,30 +7,46 @@
     <meta name="description" content="TimeScore - because not all time is equal" />
     <style>
         body {
-            font: 30px/1.5 georgia;
+            font: 16px/1.5 georgia;
             text-align: center;
         }
 
         time {
-            font-size: 3em;
+            font-size: 5em;
         }
 
-        #score {
-            font-weight: bold;
+        p {
+            font-size: 2.5em;
+            margin: .5em 0;
         }
+
+            p span {
+                font-weight: bold;
+            }
 
         ul {
             text-align: left;
             list-style: none;
             padding: 0;
-            font-size: .5em;
-            margin: 0 auto;
+            margin: 1em auto 0 auto;
             display: inline-block;
             color: #999;
         }
 
             ul .active {
                 color: #000;
+            }
+
+        footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            color: #999;
+        }
+
+            footer a {
+                color: inherit;
             }
     </style>
 
@@ -56,58 +72,17 @@
 </head>
 <body>
 
-    <time></time>
-    <p>Time score: <span id="score"></span></p>
+    <main>
+        <time></time>
+        <p>Time score: <span id="score"></span></p>
 
-    <ul id="rules" role="list"></ul>
+        <ul id="rules" role="list"></ul>
+    </main>
 
-    <script src="assets/timescore.js"></script>
-    <script>
-        (function () {
-            var time = document.querySelector("time"),
-                score = document.getElementById("score"),
-                rules = document.getElementById("rules"),
-                ts = new TimeScore();
+    <footer>
+        Open source on <a href="https://github.com/madskristensen/timescore/">GitHub</a>
+    </footer>
 
-            function display() {
-                //var result = ts.getScore(new Date());
-                var result = ts.getScore(new Date(2015, 12, 31, 9, 9));
-
-                time.innerHTML = result.time;
-                score.innerHTML = result.score.points;
-
-                var lis = rules.getElementsByTagName("li");
-
-                for (var i = 0; i < lis.length; i++) {
-                    li = lis[i];
-
-                    if (result.score.points > 0 && li.innerHTML.lastIndexOf(result.score.rule) > -1) {
-                        li.classList.add("active");
-                    }
-                    else {
-                        li.classList.remove("active");
-                    }
-                }
-            }
-
-            function showRules() {
-                for (var name in ts.rules) {
-                    var rule = ts.rules[name];
-                    var li = document.createElement("li");
-                    li.innerHTML = rule.points + " points - " + rule.rule;
-                    li.id = name;
-                    rules.appendChild(li);
-                }
-            };
-
-            showRules();
-            display();
-
-            setInterval(function () {
-                display();
-
-            }, 60 * 1000); // 1 minute
-        })();
-    </script>
+    <script src="timescore.js" async></script>
 </body>
 </html>
