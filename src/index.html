@@ -70,8 +70,8 @@
                 ts = new TimeScore();
 
             function display() {
-                var result = ts.getScore(new Date());
-                //var result = ts.getScore(new Date(2015, 12, 31, 9, 9));
+                //var result = ts.getScore(new Date());
+                var result = ts.getScore(new Date(2015, 12, 31, 9, 9));
 
                 time.innerHTML = result.time;
                 score.innerHTML = result.score.points;
