@@ -33,44 +33,65 @@
                 imperial = "0" + imperial;
             }
 
-            _hour = imperial.toString();
+            _hour = imperial.indexOf("0") == 0 ? imperial.substr(1) : imperial;
         }
         else {
             _hour = hour.toString();
         }
+
+        _hour = _hour.indexOf("0") == 0 ? _hour.substr(1) : _hour;
     }
 
     function runRules() {
         var reverseMinutes = _minute.split("").reverse().join("");
-        var singleHour = _hour.indexOf("0") == 0 ? _hour.substr(1) : _hour;
+        var hits = [];
 
-        if (_hour === reverseMinutes || singleHour === reverseMinutes) {
-            return rules.reverse;
+        if (_hour == reverseMinutes || "0" + _hour === _minute) {
+            hits.push(rules.reverse);
+
+        }
+        else if (_hour === _minute) {
+            hits.push(rules.equals);
         }
 
-        if (_hour === _minute) {
-            return rules.equals;
+        if (_hour + _hour === _minute) {
+            hits.push(rules.threeofakind);
         }
 
         if (_minute === "00") {
-            return rules.tophour;
+            hits.push(rules.tophour);
         }
 
-        if (_hour === "01" && _minute === "11") {
-            return rules.sevelEleven;
+        if (_hour === "07" && _minute === "11") {
+            hits.push(rules.sevelEleven);
         }
 
-        return {
-            points: 0,
-            rule: ""
-        };
+        if (_hour === "12" && _minute === "34") {
+            hits.push(rules.onetwothreefour);
+        }
+
+        if (_hour === "11" && _minute === "11") {
+            hits.push(rules.eleveneleven);
+        }
+
+        return hits;
     }
 
     var rules = {
 
+        onetwothreefour: {
+            points: 4,
+            rule: "Royal Straight Flush"
+        },
+
         sevelEleven: {
             points: 4,
             rule: "Thank heaven for 7-Eleven"
+        },
+
+        threeofakind: {
+            points: 3,
+            rule: "Three of a kind"
         },
 
         reverse: {
@@ -87,38 +108,60 @@
             points: 1,
             rule: "Top of the hour"
         },
+
+        eleveneleven: {
+            points: 1,
+            rule: "Four of a kind"
+        },
+
     };
 
     return {
         getScore: getScore,
         rules: rules
-    }
+    };
 });
 
 (function () {
     var time = document.querySelector("time"),
-        score = document.getElementById("score"),
+        elmScore = document.getElementById("score"),
         rules = document.getElementById("rules"),
         ts = new TimeScore();
 
     function display() {
         var result = ts.getScore(new Date());
-        //var result = ts.getScore(new Date(2015, 12, 31, 9, 9));
+        //var result = ts.getScore(new Date(2015, 12, 31, 12, 00));
+        var points = 0;
+        var lis = rules.getElementsByTagName("li");
 
         time.innerHTML = result.time;
-        score.innerHTML = result.score.points;
+        clearResults();
 
+        for (var i = 0; i < result.score.length; i++) {
+
+            var score = result.score[i];
+            points += score.points;
+
+            for (var a = 0; a < lis.length; a++) {
+                li = lis[a];
+
+                if (score.points > 0 && li.innerHTML.lastIndexOf(score.rule) > -1) {
+                    li.classList.add("active");
+                    break;
+                }
+            }
+        }
+
+        elmScore.innerHTML = points;
+    }
+
+    function clearResults() {
         var lis = rules.getElementsByTagName("li");
 
         for (var i = 0; i < lis.length; i++) {
             li = lis[i];
 
-            if (result.score.points > 0 && li.innerHTML.lastIndexOf(result.score.rule) > -1) {
-                li.classList.add("active");
-            }
-            else {
-                li.classList.remove("active");
-            }
+            li.classList.remove("active");
         }
     }
 

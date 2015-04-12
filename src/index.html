@@ -3,16 +3,25 @@
 <head>
     <title>Time Score</title>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1" />
     <meta name="description" content="TimeScore - because not all time is equal" />
     <style>
+        html {
+            min-height: 100%;
+            position: relative;
+        }
+
         body {
             font: 16px/1.5 georgia;
             text-align: center;
+            background: black;
+            color: white;
+            margin: 0 0 50px;
         }
 
         time {
-            font-size: 5em;
+            font-size: 6em;
+            line-height: 1.2;
         }
 
         p {
@@ -30,19 +39,25 @@
             padding: 0;
             margin: 1em auto 0 auto;
             display: inline-block;
-            color: #999;
         }
 
+            ul li {
+                opacity: .8;
+            }
+
             ul .active {
-                color: #000;
+                opacity: 1;
             }
 
         footer {
             position: absolute;
-            bottom: 0;
             left: 0;
+            bottom: 0;
+            height: 30px;
             width: 100%;
-            color: #999;
+            margin-top: 20px;
+            font-size: 90%;
+            opacity: .8;
         }
 
             footer a {
@@ -72,12 +87,12 @@
 </head>
 <body>
 
-    <main>
+    <div role="main">
         <time></time>
         <p>Time score: <span id="score"></span></p>
 
         <ul id="rules" role="list"></ul>
-    </main>
+    </div>
 
     <footer>
         Open source on <a href="https://github.com/madskristensen/timescore/">GitHub</a>
