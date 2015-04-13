@@ -8,13 +8,17 @@ QUnit.testStart(function () {
 });
 
 QUnit.module("Royal Straight Flush");
-QUnit.test("11:11", function (assert) { runTest(assert, 12, 34, 4) });
-QUnit.test("11:11", function (assert) { runTest(assert, 2, 34, 0) });
+QUnit.test("12:34", function (assert) { runTest(assert, 12, 34, 4) });
+QUnit.test("2:23", function (assert) { runTest(assert, 2, 34, 0) });
 
 
 QUnit.module("Three of a kind");
 QUnit.test("02:22", function (assert) { runTest(assert, 2, 22, 4) });
 QUnit.test("05:55", function (assert) { runTest(assert, 5, 55, 3) });
+
+
+QUnit.module("Four of a kind");
+QUnit.test("11:11", function (assert) { runTest(assert, 11, 11, 4) });
 
 
 QUnit.module("Mirror, mirror on the wall");

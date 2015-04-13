@@ -1,8 +1,10 @@
 # Folders
 .vs
 packages
+testresults
 
 # Files
 *.suo
 *.publishproj
 *.pubxml
+_chutzpah.coverage.html
