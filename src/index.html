@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
 	<title>Time Score</title>
@@ -109,18 +109,21 @@
 	<script src="timescore.js"></script>
 	<script>
 		(function () {
-			var time = document.getElementById("time"),
+			var elmTime = document.getElementById("time"),
 				elmScore = document.getElementById("score"),
 				rules = document.getElementById("rules"),
-				ts = new TimeScore();
+				ts = new TimeScore(),
+				actives = [];
 
-			function display() {
-				var result = ts.getScore(new Date());
-				//var result = ts.getScore(new Date(2015, 12, 31, 4, 55));
-				var points = 0;
-				var lis = rules.getElementsByTagName("li");
+			var current = new Date();
+			//var current = new Date(2015, 12, 31, 4, 55);
 
-				time.innerHTML = result.time;
+			function calculate() {
+				var result = ts.getScore(current),
+				    points = 0,
+					lis = rules.getElementsByTagName("li");
+
+				elmTime.innerHTML = result.time;
 				clearResults();
 
 				for (var i = 0; i < result.score.length; i++) {
@@ -132,7 +135,8 @@
 						li = lis[a];
 
 						if (score.points > 0 && li.innerHTML.lastIndexOf(score.rule) > -1) {
-							li.classList.add("active");
+							li.className = "active";
+							actives.push(li);
 							break;
 						}
 					}
@@ -142,13 +146,12 @@
 			}
 
 			function clearResults() {
-				var lis = rules.getElementsByTagName("li");
 
-				for (var i = 0; i < lis.length; i++) {
-					li = lis[i];
-
-					li.classList.remove("active");
+				for (var i = 0; i < actives.length; i++) {
+					actives[i].className = "";
 				}
+
+				actives = [];
 			}
 
 			function showRules() {
@@ -169,17 +172,20 @@
 					}
 
 					type = rule.type;
-
 					rules.appendChild(li);
 				}
 			};
 
 			showRules();
-			display();
+			calculate();
 
 			setInterval(function () {
-				display();
+				var date = new Date();
 
+				if (date.getHours() != current.getHours() || date.getMinutes() != current.getMinutes()) {
+					current = date;
+					calculate();
+				}
 			}, 2000);
 		})();
 	</script>

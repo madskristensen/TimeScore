@@ -138,6 +138,7 @@ var TimeScore = (function () {
 
     return {
         getScore: getScore,
-        rules: rules
+        rules: rules,
+        date : _date
     };
 });
