@@ -4,7 +4,7 @@ Find the website at [TimeScore.azurewebsites.net](http://timescore.azurewebsites
 
 TimeScore gives you an instant answer to one of the universe' oldest questions:
 
-**How many points are time worth right now?**
+**How many points is time worth right now?**
 
 #### How does it know?
 The points awarded to any specific point in time is specified using a few
