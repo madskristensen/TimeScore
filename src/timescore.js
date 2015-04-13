@@ -135,7 +135,7 @@
 });
 
 (function () {
-    var time = document.querySelector("time"),
+    var time = document.getElementById("time"),
         elmScore = document.getElementById("score"),
         rules = document.getElementById("rules"),
         ts = new TimeScore();
