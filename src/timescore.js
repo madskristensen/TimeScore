@@ -181,5 +181,5 @@
     setInterval(function () {
         display();
 
-    }, 60 * 1000); // 1 minute
+    }, 2000);
 })();
