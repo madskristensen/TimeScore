@@ -178,8 +178,6 @@
     }
 
     function showRules() {
-        rules.innerHTML = "";
-
         for (var name in ts.rules) {
             var rule = ts.rules[name];
             var li = document.createElement("li");
@@ -189,7 +187,7 @@
         }
     };
 
-    //showRules();
+    showRules();
     display();
 
     setInterval(function () {
