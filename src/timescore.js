@@ -103,12 +103,12 @@
 
         reverse: {
             points: 3,
-            rule: "Minutes reversed equals hour"
+            rule: "Mirror, mirror on the wall"
         },
 
         equals: {
             points: 2,
-            rule: "Hour and minutes are the same"
+            rule: "Pete : Repeat"
         },
 
         tophour: {
@@ -118,12 +118,14 @@
 
         eleveneleven: {
             points: 1,
-            rule: "Four of a kind"
+            rule: "Four of a kind",
+            type: "bonus"
         },
 
         nightowl: {
             points: 1,
-            rule: "Night owl"
+            rule: "Night owl",
+            type: "bonus"
         },
 
     };
@@ -178,11 +180,24 @@
     }
 
     function showRules() {
+
+        var type;
+
         for (var name in ts.rules) {
             var rule = ts.rules[name];
+
+            var point = rule.points === 1 ? "point&nbsp;&nbsp;" : "points";
+
             var li = document.createElement("li");
-            li.innerHTML = rule.points + " points - " + rule.rule;
+            li.innerHTML = rule.points + " " + point + " - " + rule.rule;
             li.id = name;
+
+            if (type != rule.type) {
+                li.innerHTML = "<strong>Bonus points</strong>" + li.innerHTML;
+            }
+
+            type = rule.type;
+
             rules.appendChild(li);
         }
     };
