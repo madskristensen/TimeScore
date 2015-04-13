@@ -3,7 +3,9 @@
     var _hour, _minute, _date;
 
     function getScore(date) {
+        _date = date;
         normalize(date);
+
         var score = runRules();
 
         return {
@@ -44,6 +46,7 @@
 
     function runRules() {
         var reverseMinutes = _minute.split("").reverse().join("");
+        var realHours = _date.getHours();
         var hits = [];
 
         if (_hour == reverseMinutes || "0" + _hour === _minute) {
@@ -72,6 +75,10 @@
 
         if (_hour === "11" && _minute === "11") {
             hits.push(rules.eleveneleven);
+        }
+
+        if (realHours >= 2 && realHours < 5) {
+            hits.push(rules.nightowl);
         }
 
         return hits;
@@ -114,6 +121,11 @@
             rule: "Four of a kind"
         },
 
+        nightowl: {
+            points: 1,
+            rule: "Night owl"
+        },
+
     };
 
     return {
@@ -130,7 +142,7 @@
 
     function display() {
         var result = ts.getScore(new Date());
-        //var result = ts.getScore(new Date(2015, 12, 31, 12, 00));
+        //var result = ts.getScore(new Date(2015, 12, 31, 4, 44));
         var points = 0;
         var lis = rules.getElementsByTagName("li");
 

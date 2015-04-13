@@ -17,3 +17,4 @@ universal rules. Here they are:
 - 2 points - *Hour and minutes are the same*
 - 1 points - *Top of the hour*
 - 1 points - *Four of a kind*
+- 1 points - *Night owl*
