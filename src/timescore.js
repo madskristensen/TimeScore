@@ -1,4 +1,4 @@
-﻿var TimeScore = (function () {
+var TimeScore = (function () {
 
     var _hour, _minute, _date;
 
@@ -25,11 +25,14 @@
             _minute = minute.toString();
         }
 
-        if (hour < 10) {
+        if (hour === 0) {
+            _hour = "12";
+        }
+        else if (hour < 10) {
             _hour = "0" + hour;
         }
         else if (hour > 12) {
-            var imperial = hour - 12;
+            var imperial = (hour - 12).toString();
 
             if (imperial < 10) {
                 imperial = "0" + imperial;
@@ -65,8 +68,11 @@
             hits.push(rules.tophour);
         }
 
-        if (_hour === "07" && _minute === "11") {
-            hits.push(rules.sevelEleven);
+        if ((_hour === "7" && _minute === "11") || // 7-Eleven
+            (realHours === 4 && _minute === "55") || // Caitlin's birthday
+            (realHours === 11 && _minute === "07") // Emily's birthday
+            ) {
+            hits.push(rules.momentInTime);
         }
 
         if (_hour === "12" && _minute === "34") {
@@ -77,7 +83,7 @@
             hits.push(rules.eleveneleven);
         }
 
-        if (realHours >= 2 && realHours < 5) {
+        if (hits.length > 0 && realHours >= 2 && realHours < 5) {
             hits.push(rules.nightowl);
         }
 
@@ -91,9 +97,9 @@
             rule: "Royal Straight Flush"
         },
 
-        sevelEleven: {
+        momentInTime: {
             points: 4,
-            rule: "Thank heaven for 7-Eleven"
+            rule: "Special moment in time"
         },
 
         threeofakind: {
@@ -135,78 +141,3 @@
         rules: rules
     };
 });
-
-(function () {
-    var time = document.getElementById("time"),
-        elmScore = document.getElementById("score"),
-        rules = document.getElementById("rules"),
-        ts = new TimeScore();
-
-    function display() {
-        var result = ts.getScore(new Date());
-        //var result = ts.getScore(new Date(2015, 12, 31, 4, 44));
-        var points = 0;
-        var lis = rules.getElementsByTagName("li");
-
-        time.innerHTML = result.time;
-        clearResults();
-
-        for (var i = 0; i < result.score.length; i++) {
-
-            var score = result.score[i];
-            points += score.points;
-
-            for (var a = 0; a < lis.length; a++) {
-                li = lis[a];
-
-                if (score.points > 0 && li.innerHTML.lastIndexOf(score.rule) > -1) {
-                    li.classList.add("active");
-                    break;
-                }
-            }
-        }
-
-        elmScore.innerHTML = points;
-    }
-
-    function clearResults() {
-        var lis = rules.getElementsByTagName("li");
-
-        for (var i = 0; i < lis.length; i++) {
-            li = lis[i];
-
-            li.classList.remove("active");
-        }
-    }
-
-    function showRules() {
-
-        var type;
-
-        for (var name in ts.rules) {
-            var rule = ts.rules[name];
-
-            var point = rule.points === 1 ? "point&nbsp;&nbsp;" : "points";
-
-            var li = document.createElement("li");
-            li.innerHTML = rule.points + " " + point + " - " + rule.rule;
-            li.id = name;
-
-            if (type != rule.type) {
-                li.innerHTML = "<strong>Bonus points</strong>" + li.innerHTML;
-            }
-
-            type = rule.type;
-
-            rules.appendChild(li);
-        }
-    };
-
-    showRules();
-    display();
-
-    setInterval(function () {
-        display();
-
-    }, 2000);
-})();
