@@ -189,7 +189,7 @@
         }
     };
 
-    showRules();
+    //showRules();
     display();
 
     setInterval(function () {
