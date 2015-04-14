@@ -1,193 +1,227 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
-	<title>Time Score</title>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1;minimal-ui" />
-	<meta name="description" content="TimeScore - because not all time is equal" />
-	<style>
-		html {
-			min-height: 100%;
-			position: relative;
-		}
+    <title>Time Score</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1, minimal-ui" />
+    <meta name="description" content="TimeScore - because not all time is equal" />
+    <style>
+        html {
+            min-height: 100%;
+            position: relative;
+        }
 
-		body {
-			font: 16px/1.5 georgia;
-			text-align: center;
-			background: black;
-			color: white;
-			margin: 0 0 50px;
-		}
+        body {
+            font: 16px/1.5 georgia;
+            text-align: center;
+            background: black;
+            color: white;
+            margin: 0 0 50px;
+        }
 
-		#time {
-			font-size: 6em;
-			line-height: 1.2;
-		}
+        #time {
+            font-size: 6em;
+            line-height: 1.2;
+        }
 
-		p {
-			font-size: 2.5em;
-			margin: .5em 0;
-		}
+        p {
+            font-size: 2.5em;
+            margin: .5em 0;
+        }
 
-			p span {
-				font-weight: bold;
-			}
+            p span {
+                font-weight: bold;
+            }
 
-		ul {
-			text-align: left;
-			list-style: none;
-			padding: 0;
-			margin: 1em auto 0 auto;
-			display: inline-block;
-		}
+        ul {
+            text-align: left;
+            list-style: none;
+            padding: 0;
+            margin: 1em auto 0 auto;
+            display: inline-block;
+            width: 260px;
+        }
 
-			ul li {
-				opacity: .7;
-			}
+            ul li {
+                opacity: .7;
+            }
 
-			ul .active {
-				opacity: 1;
-			}
+            ul .active {
+                opacity: 1;
+            }
 
-			ul strong {
-				display: block;
-				margin-top: .8em;
-			}
+            ul strong {
+                display: block;
+                margin-top: .8em;
+            }
 
-		footer {
-			position: absolute;
-			left: 0;
-			bottom: 0;
-			height: 30px;
-			width: 100%;
-			margin-top: 20px;
-			font-size: 90%;
-			opacity: .8;
-		}
+        #highscore {
+            margin-top: 1em;
+            margin-bottom: 1em;
+            font-size: 1.3em;
+        }
 
-			footer a {
-				color: inherit;
-			}
-	</style>
+            #highscore > span:first-child {
+                display: inline-block;
+                margin-right: 1.5em;
+            }
 
-	<link rel="apple-touch-icon" sizes="57x57" href="/favicon/apple-touch-icon-57x57.png" />
-	<link rel="apple-touch-icon" sizes="60x60" href="/favicon/apple-touch-icon-60x60.png" />
-	<link rel="apple-touch-icon" sizes="72x72" href="/favicon/apple-touch-icon-72x72.png" />
-	<link rel="apple-touch-icon" sizes="76x76" href="/favicon/apple-touch-icon-76x76.png" />
-	<link rel="apple-touch-icon" sizes="114x114" href="/favicon/apple-touch-icon-114x114.png" />
-	<link rel="apple-touch-icon" sizes="120x120" href="/favicon/apple-touch-icon-120x120.png" />
-	<link rel="apple-touch-icon" sizes="144x144" href="/favicon/apple-touch-icon-144x144.png" />
-	<link rel="apple-touch-icon" sizes="152x152" href="/favicon/apple-touch-icon-152x152.png" />
-	<link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon-180x180.png" />
-	<link rel="icon" type="image/png" href="/favicon/favicon-32x32.png" sizes="32x32" />
-	<link rel="icon" type="image/png" href="/favicon/android-chrome-192x192.png" sizes="192x192" />
-	<link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96" />
-	<link rel="icon" type="image/png" href="/favicon/favicon-16x16.png" sizes="16x16" />
-	<link rel="manifest" href="/favicon/manifest.json" />
-	<link rel="shortcut icon" href="/favicon/favicon.ico" />
-	<meta name="msapplication-TileColor" content="#00aba9" />
-	<meta name="msapplication-TileImage" content="/favicon/mstile-144x144.png" />
-	<meta name="msapplication-config" content="/favicon/browserconfig.xml" />
-	<meta name="theme-color" content="#ffffff" />
-	<meta name="mobile-web-app-capable" content="yes" />
-	<meta name="apple-mobile-web-app-capable" content="yes" />
-	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+            #highscore > span span {
+                font-weight: bold;
+            }
+
+        footer {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            height: 30px;
+            width: 100%;
+            margin-top: 20px;
+            font-size: 90%;
+            opacity: .8;
+        }
+
+            footer a {
+                color: inherit;
+            }
+    </style>
+
+    <link rel="apple-touch-icon" sizes="57x57" href="/favicon/apple-touch-icon-57x57.png" />
+    <link rel="apple-touch-icon" sizes="60x60" href="/favicon/apple-touch-icon-60x60.png" />
+    <link rel="apple-touch-icon" sizes="72x72" href="/favicon/apple-touch-icon-72x72.png" />
+    <link rel="apple-touch-icon" sizes="76x76" href="/favicon/apple-touch-icon-76x76.png" />
+    <link rel="apple-touch-icon" sizes="114x114" href="/favicon/apple-touch-icon-114x114.png" />
+    <link rel="apple-touch-icon" sizes="120x120" href="/favicon/apple-touch-icon-120x120.png" />
+    <link rel="apple-touch-icon" sizes="144x144" href="/favicon/apple-touch-icon-144x144.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="/favicon/apple-touch-icon-152x152.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon-180x180.png" />
+    <link rel="icon" type="image/png" href="/favicon/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="/favicon/android-chrome-192x192.png" sizes="192x192" />
+    <link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/png" href="/favicon/favicon-16x16.png" sizes="16x16" />
+    <link rel="manifest" href="/favicon/manifest.json" />
+    <link rel="shortcut icon" href="/favicon/favicon.ico" />
+    <meta name="msapplication-TileColor" content="#00aba9" />
+    <meta name="msapplication-TileImage" content="/favicon/mstile-144x144.png" />
+    <meta name="msapplication-config" content="/favicon/browserconfig.xml" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 </head>
 <body>
 
-	<div role="main">
-		<span id="time">0:00</span>
-		<p>Time score: <span id="score">0</span></p>
+    <div role="main">
+        <span id="time">0:00</span>
+        <p>Time score: <span id="score">0</span></p>
 
-		<ul id="rules" role="list"></ul>
-	</div>
+        <ul id="rules" role="list"></ul>
 
-	<footer>
-		Open source on <a href="https://github.com/madskristensen/timescore/">GitHub</a>
-	</footer>
+        <div id="highscore">
+            <span id="daily">Today: <span>0</span></span>
+            <span id="weekly">This week: <span>0</span></span>
+        </div>
+    </div>
 
-	<script src="timescore.js"></script>
-	<script>
-		(function () {
-			var elmTime = document.getElementById("time"),
+    <footer>
+        Open source on <a href="https://github.com/madskristensen/timescore/">GitHub</a>
+    </footer>
+
+    <script src="js/timescore.js"></script>
+    <script src="js/highscore.js"></script>
+    <script>
+        (function () {
+            var elmTime = document.getElementById("time"),
 				elmScore = document.getElementById("score"),
 				rules = document.getElementById("rules"),
 				ts = new TimeScore(),
+                hs = new Highscore(),
 				actives = [];
 
-			var current = new Date();
-			//var current = new Date(2015, 12, 31, 4, 55);
+            var current = new Date();
+            //current.setHours(7); current.setMinutes(11);
 
-			function calculate() {
-				var result = ts.getScore(current),
+            function calculate() {
+                var result = ts.getScore(current),
 				    points = 0,
 					lis = rules.getElementsByTagName("li");
 
-				elmTime.innerHTML = result.time;
-				clearResults();
+                elmTime.innerHTML = result.time;
+                clearResults();
 
-				for (var i = 0; i < result.score.length; i++) {
+                for (var i = 0; i < result.score.length; i++) {
 
-					var score = result.score[i];
-					points += score.points;
+                    var score = result.score[i];
+                    points += score.points;
 
-					for (var a = 0; a < lis.length; a++) {
-						li = lis[a];
+                    for (var a = 0; a < lis.length; a++) {
+                        li = lis[a];
 
-						if (score.points > 0 && li.innerHTML.lastIndexOf(score.rule) > -1) {
-							li.className = "active";
-							actives.push(li);
-							break;
-						}
-					}
-				}
+                        if (score.points > 0 && li.innerHTML.lastIndexOf(score.rule) > -1) {
+                            li.className = "active";
+                            actives.push(li);
+                            break;
+                        }
+                    }
+                }
 
-				elmScore.innerHTML = points;
-			}
+                elmScore.innerHTML = points;
+                if (points > 0) {
+                    hs.recordScore(current, points);
+                    updateHighscore();
+                }
+            }
 
-			function clearResults() {
+            function clearResults() {
 
-				for (var i = 0; i < actives.length; i++) {
-					actives[i].className = "";
-				}
+                for (var i = 0; i < actives.length; i++) {
+                    actives[i].className = "";
+                }
 
-				actives = [];
-			}
+                actives = [];
+            }
 
-			function showRules() {
+            function updateHighscore() {
+                var score = hs.getScore(current);
+                document.getElementById("daily").firstElementChild.innerHTML = score.daily;
+                document.getElementById("weekly").firstElementChild.innerHTML = score.weekly;
+            }
 
-				var type;
+            function showRules() {
 
-				for (var name in ts.rules) {
-					var rule = ts.rules[name];
+                var type;
 
-					var point = rule.points === 1 ? "point&nbsp;&nbsp;" : "points";
+                for (var name in ts.rules) {
+                    var rule = ts.rules[name];
 
-					var li = document.createElement("li");
-					li.innerHTML = rule.points + " " + point + " - " + rule.rule;
-					li.id = name;
+                    var point = rule.points === 1 ? "point&nbsp;&nbsp;" : "points";
 
-					if (type != rule.type) {
-						li.innerHTML = "<strong>Bonus points</strong>" + li.innerHTML;
-					}
+                    var li = document.createElement("li");
+                    li.innerHTML = rule.points + " " + point + " - " + rule.rule;
+                    li.id = name;
 
-					type = rule.type;
-					rules.appendChild(li);
-				}
-			};
+                    if (type != rule.type) {
+                        li.innerHTML = "<strong>Bonus points</strong>" + li.innerHTML;
+                    }
 
-			showRules();
-			calculate();
+                    type = rule.type;
+                    rules.appendChild(li);
+                }
+            };
 
-			setInterval(function () {
-				var date = new Date();
+            showRules();
+            calculate();
+            updateHighscore();
 
-				if (date.getHours() != current.getHours() || date.getMinutes() != current.getMinutes()) {
-					current = date;
-					calculate();
-				}
-			}, 2000);
-		})();
-	</script>
+            setInterval(function () {
+                var date = new Date();
+
+                if (date.getHours() != current.getHours() || date.getMinutes() != current.getMinutes()) {
+                    current = date;
+                    calculate();
+                }
+            }, 2000);
+        })();
+    </script>
 </body>
 </html>
