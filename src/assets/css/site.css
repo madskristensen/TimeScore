@@ -97,7 +97,8 @@ footer {
     }
 
     #badges p:hover:after,
-    #badges p:active:after {
+    #badges p:active:after,
+    #badges p:focus:after {
         content: attr(aria-label);
         position: absolute;
         top: 0;

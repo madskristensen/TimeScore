@@ -12,7 +12,7 @@ var elmTime = document.getElementById("time"),
     actives = [];
 
 var current = new Date();
-current.setHours(7); current.setMinutes(11);
+//current.setHours(7); current.setMinutes(11);
 
 //(function printAllCombinations() {
 //    current.setHours(0); current.setMinutes(0);
@@ -150,5 +150,6 @@ reset.addEventListener("click", function (e) {
     if (confirm("This will reset the score. Are you sure?")) {
         localStorage.clear();
         updateHighscore();
+        updateBadges();
     }
 });

@@ -23,10 +23,38 @@ var Badges = (function () {
             }
         }
 
+        if (allBadges[b].type === "single" && localStorage["badge:" + b])
+            return;
+
         localStorage["badge:" + b] = localStorage["badge:" + b] ? parseInt(localStorage["badge:" + b]) + 1 : 1;
     }
 
     var allBadges = {
+        newbie: {
+            id: "newbie",
+            name: "Newbie",
+            description: "Congrats!! You got your first point",
+            type: "single"
+        },
+        adventurer: {
+            id: "adventurer",
+            name: "Adventurer",
+            description: "Congrats!! That's your first 10 points",
+            type: "single"
+        },
+        timetraveller: {
+            id: "Time traveller",
+            name: "Adventurer",
+            description: "Congrats!! That's your first 50 points",
+            type: "single"
+        },
+        timelord: {
+            id: "timelord",
+            name: "Time Lord",
+            description: "Congrats!! That's your first 100 points",
+            type: "single"
+        },
+
         appreciate: {
             id: "appreciate",
             name: "Who do we appreciate",
@@ -35,7 +63,7 @@ var Badges = (function () {
         beer: {
             id: "beer",
             name: "Beer o'clock",
-            description: "That time of day again"
+            description: "Beer o'clock"
         },
         caitlin: {
             id: "caitlin",
@@ -45,32 +73,32 @@ var Badges = (function () {
         denmark: {
             id: "denmark",
             name: "Kingdom of Denmark",
-            description: "Kingdom of Denmark"
+            description: "Kingdom of Denmark was founded"
         },
         ellendun: {
             id: "ellendun",
             name: "Battle of Ellendun",
-            description: "Battle of Ellendun"
+            description: "Battle of Ellendun which united England"
         },
         emily: {
             id: "emily",
             name: "Emily's birthday",
-            description: "Emily's birthday"
+            description: "Emily was born on this time of day"
         },
         pi: {
             id: "pi",
             name: "Wonderful day for PI",
-            description: "Wonderful day for PI",
+            description: "It's a wonderful day for PI",
         },
         prime: {
             id: "prime",
             name: "Optimus Prime",
-            description: "Optimus Prime",
+            description: "Gotta love them prime numbers",
         },
         redsea: {
             id: "redsea",
             name: "What color is the sea?",
-            description: "What color is the sea?",
+            description: "What sea hides under these coordinates?",
         },
         scooter: {
             id: "scotter",
@@ -90,7 +118,7 @@ var Badges = (function () {
         youknow: {
             id: "youknow",
             name: "You know if you know",
-            description: "Shakespeare FTW!"
+            description: "you know if you know"
         },
     }
 

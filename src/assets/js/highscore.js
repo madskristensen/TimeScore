@@ -1,6 +1,9 @@
-﻿var Highscore = function () {
+﻿/// <reference path="badges.js" />
 
-    var _score;
+var Highscore = function () {
+
+    var _score
+        badgeService = new Badges();
 
     function recordScore(date, points) {
 
@@ -41,6 +44,15 @@
                 localStorage.removeItem(hash);
             }
         }
+
+        if (weekly >= 100)
+            badgeService.addBadge(badgeService.badges.timelord)
+        else if (weekly >= 50)
+            badgeService.addBadge(badgeService.badges.timetraveller)
+        else if (weekly >= 10)
+            badgeService.addBadge(badgeService.badges.adventurer)
+        else if (weekly > 0)
+            badgeService.addBadge(badgeService.badges.newbie)
 
         return {
             daily: daily,
