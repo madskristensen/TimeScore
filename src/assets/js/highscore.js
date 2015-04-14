@@ -4,13 +4,15 @@
 
     function recordScore(date, points) {
 
-        var key = cleanDate(date);// date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes();
-        console.log(key)
+        var key = cleanDate(date);
+
         localStorage[key] = points;
     }
 
     function cleanDate(date) {
-        return new Date(date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes());
+        date.setSeconds(0);
+        date.setMilliseconds(0);
+        return date;
     }
 
     function getScore(date) {
@@ -20,7 +22,6 @@
         var weekly = 0;
 
         for (var hash in localStorage) {
-
             var timestamp = new Date(hash);
             var timeDiff = Math.abs(date.getTime() - timestamp.getTime());
             var diffDays = timeDiff / (1000 * 3600 * 24);

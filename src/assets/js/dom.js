@@ -4,12 +4,13 @@
 var elmTime = document.getElementById("time"),
     elmScore = document.getElementById("score"),
     rules = document.getElementById("rules"),
+    reset = document.getElementById("reset"),
     ts = new TimeScore(),
     hs = new Highscore(),
     actives = [];
 
 var current = new Date();
-//current.setHours(4); current.setMinutes(5);
+//current.setHours(22); current.setMinutes(55);
 
 //(function printAllCombinations() {
 //    current.setHours(0); current.setMinutes(0);
@@ -113,3 +114,12 @@ setInterval(function () {
         calculate();
     }
 }, 2000);
+
+reset.addEventListener("click", function (e) {
+    e.preventDefault();
+
+    if (confirm("This will reset the score. Are you sure?")) {
+        localStorage.clear();
+        updateHighscore();
+    }
+});

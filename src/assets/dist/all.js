@@ -169,13 +169,15 @@ var Highscore = function () {
 
     function recordScore(date, points) {
 
-        var key = cleanDate(date);// date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes();
-        console.log(key)
+        var key = cleanDate(date);
+
         localStorage[key] = points;
     }
 
     function cleanDate(date) {
-        return new Date(date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes());
+        date.setSeconds(0);
+        date.setMilliseconds(0);
+        return date;
     }
 
     function getScore(date) {
@@ -185,7 +187,6 @@ var Highscore = function () {
         var weekly = 0;
 
         for (var hash in localStorage) {
-
             var timestamp = new Date(hash);
             var timeDiff = Math.abs(date.getTime() - timestamp.getTime());
             var diffDays = timeDiff / (1000 * 3600 * 24);
@@ -220,12 +221,13 @@ var Highscore = function () {
 var elmTime = document.getElementById("time"),
     elmScore = document.getElementById("score"),
     rules = document.getElementById("rules"),
+    reset = document.getElementById("reset"),
     ts = new TimeScore(),
     hs = new Highscore(),
     actives = [];
 
 var current = new Date();
-//current.setHours(4); current.setMinutes(5);
+//current.setHours(22); current.setMinutes(55);
 
 //(function printAllCombinations() {
 //    current.setHours(0); current.setMinutes(0);
@@ -329,3 +331,12 @@ setInterval(function () {
         calculate();
     }
 }, 2000);
+
+reset.addEventListener("click", function (e) {
+    e.preventDefault();
+
+    if (confirm("This will reset the score. Are you sure?")) {
+        localStorage.clear();
+        updateHighscore();
+    }
+});
