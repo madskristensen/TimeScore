@@ -106,3 +106,14 @@ footer {
         font-size: 16px;
         background-color: rgba(0, 0, 0, 0.54);
     }
+
+    #badges p span{
+        position: absolute;
+        bottom: 5px;
+        right: 0;
+        text-align: left;
+        width: 30px;
+        display: block;
+        font-size: .4em;
+        opacity: .8;
+    }

@@ -37,6 +37,7 @@ var current = new Date();
 //})();
 
 function calculate() {
+
     var result = ts.getScore(current),
         points = 0,
         lis = rules.getElementsByTagName("li");
@@ -61,7 +62,7 @@ function calculate() {
     }
 
     elmScore.innerHTML = points;
-    if (points > 0) {
+    if (points > 0){
         hs.recordScore(current, points);
         updateHighscore();
         updateBadges();
@@ -115,12 +116,17 @@ function updateBadges() {
     for (var i = 0; i < badges.length; i++) {
         var badge = badges[i];
 
-        console.log(badge)
         var img = document.createElement("p")
         img.setAttribute("aria-label", badge.description);
 
         if (badge.user)
             img.className = "user";
+
+        if (badge.level > 1) {
+            var span = document.createElement("span");
+            span.innerHTML = badge.level + "x";
+            img.appendChild(span);
+        }
 
         elmBadges.appendChild(img);
     }

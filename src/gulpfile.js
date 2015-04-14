@@ -8,7 +8,7 @@ gulp.task("default", ["concat", "manifest"]);
 
 
 gulp.task("concat", function () {
-    gulp.src(["./assets/js/badges.js", "./assets/js/timescore.js", "./assets/js/highscore.js", "./assets/js/dom.js"])
+    gulp.src(["./assets/js/badges.js", "./assets/js/highscore.js", "./assets/js/timescore.js", "./assets/js/dom.js"])
         .pipe(concat("all.js"))
         .pipe(gulp.dest("./assets/dist"))
 });

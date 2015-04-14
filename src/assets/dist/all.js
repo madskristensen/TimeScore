@@ -5,9 +5,15 @@ var Badges = (function () {
         var badges = [];
 
         for (var badge in allBadges) {
+            var points = localStorage["badge:" + allBadges[badge].id];
 
-            if (localStorage["badge:" + allBadges[badge].id])
-            badges.push(allBadges[badge]);
+            if (points) {
+                var b = parseInt(points, 10)
+                var thisBadge = allBadges[badge]
+                thisBadge.level = Math.floor(points / 5);
+                console.log(points, thisBadge.level)
+                badges.push(thisBadge);
+            }
         }
 
         return badges;
@@ -25,7 +31,7 @@ var Badges = (function () {
 
         if (allBadges[b].type === "single" && localStorage["badge:" + b])
             return;
-
+        console.log(name)
         localStorage["badge:" + b] = localStorage["badge:" + b] ? parseInt(localStorage["badge:" + b]) + 1 : 1;
     }
 
@@ -130,10 +136,89 @@ var Badges = (function () {
 });
 /// <reference path="badges.js" />
 
+var Highscore = function () {
+
+    var _score
+    badgeService = new Badges();
+
+    function recordScore(date, points) {
+
+        if (isRecorded(date))
+            return;
+
+        var key = cleanDate(date);
+        localStorage[key] = points;
+    }
+
+    function cleanDate(date) {
+        date.setSeconds(0);
+        date.setMilliseconds(0);
+        return date;
+    }
+
+    function isRecorded(date) {
+        var clean = cleanDate(date);
+
+        return localStorage[clean] != undefined;
+    }
+
+    function getScore(date) {
+
+        date = cleanDate(date);
+        var daily = 0;
+        var weekly = 0;
+
+        for (var hash in localStorage) {
+
+            if (hash.indexOf("badge:") === 0)
+                continue;
+
+            var timestamp = new Date(hash);
+            var timeDiff = Math.abs(date.getTime() - timestamp.getTime());
+            var diffDays = timeDiff / (1000 * 3600 * 24);
+
+            if (diffDays <= 1) {
+                daily += parseInt(localStorage[hash], 10);
+                weekly += parseInt(localStorage[hash], 10);
+            }
+            else if (diffDays <= 7) {
+                weekly += parseInt(localStorage[hash], 10);
+            }
+            else {
+                localStorage.removeItem(hash);
+            }
+        }
+
+        if (weekly >= 100)
+            badgeService.addBadge(badgeService.badges.timelord)
+        else if (weekly >= 50)
+            badgeService.addBadge(badgeService.badges.timetraveller)
+        else if (weekly >= 10)
+            badgeService.addBadge(badgeService.badges.adventurer)
+        else if (weekly > 0)
+            badgeService.addBadge(badgeService.badges.newbie)
+
+        return {
+            daily: daily,
+            weekly: weekly,
+            total: 0
+        }
+    }
+
+    return {
+        recordScore: recordScore,
+        getScore: getScore,
+        isRecorded: isRecorded
+    }
+}
+/// <reference path="badges.js" />
+/// <reference path="highscore.js" />
+
 var TimeScore = (function () {
 
     var _hour, _minute, _date,
-        badgeService = new Badges();
+        badgeService = new Badges(),
+        hightscoreService = new Highscore();
 
     function getScore(date) {
         _date = date;
@@ -257,7 +342,7 @@ var TimeScore = (function () {
         else if (realHours === 11 && _minute === "07")
             badge = badges.emily;
 
-        if (badge) {
+        if (badge && !hightscoreService.isRecorded(_date)) {
             rule = rules.momentInTime;
             rule.badge = badge;
             hits.push(rule);
@@ -332,74 +417,6 @@ var TimeScore = (function () {
     };
 });
 /// <reference path="badges.js" />
-
-var Highscore = function () {
-
-    var _score
-        badgeService = new Badges();
-
-    function recordScore(date, points) {
-
-        var key = cleanDate(date);
-
-        localStorage[key] = points;
-    }
-
-    function cleanDate(date) {
-        date.setSeconds(0);
-        date.setMilliseconds(0);
-        return date;
-    }
-
-    function getScore(date) {
-
-        date = cleanDate(date);
-        var daily = 0;
-        var weekly = 0;
-
-        for (var hash in localStorage) {
-
-            if (hash.indexOf("badge:") === 0)
-                continue;
-
-            var timestamp = new Date(hash);
-            var timeDiff = Math.abs(date.getTime() - timestamp.getTime());
-            var diffDays = timeDiff / (1000 * 3600 * 24);
-
-            if (diffDays <= 1) {
-                daily += parseInt(localStorage[hash], 10);
-                weekly += parseInt(localStorage[hash], 10);
-            }
-            else if (diffDays <= 7) {
-                weekly += parseInt(localStorage[hash], 10);
-            }
-            else {
-                localStorage.removeItem(hash);
-            }
-        }
-
-        if (weekly >= 100)
-            badgeService.addBadge(badgeService.badges.timelord)
-        else if (weekly >= 50)
-            badgeService.addBadge(badgeService.badges.timetraveller)
-        else if (weekly >= 10)
-            badgeService.addBadge(badgeService.badges.adventurer)
-        else if (weekly > 0)
-            badgeService.addBadge(badgeService.badges.newbie)
-
-        return {
-            daily: daily,
-            weekly: weekly,
-            total: 0
-        }
-    }
-
-    return {
-        recordScore: recordScore,
-        getScore: getScore
-    }
-}
-/// <reference path="badges.js" />
 /// <reference path="timescore.js" />
 /// <reference path="highscore.js" />
 
@@ -438,6 +455,7 @@ var current = new Date();
 //})();
 
 function calculate() {
+
     var result = ts.getScore(current),
         points = 0,
         lis = rules.getElementsByTagName("li");
@@ -462,7 +480,7 @@ function calculate() {
     }
 
     elmScore.innerHTML = points;
-    if (points > 0) {
+    if (points > 0){
         hs.recordScore(current, points);
         updateHighscore();
         updateBadges();
@@ -516,12 +534,17 @@ function updateBadges() {
     for (var i = 0; i < badges.length; i++) {
         var badge = badges[i];
 
-        console.log(badge)
         var img = document.createElement("p")
         img.setAttribute("aria-label", badge.description);
 
         if (badge.user)
             img.className = "user";
+
+        if (badge.level > 1) {
+            var span = document.createElement("span");
+            span.innerHTML = badge.level + "x";
+            img.appendChild(span);
+        }
 
         elmBadges.appendChild(img);
     }

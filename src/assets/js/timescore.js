@@ -1,9 +1,11 @@
 /// <reference path="badges.js" />
+/// <reference path="highscore.js" />
 
 var TimeScore = (function () {
 
     var _hour, _minute, _date,
-        badgeService = new Badges();
+        badgeService = new Badges(),
+        hightscoreService = new Highscore();
 
     function getScore(date) {
         _date = date;
@@ -127,7 +129,7 @@ var TimeScore = (function () {
         else if (realHours === 11 && _minute === "07")
             badge = badges.emily;
 
-        if (badge) {
+        if (badge && !hightscoreService.isRecorded(_date)) {
             rule = rules.momentInTime;
             rule.badge = badge;
             hits.push(rule);

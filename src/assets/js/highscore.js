@@ -3,12 +3,14 @@
 var Highscore = function () {
 
     var _score
-        badgeService = new Badges();
+    badgeService = new Badges();
 
     function recordScore(date, points) {
 
-        var key = cleanDate(date);
+        if (isRecorded(date))
+            return;
 
+        var key = cleanDate(date);
         localStorage[key] = points;
     }
 
@@ -16,6 +18,12 @@ var Highscore = function () {
         date.setSeconds(0);
         date.setMilliseconds(0);
         return date;
+    }
+
+    function isRecorded(date) {
+        var clean = cleanDate(date);
+
+        return localStorage[clean] != undefined;
     }
 
     function getScore(date) {
@@ -63,6 +71,7 @@ var Highscore = function () {
 
     return {
         recordScore: recordScore,
-        getScore: getScore
+        getScore: getScore,
+        isRecorded: isRecorded
     }
 }
