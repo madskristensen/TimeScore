@@ -69,10 +69,26 @@ var TimeScore = (function () {
         }
 
         if ((_hour === "7" && _minute === "11") || // 7-Eleven
+            (_hour === "3" && _minute === "14") || // The number PI
+            (_hour === "7" && _minute === "37") || // Popular airplane
+            (_hour === "1" && _minute === "35") || // Prime numbers
+            (_hour === "5" && _minute === "31") || // Prime numbers
+            (_hour === "8" && _minute === "25") || // Battle of Ellendun
+            (_hour === "9" && _minute === "36") || // Kingdom of Denmark
+            (_hour === "2" && _minute === "46") || // Who do we appreciate
+            (_hour === "9" && _minute === "46") || // Retro scooter
+            (realHours === 16 && _minute === "20") || // You know if you know
+            (realHours === 23 && _minute === "37") || // What color is the sea?
+            (realHours === 17 && _minute === "30") || // Beer o'clock
             (realHours === 4 && _minute === "55") || // Caitlin's birthday
             (realHours === 11 && _minute === "07") // Emily's birthday
             ) {
             hits.push(rules.momentInTime);
+        }
+
+        var half = parseInt(_hour) / 2;
+        if (_minute.length == 2 && _minute[0] == half && _minute[1] == half) {
+            hits.push(rules.product);
         }
 
         if (_hour === "12" && _minute === "34") {
@@ -115,6 +131,11 @@ var TimeScore = (function () {
         equals: {
             points: 2,
             rule: "Pete : Repeat"
+        },
+
+        product: {
+            points: 2,
+            rule: "Minute is the product"
         },
 
         tophour: {
@@ -193,6 +214,8 @@ var Highscore = function () {
         getScore: getScore
     }
 }
+/// <reference path="timescore.js" />
+/// <reference path="highscore.js" />
 
 var elmTime = document.getElementById("time"),
     elmScore = document.getElementById("score"),
@@ -202,7 +225,29 @@ var elmTime = document.getElementById("time"),
     actives = [];
 
 var current = new Date();
-//current.setHours(7); current.setMinutes(11);
+//current.setHours(4); current.setMinutes(5);
+
+//(function printAllCombinations() {
+//    current.setHours(0); current.setMinutes(0);
+//    var day = current.getDate();
+//    var pre = document.createElement("pre");
+
+//    while (current.getDate() == day) {
+//        var result = ts.getScore(current);
+//        var points = 0;
+
+//        for (var i = 0; i < result.score.length; i++) {
+//            points += result.score[i].points;
+//        }
+
+//        if (points > 0)
+//            pre.innerHTML += current.getHours() + ":" + current.getMinutes() + "\t" + points + "\r\n";
+
+//        current = new Date(current.getTime() + 60000);
+//    }
+
+//    document.body.appendChild(pre);
+//})();
 
 function calculate() {
     var result = ts.getScore(current),

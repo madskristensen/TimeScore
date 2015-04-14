@@ -26,7 +26,7 @@ gulp.task("manifest", function () {
     .pipe(gulp.dest('./'));
 });
 
-gulp.task("watch", function () {
+gulp.task("watch", ["concat", "manifest"], function () {
     gulp.watch("./assets/js/*", ["manifest", "concat"]);
     gulp.watch("./assets/css/*", ["manifest"]);
 });

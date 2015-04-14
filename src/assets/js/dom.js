@@ -1,4 +1,6 @@
-﻿
+﻿/// <reference path="timescore.js" />
+/// <reference path="highscore.js" />
+
 var elmTime = document.getElementById("time"),
     elmScore = document.getElementById("score"),
     rules = document.getElementById("rules"),
@@ -7,7 +9,29 @@ var elmTime = document.getElementById("time"),
     actives = [];
 
 var current = new Date();
-//current.setHours(7); current.setMinutes(11);
+//current.setHours(4); current.setMinutes(5);
+
+//(function printAllCombinations() {
+//    current.setHours(0); current.setMinutes(0);
+//    var day = current.getDate();
+//    var pre = document.createElement("pre");
+
+//    while (current.getDate() == day) {
+//        var result = ts.getScore(current);
+//        var points = 0;
+
+//        for (var i = 0; i < result.score.length; i++) {
+//            points += result.score[i].points;
+//        }
+
+//        if (points > 0)
+//            pre.innerHTML += current.getHours() + ":" + current.getMinutes() + "\t" + points + "\r\n";
+
+//        current = new Date(current.getTime() + 60000);
+//    }
+
+//    document.body.appendChild(pre);
+//})();
 
 function calculate() {
     var result = ts.getScore(current),
