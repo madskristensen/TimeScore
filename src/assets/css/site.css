@@ -82,3 +82,26 @@ footer {
     footer a {
         color: inherit;
     }
+
+#badges {
+    width: 310px;
+    margin: 0 auto 1em auto;
+}
+
+    #badges p {
+        background: url(/assets/img/badge.svg) no-repeat;
+        width: 100px;
+        height: 100px;
+        display: inline-block;
+        position: relative;
+    }
+
+    #badges p:hover:after,
+    #badges p:active:after {
+        content: attr(aria-label);
+        position: absolute;
+        top: 0;
+        left: 0;
+        font-size: 16px;
+        background-color: rgba(0, 0, 0, 0.54);
+    }

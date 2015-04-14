@@ -8,13 +8,13 @@ gulp.task("default", ["concat", "manifest"]);
 
 
 gulp.task("concat", function () {
-    gulp.src(["./assets/js/timescore.js", "./assets/js/highscore.js", "./assets/js/dom.js"])
+    gulp.src(["./assets/js/badges.js", "./assets/js/timescore.js", "./assets/js/highscore.js", "./assets/js/dom.js"])
         .pipe(concat("all.js"))
         .pipe(gulp.dest("./assets/dist"))
 });
 
 gulp.task("manifest", function () {
-    gulp.src(['./assets/{dist,css}/*'])
+    gulp.src(['./assets/{dist,css,img}/*'])
     .pipe(manifest({
         hash: true,
         relativePath: "assets",

@@ -22,6 +22,10 @@
         var weekly = 0;
 
         for (var hash in localStorage) {
+
+            if (hash.indexOf("badge:") === 0)
+                continue;
+
             var timestamp = new Date(hash);
             var timeDiff = Math.abs(date.getTime() - timestamp.getTime());
             var diffDays = timeDiff / (1000 * 3600 * 24);

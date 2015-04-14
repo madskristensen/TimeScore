@@ -1,6 +1,9 @@
+/// <reference path="badges.js" />
+
 var TimeScore = (function () {
 
-    var _hour, _minute, _date;
+    var _hour, _minute, _date,
+        badgeService = new Badges();
 
     function getScore(date) {
         _date = date;
@@ -70,23 +73,7 @@ var TimeScore = (function () {
             hits.push(rules.tophour);
         }
 
-        if ((_hour === "7" && _minute === "11") || // 7-Eleven
-            (_hour === "3" && _minute === "14") || // The number PI
-            (_hour === "10" && _minute === "40") || // Macbeth murders Duncan
-            (_hour === "1" && _minute === "35") || // Prime numbers
-            (_hour === "5" && _minute === "31") || // Prime numbers
-            (_hour === "8" && _minute === "25") || // Battle of Ellendun
-            (_hour === "9" && _minute === "36") || // Kingdom of Denmark
-            (_hour === "2" && _minute === "46") || // Who do we appreciate
-            (_hour === "9" && _minute === "46") || // Retro scooter
-            (realHours === 16 && _minute === "20") || // You know if you know
-            (realHours === 23 && _minute === "37") || // What color is the sea?
-            (realHours === 17 && _minute === "30") || // Beer o'clock
-            (realHours === 4 && _minute === "55") || // Caitlin's birthday
-            (realHours === 11 && _minute === "07") // Emily's birthday
-            ) {
-            hits.push(rules.momentInTime);
-        }
+        ruleMomentIntime(hits);
 
         var half = parseInt(_hour) / 2;
         if (_minute.length == 2 && _minute[0] == half && _minute[1] == half) {
@@ -108,52 +95,101 @@ var TimeScore = (function () {
         return hits;
     }
 
+    function ruleMomentIntime(hits) {
+        var realHours = _date.getHours();
+        var badges = badgeService.badges;
+        var badge = null;
+
+        if (_hour === "7" && _minute === "11")
+            badge = badges.seveneleven;
+        else if (_hour === "3" && _minute === "14")
+            badge = badges.pi;
+        else if (_hour === "10" && _minute === "40")
+            badge = badges.shakespeare;
+        else if ((_hour === "1" && _minute === "35") || _hour === "5" && _minute === "31")
+            badge = badges.prime;
+        else if (_hour === "8" && _minute === "25")
+            badge = badges.ellendun;
+        else if (_hour === "9" && _minute === "36")
+            badge = badges.denmark;
+        else if (_hour === "2" && _minute === "46")
+            badge = badges.appreciate;
+        else if (_hour === "9" && _minute === "46")
+            badge = badges.scooter;
+        else if (realHours === 16 && _minute === "20")
+            badge = badges.youknow;
+        else if (realHours === 23 && _minute === "37")
+            badge = badges.redsea;
+        else if (realHours === 17 && _minute === "30")
+            badge = badges.beer;
+        else if (realHours === 4 && _minute === "55")
+            badge = badges.caitlin;
+        else if (realHours === 11 && _minute === "07")
+            badge = badges.emily;
+
+        if (badge) {
+            rule = rules.momentInTime;
+            rule.badge = badge;
+            hits.push(rule);
+            badgeService.addBadge(badge);
+        }
+    }
+
     var rules = {
 
         onetwothreefour: {
+            id: "royalstraightflush",
             points: 6,
             rule: "Royal Straight Flush"
         },
 
         momentInTime: {
+            id: "momentintime",
             points: 4,
             rule: "Special moment in time"
         },
 
         threeofakind: {
+            id: "threeofakind",
             points: 3,
             rule: "Three of a kind"
         },
 
         equals: {
+            id: "equals",
             points: 2,
             rule: "Pete : Repeat"
         },
 
         product: {
+            id: "product",
             points: 2,
             rule: "Minute is the product"
         },
 
         mirrormirror: {
+            id: "mirrormirror",
             points: 1,
             rule: "Mirror, mirror on the wall"
         },
 
         tophour: {
+            id: "tophour",
             points: 1,
             rule: "Top of the hour"
         },
 
         eleveneleven: {
+            id: "fourofakind",
             points: 3,
             rule: "Four of a kind",
             type: "bonus"
         },
 
         nightowl: {
+            id: "nightowl",
             points: 1,
-            rule: "Night owl",
+            rule: "Knight owl",
             type: "bonus"
         },
 
@@ -162,6 +198,6 @@ var TimeScore = (function () {
     return {
         getScore: getScore,
         rules: rules,
-        date : _date
+        date: _date
     };
 });

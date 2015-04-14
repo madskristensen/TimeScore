@@ -1,16 +1,18 @@
-﻿/// <reference path="timescore.js" />
+﻿/// <reference path="badges.js" />
+/// <reference path="timescore.js" />
 /// <reference path="highscore.js" />
 
 var elmTime = document.getElementById("time"),
     elmScore = document.getElementById("score"),
     rules = document.getElementById("rules"),
     reset = document.getElementById("reset"),
+    elmBadges = document.getElementById("badges"),
     ts = new TimeScore(),
     hs = new Highscore(),
     actives = [];
 
 var current = new Date();
-//current.setHours(5); current.setMinutes(55);
+current.setHours(7); current.setMinutes(11);
 
 //(function printAllCombinations() {
 //    current.setHours(0); current.setMinutes(0);
@@ -62,6 +64,7 @@ function calculate() {
     if (points > 0) {
         hs.recordScore(current, points);
         updateHighscore();
+        updateBadges();
     }
 }
 
@@ -102,9 +105,31 @@ function showRules() {
     }
 };
 
+function updateBadges() {
+
+    var badges = new Badges().getBadges();
+
+    if (elmBadges.childElementCount === badges.length + 1)
+        return;
+
+    for (var i = 0; i < badges.length; i++) {
+        var badge = badges[i];
+
+        console.log(badge)
+        var img = document.createElement("p")
+        img.setAttribute("aria-label", badge.description);
+
+        if (badge.user)
+            img.className = "user";
+
+        elmBadges.appendChild(img);
+    }
+}
+
 showRules();
 calculate();
 updateHighscore();
+updateBadges();
 
 setInterval(function () {
 

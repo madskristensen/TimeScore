@@ -1,6 +1,111 @@
+var Badges = (function () {
+
+    function getBadges() {
+
+        var badges = [];
+
+        for (var badge in allBadges) {
+
+            if (localStorage["badge:" + allBadges[badge].id])
+            badges.push(allBadges[badge]);
+        }
+
+        return badges;
+    }
+
+    function addBadge(name) {
+        var b = null;
+
+        for (var badge in allBadges) {
+            if (badge === name || allBadges[badge] === name) {
+                b = badge;
+                break;
+            }
+        }
+
+        localStorage["badge:" + b] = localStorage["badge:" + b] ? parseInt(localStorage["badge:" + b]) + 1 : 1;
+    }
+
+    var allBadges = {
+        appreciate: {
+            id: "appreciate",
+            name: "Who do we appreciate",
+            description: "Who do we appreciate"
+        },
+        beer: {
+            id: "beer",
+            name: "Beer o'clock",
+            description: "That time of day again"
+        },
+        caitlin: {
+            id: "caitlin",
+            name: "Caitlin's birthday",
+            description: "Caitlin was born on this time of day."
+        },
+        denmark: {
+            id: "denmark",
+            name: "Kingdom of Denmark",
+            description: "Kingdom of Denmark"
+        },
+        ellendun: {
+            id: "ellendun",
+            name: "Battle of Ellendun",
+            description: "Battle of Ellendun"
+        },
+        emily: {
+            id: "emily",
+            name: "Emily's birthday",
+            description: "Emily's birthday"
+        },
+        pi: {
+            id: "pi",
+            name: "Wonderful day for PI",
+            description: "Wonderful day for PI",
+        },
+        prime: {
+            id: "prime",
+            name: "Optimus Prime",
+            description: "Optimus Prime",
+        },
+        redsea: {
+            id: "redsea",
+            name: "What color is the sea?",
+            description: "What color is the sea?",
+        },
+        scooter: {
+            id: "scotter",
+            name: "Retro scooter",
+            description: "Retro scooter",
+        },
+        seveneleven: {
+            id: "seveneleven",
+            name: "7-Eleven",
+            description: "Thank heaven for this corner store",
+        },
+        shakespeare: {
+            id: "shakespeare",
+            name: "Shakespeare FTW!",
+            description: "Shakespeare FTW!",
+        },
+        youknow: {
+            id: "youknow",
+            name: "You know if you know",
+            description: "Shakespeare FTW!"
+        },
+    }
+
+    return {
+        badges: allBadges,
+        getBadges: getBadges,
+        addBadge: addBadge,
+    }
+});
+/// <reference path="badges.js" />
+
 var TimeScore = (function () {
 
-    var _hour, _minute, _date;
+    var _hour, _minute, _date,
+        badgeService = new Badges();
 
     function getScore(date) {
         _date = date;
@@ -70,23 +175,7 @@ var TimeScore = (function () {
             hits.push(rules.tophour);
         }
 
-        if ((_hour === "7" && _minute === "11") || // 7-Eleven
-            (_hour === "3" && _minute === "14") || // The number PI
-            (_hour === "10" && _minute === "40") || // Macbeth murders Duncan
-            (_hour === "1" && _minute === "35") || // Prime numbers
-            (_hour === "5" && _minute === "31") || // Prime numbers
-            (_hour === "8" && _minute === "25") || // Battle of Ellendun
-            (_hour === "9" && _minute === "36") || // Kingdom of Denmark
-            (_hour === "2" && _minute === "46") || // Who do we appreciate
-            (_hour === "9" && _minute === "46") || // Retro scooter
-            (realHours === 16 && _minute === "20") || // You know if you know
-            (realHours === 23 && _minute === "37") || // What color is the sea?
-            (realHours === 17 && _minute === "30") || // Beer o'clock
-            (realHours === 4 && _minute === "55") || // Caitlin's birthday
-            (realHours === 11 && _minute === "07") // Emily's birthday
-            ) {
-            hits.push(rules.momentInTime);
-        }
+        ruleMomentIntime(hits);
 
         var half = parseInt(_hour) / 2;
         if (_minute.length == 2 && _minute[0] == half && _minute[1] == half) {
@@ -108,52 +197,101 @@ var TimeScore = (function () {
         return hits;
     }
 
+    function ruleMomentIntime(hits) {
+        var realHours = _date.getHours();
+        var badges = badgeService.badges;
+        var badge = null;
+
+        if (_hour === "7" && _minute === "11")
+            badge = badges.seveneleven;
+        else if (_hour === "3" && _minute === "14")
+            badge = badges.pi;
+        else if (_hour === "10" && _minute === "40")
+            badge = badges.shakespeare;
+        else if ((_hour === "1" && _minute === "35") || _hour === "5" && _minute === "31")
+            badge = badges.prime;
+        else if (_hour === "8" && _minute === "25")
+            badge = badges.ellendun;
+        else if (_hour === "9" && _minute === "36")
+            badge = badges.denmark;
+        else if (_hour === "2" && _minute === "46")
+            badge = badges.appreciate;
+        else if (_hour === "9" && _minute === "46")
+            badge = badges.scooter;
+        else if (realHours === 16 && _minute === "20")
+            badge = badges.youknow;
+        else if (realHours === 23 && _minute === "37")
+            badge = badges.redsea;
+        else if (realHours === 17 && _minute === "30")
+            badge = badges.beer;
+        else if (realHours === 4 && _minute === "55")
+            badge = badges.caitlin;
+        else if (realHours === 11 && _minute === "07")
+            badge = badges.emily;
+
+        if (badge) {
+            rule = rules.momentInTime;
+            rule.badge = badge;
+            hits.push(rule);
+            badgeService.addBadge(badge);
+        }
+    }
+
     var rules = {
 
         onetwothreefour: {
+            id: "royalstraightflush",
             points: 6,
             rule: "Royal Straight Flush"
         },
 
         momentInTime: {
+            id: "momentintime",
             points: 4,
             rule: "Special moment in time"
         },
 
         threeofakind: {
+            id: "threeofakind",
             points: 3,
             rule: "Three of a kind"
         },
 
         equals: {
+            id: "equals",
             points: 2,
             rule: "Pete : Repeat"
         },
 
         product: {
+            id: "product",
             points: 2,
             rule: "Minute is the product"
         },
 
         mirrormirror: {
+            id: "mirrormirror",
             points: 1,
             rule: "Mirror, mirror on the wall"
         },
 
         tophour: {
+            id: "tophour",
             points: 1,
             rule: "Top of the hour"
         },
 
         eleveneleven: {
+            id: "fourofakind",
             points: 3,
             rule: "Four of a kind",
             type: "bonus"
         },
 
         nightowl: {
+            id: "nightowl",
             points: 1,
-            rule: "Night owl",
+            rule: "Knight owl",
             type: "bonus"
         },
 
@@ -162,7 +300,7 @@ var TimeScore = (function () {
     return {
         getScore: getScore,
         rules: rules,
-        date : _date
+        date: _date
     };
 });
 var Highscore = function () {
@@ -189,6 +327,10 @@ var Highscore = function () {
         var weekly = 0;
 
         for (var hash in localStorage) {
+
+            if (hash.indexOf("badge:") === 0)
+                continue;
+
             var timestamp = new Date(hash);
             var timeDiff = Math.abs(date.getTime() - timestamp.getTime());
             var diffDays = timeDiff / (1000 * 3600 * 24);
@@ -217,6 +359,7 @@ var Highscore = function () {
         getScore: getScore
     }
 }
+/// <reference path="badges.js" />
 /// <reference path="timescore.js" />
 /// <reference path="highscore.js" />
 
@@ -224,12 +367,13 @@ var elmTime = document.getElementById("time"),
     elmScore = document.getElementById("score"),
     rules = document.getElementById("rules"),
     reset = document.getElementById("reset"),
+    elmBadges = document.getElementById("badges"),
     ts = new TimeScore(),
     hs = new Highscore(),
     actives = [];
 
 var current = new Date();
-//current.setHours(5); current.setMinutes(55);
+current.setHours(7); current.setMinutes(11);
 
 //(function printAllCombinations() {
 //    current.setHours(0); current.setMinutes(0);
@@ -281,6 +425,7 @@ function calculate() {
     if (points > 0) {
         hs.recordScore(current, points);
         updateHighscore();
+        updateBadges();
     }
 }
 
@@ -321,9 +466,31 @@ function showRules() {
     }
 };
 
+function updateBadges() {
+
+    var badges = new Badges().getBadges();
+
+    if (elmBadges.childElementCount === badges.length + 1)
+        return;
+
+    for (var i = 0; i < badges.length; i++) {
+        var badge = badges[i];
+
+        console.log(badge)
+        var img = document.createElement("p")
+        img.setAttribute("aria-label", badge.description);
+
+        if (badge.user)
+            img.className = "user";
+
+        elmBadges.appendChild(img);
+    }
+}
+
 showRules();
 calculate();
 updateHighscore();
+updateBadges();
 
 setInterval(function () {
 
