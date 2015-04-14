@@ -1,0 +1,10 @@
+{
+	"name": "TimeScore",
+	"version": "1.0.0",
+	"private": true,
+	"devDependencies": {
+		"gulp": "3.8.11",
+		"gulp-cache-manifest": "0.0.1",
+		"gulp-concat": "2.5.2"
+	}
+}

@@ -2,9 +2,11 @@
 .vs
 packages
 testresults
+src/node_modules
 
 # Files
 *.suo
 *.publishproj
 *.pubxml
+*.webinfo
 _chutzpah.coverage.html

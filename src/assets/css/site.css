@@ -1,0 +1,84 @@
+﻿@media only screen and (max-width: 500px) {
+    @-ms-viewport {
+        max-width: 310px;
+    }
+}
+
+html {
+    min-height: 100%;
+    position: relative;
+}
+
+body {
+    font: 16px/1.5 georgia;
+    text-align: center;
+    background: black;
+    color: white;
+    margin: 0 0 50px;
+    min-width: 280px;
+}
+
+#time {
+    font-size: 6em;
+    line-height: 1.2;
+}
+
+p {
+    font-size: 2.5em;
+    margin: .5em 0;
+}
+
+    p span {
+        font-weight: bold;
+    }
+
+ul {
+    text-align: left;
+    list-style: none;
+    padding: 0;
+    margin: 1em auto 0 auto;
+    display: inline-block;
+}
+
+    ul li {
+        opacity: .7;
+    }
+
+    ul .active {
+        opacity: 1;
+    }
+
+    ul strong {
+        display: block;
+        margin-top: .8em;
+    }
+
+#highscore {
+    margin-top: 1em;
+    margin-bottom: 1em;
+    font-size: 1.3em;
+}
+
+    #highscore > span:first-child {
+        display: inline-block;
+        margin-right: 1.5em;
+    }
+
+    #highscore > span span {
+        font-weight: bold;
+    }
+
+footer {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 30px;
+    width: 100%;
+    margin-top: 20px;
+    font-size: 90%;
+    opacity: .8;
+}
+
+    footer a {
+        color: inherit;
+    }
