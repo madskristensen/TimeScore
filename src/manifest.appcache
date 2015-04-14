@@ -9,4 +9,8 @@ assets/css/site.css
 NETWORK:
 http://*
 
-# hash: d975a460050533defa92940d1abef70d5d07e11b6132bf66660021510253f4e8
+
+SETTINGS:
+prefer-online
+
+# hash: 8b929d3c1a5d506377f6db524a933a8732d86887f80fa596c4d543f60c408e51

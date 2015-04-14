@@ -18,7 +18,7 @@ gulp.task("manifest", function () {
     .pipe(manifest({
         hash: true,
         relativePath: "assets",
-        preferOnline: false,
+        preferOnline: true,
         network: ["http://*"],
         filename: "manifest.appcache",
         exclude: ["manifest.appcache"]

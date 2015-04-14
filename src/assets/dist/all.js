@@ -52,8 +52,10 @@ var TimeScore = (function () {
         var realHours = _date.getHours();
         var hits = [];
 
-        if (_hour == reverseMinutes || "0" + _hour === _minute) {
-            hits.push(rules.reverse);
+        var all = (_hour + _minute);
+        var reverseAll = all.split("").reverse().join("");
+        if (all === reverseAll) {
+            hits.push(rules.mirrormirror);
 
         }
         else if (_hour === _minute) {
@@ -70,7 +72,7 @@ var TimeScore = (function () {
 
         if ((_hour === "7" && _minute === "11") || // 7-Eleven
             (_hour === "3" && _minute === "14") || // The number PI
-            (_hour === "7" && _minute === "37") || // Popular airplane
+            (_hour === "10" && _minute === "40") || // Macbeth murders Duncan
             (_hour === "1" && _minute === "35") || // Prime numbers
             (_hour === "5" && _minute === "31") || // Prime numbers
             (_hour === "8" && _minute === "25") || // Battle of Ellendun
@@ -109,7 +111,7 @@ var TimeScore = (function () {
     var rules = {
 
         onetwothreefour: {
-            points: 4,
+            points: 6,
             rule: "Royal Straight Flush"
         },
 
@@ -123,11 +125,6 @@ var TimeScore = (function () {
             rule: "Three of a kind"
         },
 
-        reverse: {
-            points: 3,
-            rule: "Mirror, mirror on the wall"
-        },
-
         equals: {
             points: 2,
             rule: "Pete : Repeat"
@@ -138,13 +135,18 @@ var TimeScore = (function () {
             rule: "Minute is the product"
         },
 
+        mirrormirror: {
+            points: 1,
+            rule: "Mirror, mirror on the wall"
+        },
+
         tophour: {
             points: 1,
             rule: "Top of the hour"
         },
 
         eleveneleven: {
-            points: 1,
+            points: 3,
             rule: "Four of a kind",
             type: "bonus"
         },
@@ -227,7 +229,7 @@ var elmTime = document.getElementById("time"),
     actives = [];
 
 var current = new Date();
-//current.setHours(22); current.setMinutes(55);
+//current.setHours(5); current.setMinutes(55);
 
 //(function printAllCombinations() {
 //    current.setHours(0); current.setMinutes(0);
@@ -324,6 +326,10 @@ calculate();
 updateHighscore();
 
 setInterval(function () {
+
+    if (document.hidden || document["webkitHidden"] || document["mozHidden"] || document["msHidden"] || document["oHidden"])
+        return;
+
     var date = new Date();
 
     if (date.getHours() != current.getHours() || date.getMinutes() != current.getMinutes()) {

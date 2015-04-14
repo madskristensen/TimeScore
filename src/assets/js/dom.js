@@ -10,7 +10,7 @@ var elmTime = document.getElementById("time"),
     actives = [];
 
 var current = new Date();
-//current.setHours(22); current.setMinutes(55);
+//current.setHours(5); current.setMinutes(55);
 
 //(function printAllCombinations() {
 //    current.setHours(0); current.setMinutes(0);
@@ -107,6 +107,10 @@ calculate();
 updateHighscore();
 
 setInterval(function () {
+
+    if (document.hidden || document["webkitHidden"] || document["mozHidden"] || document["msHidden"] || document["oHidden"])
+        return;
+
     var date = new Date();
 
     if (date.getHours() != current.getHours() || date.getMinutes() != current.getMinutes()) {
