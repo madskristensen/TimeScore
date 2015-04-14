@@ -62,7 +62,7 @@ function calculate() {
     }
 
     elmScore.innerHTML = points;
-    if (points > 0){
+    if (points > 0) {
         hs.recordScore(current, points);
         updateHighscore();
         updateBadges();
@@ -109,6 +109,9 @@ function showRules() {
 function updateBadges() {
 
     var badges = new Badges().getBadges();
+    var badgesText = badges.length === 1 ? " badge" : " badges";
+
+    elmBadges.firstElementChild.innerHTML = badges.length + badgesText;
 
     if (elmBadges.childElementCount === badges.length + 1)
         return;

@@ -11,7 +11,6 @@ var Badges = (function () {
                 var b = parseInt(points, 10)
                 var thisBadge = allBadges[badge]
                 thisBadge.level = Math.floor(points / 5);
-                console.log(points, thisBadge.level)
                 badges.push(thisBadge);
             }
         }
@@ -31,7 +30,7 @@ var Badges = (function () {
 
         if (allBadges[b].type === "single" && localStorage["badge:" + b])
             return;
-        console.log(name)
+
         localStorage["badge:" + b] = localStorage["badge:" + b] ? parseInt(localStorage["badge:" + b]) + 1 : 1;
     }
 

@@ -11,7 +11,6 @@ var Badges = (function () {
                 var b = parseInt(points, 10)
                 var thisBadge = allBadges[badge]
                 thisBadge.level = Math.floor(points / 5);
-                console.log(points, thisBadge.level)
                 badges.push(thisBadge);
             }
         }
@@ -31,7 +30,7 @@ var Badges = (function () {
 
         if (allBadges[b].type === "single" && localStorage["badge:" + b])
             return;
-        console.log(name)
+
         localStorage["badge:" + b] = localStorage["badge:" + b] ? parseInt(localStorage["badge:" + b]) + 1 : 1;
     }
 
@@ -480,7 +479,7 @@ function calculate() {
     }
 
     elmScore.innerHTML = points;
-    if (points > 0){
+    if (points > 0) {
         hs.recordScore(current, points);
         updateHighscore();
         updateBadges();
@@ -527,6 +526,9 @@ function showRules() {
 function updateBadges() {
 
     var badges = new Badges().getBadges();
+    var badgesText = badges.length === 1 ? " badge" : " badges";
+
+    elmBadges.firstElementChild.innerHTML = badges.length + badgesText;
 
     if (elmBadges.childElementCount === badges.length + 1)
         return;
