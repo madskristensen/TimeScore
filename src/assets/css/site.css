@@ -52,7 +52,7 @@ ul {
         margin-top: .8em;
     }
 
-    ul li span{
+    ul li span {
         display: inline-block;
         width: 59px;
     }
@@ -87,10 +87,10 @@ footer {
         color: inherit;
     }
 
-    footer img{
+    footer img {
         position: relative;
         top: 2px;
-        margin: 0 4px 
+        margin: 0 4px;
     }
 
 #badges {
@@ -136,7 +136,7 @@ footer {
 #meter {
     height: 1px;
     width: 0;
-    background: linear-gradient(to right, transparent , #dfdfdf);
+    background: linear-gradient(to right, transparent, #bbb);
     -moz-transition: width 2s linear;
     -o-transition: width 2s linear;
     -webkit-transition: width 2s linear;

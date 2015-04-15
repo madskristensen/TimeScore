@@ -13,7 +13,7 @@ var elmTime = document.getElementById("time"),
     actives = [];
 
 var current = new Date();
-current.setHours(7); current.setMinutes(11); //localStorage.clear();
+//current.setHours(7); current.setMinutes(11); //localStorage.clear();
 
 //(function printAllCombinations() {
 //    current.setHours(0); current.setMinutes(0);
