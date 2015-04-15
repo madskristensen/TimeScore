@@ -136,7 +136,7 @@ footer {
 #meter {
     height: 1px;
     width: 0;
-    background: linear-gradient(to right, transparent, #bbb);
+    background: linear-gradient(to right, transparent, #919191);
     -moz-transition: width 2s linear;
     -o-transition: width 2s linear;
     -webkit-transition: width 2s linear;
