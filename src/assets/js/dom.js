@@ -65,8 +65,6 @@ function updateHighscore() {
 
 function showRules() {
 
-    var type;
-
     for (var name in ts.rules) {
         var rule = ts.rules[name];
 
@@ -76,11 +74,6 @@ function showRules() {
         li.innerHTML = "<span>" + rule.points + " " + point + "</span> - " + rule.rule;
         li.id = name;
 
-        if (type != rule.type) {
-            li.innerHTML = "<strong>Bonus points</strong>" + li.innerHTML;
-        }
-
-        type = rule.type;
         rules.appendChild(li);
     }
 };

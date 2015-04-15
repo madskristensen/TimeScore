@@ -294,6 +294,10 @@ var TimeScore = (function () {
             hits.push(rules.eleveneleven);
         }
 
+        if (_hour.length === 2 && _minute[0] === _minute[1]) {
+            hits.push(rules.twopairs);
+        }
+
         if (hits.length > 0 && realHours >= 2 && realHours < 5) {
             hits.push(rules.nightowl);
         }
@@ -345,26 +349,38 @@ var TimeScore = (function () {
 
         onetwothreefour: {
             id: "royalstraightflush",
-            points: 6,
+            points: 10,
             rule: "Royal Straight Flush"
         },
 
         momentInTime: {
             id: "momentintime",
-            points: 5,
+            points: 7,
             rule: "Special moment in time"
         },
 
         eleveneleven: {
             id: "fourofakind",
-            points: 4,
+            points: 6,
             rule: "Four of a kind"
         },
 
         threeofakind: {
             id: "threeofakind",
-            points: 3,
+            points: 5,
             rule: "Three of a kind"
+        },
+
+        product: {
+            id: "product",
+            points: 4,
+            rule: "Minute is the product"
+        },
+
+        mirrormirror: {
+            id: "mirrormirror",
+            points: 3,
+            rule: "Mirror, mirror on the wall"
         },
 
         equals: {
@@ -373,29 +389,22 @@ var TimeScore = (function () {
             rule: "Pete : Repeat"
         },
 
-        product: {
-            id: "product",
-            points: 2,
-            rule: "Minute is the product"
-        },
-
-        mirrormirror: {
-            id: "mirrormirror",
-            points: 1,
-            rule: "Mirror, mirror on the wall"
-        },
-
         tophour: {
             id: "tophour",
-            points: 1,
+            points: 2,
             rule: "Top of the hour"
+        },
+
+        twopairs: {
+            id: "twopairs",
+            points: 1,
+            rule: "Two pairs"
         },
 
         nightowl: {
             id: "nightowl",
             points: 1,
-            rule: "Knight owl",
-            type: "bonus"
+            rule: "Knight owl (bonus)"
         },
 
     };
@@ -473,8 +482,6 @@ function updateHighscore() {
 
 function showRules() {
 
-    var type;
-
     for (var name in ts.rules) {
         var rule = ts.rules[name];
 
@@ -484,11 +491,6 @@ function showRules() {
         li.innerHTML = "<span>" + rule.points + " " + point + "</span> - " + rule.rule;
         li.id = name;
 
-        if (type != rule.type) {
-            li.innerHTML = "<strong>Bonus points</strong>" + li.innerHTML;
-        }
-
-        type = rule.type;
         rules.appendChild(li);
     }
 };
