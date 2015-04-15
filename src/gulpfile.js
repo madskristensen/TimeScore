@@ -14,14 +14,14 @@ gulp.task("concat", function () {
 });
 
 gulp.task("manifest", function () {
-    gulp.src(['./assets/{dist,css,img}/*'])
+    gulp.src(["./assets/{dist,css,img}/*", "./index.html", "web.config"])
     .pipe(manifest({
-        hash: true,
+        timestamp: true,
         relativePath: "assets",
         preferOnline: true,
         network: ["http://*"],
         filename: "manifest.appcache",
-        exclude: ["manifest.appcache"]
+        exclude: ["index.html", "web.config"]
     }))
     .pipe(gulp.dest('./'));
 });
@@ -29,4 +29,5 @@ gulp.task("manifest", function () {
 gulp.task("watch", ["concat", "manifest"], function () {
     gulp.watch("./assets/js/*", ["manifest", "concat"]);
     gulp.watch("./assets/css/*", ["manifest"]);
+    gulp.watch(["./index.html", "./web.config"], ["manifest"]);
 });

@@ -53,9 +53,9 @@ var Badges = (function () {
             type: "single"
         },
 
-        appreciate: {
-            id: "appreciate",
-            name: "Who do we appreciate",
+        twentyfourseven: {
+            id: "twentyfourseven",
+            name: "We're open 24 hours a day",
             description: "Who do we appreciate"
         },
         beer: {

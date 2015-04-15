@@ -15,28 +15,6 @@ var elmTime = document.getElementById("time"),
 var current = new Date();
 //current.setHours(7); current.setMinutes(11); //localStorage.clear();
 
-//(function printAllCombinations() {
-//    current.setHours(0); current.setMinutes(0);
-//    var day = current.getDate();
-//    var pre = document.createElement("pre");
-
-//    while (current.getDate() == day) {
-//        var result = ts.getScore(current);
-//        var points = 0;
-
-//        for (var i = 0; i < result.score.length; i++) {
-//            points += result.score[i].points;
-//        }
-
-//        if (points > 0)
-//            pre.innerHTML += current.getHours() + ":" + current.getMinutes() + "\t" + points + "\r\n";
-
-//        current = new Date(current.getTime() + 60000);
-//    }
-
-//    document.body.appendChild(pre);
-//})();
-
 function calculate() {
 
     var result = ts.getScore(current),
@@ -62,7 +40,7 @@ function calculate() {
         }
     }
 
-    elmScore.innerHTML = points;
+    elmScore.innerHTML = points == 0 ? points : "<span class=\"active\">" + points + "</span>";
     if (points > 0) {
         hs.recordScore(current, points);
         updateHighscore();
@@ -143,6 +121,9 @@ showRules();
 calculate();
 updateHighscore();
 updateBadges();
+
+document.getElementById("main").style.display = "block";
+document.getElementById("loading").style.display = "none";
 
 setInterval(function () {
 

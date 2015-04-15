@@ -114,8 +114,8 @@ var TimeScore = (function () {
             badge = badges.ellendun;
         else if (_hour === "9" && _minute === "36")
             badge = badges.denmark;
-        else if (_hour === "2" && _minute === "46")
-            badge = badges.appreciate;
+        else if (_hour === "2" && _minute === "47")
+            badge = badges.twentyfourseven;
         else if (_hour === "9" && _minute === "46")
             badge = badges.scooter;
         else if (realHours === 16 && _minute === "20")
@@ -147,8 +147,14 @@ var TimeScore = (function () {
 
         momentInTime: {
             id: "momentintime",
-            points: 4,
+            points: 5,
             rule: "Special moment in time"
+        },
+
+        eleveneleven: {
+            id: "fourofakind",
+            points: 4,
+            rule: "Four of a kind"
         },
 
         threeofakind: {
@@ -179,13 +185,6 @@ var TimeScore = (function () {
             id: "tophour",
             points: 1,
             rule: "Top of the hour"
-        },
-
-        eleveneleven: {
-            id: "fourofakind",
-            points: 3,
-            rule: "Four of a kind",
-            type: "bonus"
         },
 
         nightowl: {

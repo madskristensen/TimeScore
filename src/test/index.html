@@ -1,9 +1,9 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-	<meta charset="utf-8">
-	<title>QUnit Example</title>
-	<link rel="stylesheet" href="//code.jquery.com/qunit/qunit-1.18.0.css">
+    <meta charset="utf-8">
+    <title>QUnit Example</title>
+    <link rel="stylesheet" href="//code.jquery.com/qunit/qunit-1.18.0.css">
 </head>
 <body>
 
@@ -15,5 +15,32 @@
     <script src="../assets/js/highscore.js"></script>
     <script src="../assets/js/timescore.js"></script>
     <script src="tests.js"></script>
+    <script>
+        var current = new Date();
+        //current.setHours(7); current.setMinutes(11); //localStorage.clear();
+
+        (function printAllCombinations() {
+            current.setHours(0); current.setMinutes(0);
+            var ts = new TimeScore();
+            var day = current.getDate();
+            var pre = document.createElement("pre");
+
+            while (current.getDate() == day) {
+                var result = ts.getScore(current);
+                var points = 0;
+
+                for (var i = 0; i < result.score.length; i++) {
+                    points += result.score[i].points;
+                }
+
+                if (points > 0)
+                    pre.innerHTML += result.time + "\t" + points + "\r\n";
+
+                current = new Date(current.getTime() + 60000);
+            }
+
+                document.body.appendChild(pre);
+            })();
+    </script>
 </body>
 </html>

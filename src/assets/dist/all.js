@@ -53,9 +53,9 @@ var Badges = (function () {
             type: "single"
         },
 
-        appreciate: {
-            id: "appreciate",
-            name: "Who do we appreciate",
+        twentyfourseven: {
+            id: "twentyfourseven",
+            name: "We're open 24 hours a day",
             description: "Who do we appreciate"
         },
         beer: {
@@ -319,8 +319,8 @@ var TimeScore = (function () {
             badge = badges.ellendun;
         else if (_hour === "9" && _minute === "36")
             badge = badges.denmark;
-        else if (_hour === "2" && _minute === "46")
-            badge = badges.appreciate;
+        else if (_hour === "2" && _minute === "47")
+            badge = badges.twentyfourseven;
         else if (_hour === "9" && _minute === "46")
             badge = badges.scooter;
         else if (realHours === 16 && _minute === "20")
@@ -352,8 +352,14 @@ var TimeScore = (function () {
 
         momentInTime: {
             id: "momentintime",
-            points: 4,
+            points: 5,
             rule: "Special moment in time"
+        },
+
+        eleveneleven: {
+            id: "fourofakind",
+            points: 4,
+            rule: "Four of a kind"
         },
 
         threeofakind: {
@@ -386,13 +392,6 @@ var TimeScore = (function () {
             rule: "Top of the hour"
         },
 
-        eleveneleven: {
-            id: "fourofakind",
-            points: 3,
-            rule: "Four of a kind",
-            type: "bonus"
-        },
-
         nightowl: {
             id: "nightowl",
             points: 1,
@@ -423,29 +422,7 @@ var elmTime = document.getElementById("time"),
     actives = [];
 
 var current = new Date();
-//current.setHours(7); current.setMinutes(11); //localStorage.clear();
-
-//(function printAllCombinations() {
-//    current.setHours(0); current.setMinutes(0);
-//    var day = current.getDate();
-//    var pre = document.createElement("pre");
-
-//    while (current.getDate() == day) {
-//        var result = ts.getScore(current);
-//        var points = 0;
-
-//        for (var i = 0; i < result.score.length; i++) {
-//            points += result.score[i].points;
-//        }
-
-//        if (points > 0)
-//            pre.innerHTML += current.getHours() + ":" + current.getMinutes() + "\t" + points + "\r\n";
-
-//        current = new Date(current.getTime() + 60000);
-//    }
-
-//    document.body.appendChild(pre);
-//})();
+/current.setHours(7); current.setMinutes(11); //localStorage.clear();
 
 function calculate() {
 
@@ -472,7 +449,7 @@ function calculate() {
         }
     }
 
-    elmScore.innerHTML = points;
+    elmScore.innerHTML = points == 0 ? points : "<span class=\"active\">" + points + "</span>";
     if (points > 0) {
         hs.recordScore(current, points);
         updateHighscore();
@@ -553,6 +530,9 @@ showRules();
 calculate();
 updateHighscore();
 updateBadges();
+
+document.getElementById("main").style.display = "block";
+document.getElementById("loading").style.display = "none";
 
 setInterval(function () {
 
