@@ -122,9 +122,6 @@ calculate();
 updateHighscore();
 updateBadges();
 
-document.getElementById("main").style.display = "block";
-document.getElementById("loading").style.display = "none";
-
 setInterval(function () {
 
     var date = new Date();

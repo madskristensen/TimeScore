@@ -16,11 +16,10 @@
     <script src="../assets/js/timescore.js"></script>
     <script src="tests.js"></script>
     <script>
-        var current = new Date();
-        //current.setHours(7); current.setMinutes(11); //localStorage.clear();
-
         (function printAllCombinations() {
+            var current = new Date();
             current.setHours(0); current.setMinutes(0);
+
             var ts = new TimeScore();
             var day = current.getDate();
             var pre = document.createElement("pre");
@@ -39,8 +38,8 @@
                 current = new Date(current.getTime() + 60000);
             }
 
-                document.body.appendChild(pre);
-            })();
+            document.body.appendChild(pre);
+        })();
     </script>
 </body>
 </html>

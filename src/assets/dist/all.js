@@ -422,7 +422,7 @@ var elmTime = document.getElementById("time"),
     actives = [];
 
 var current = new Date();
-/current.setHours(7); current.setMinutes(11); //localStorage.clear();
+//current.setHours(7); current.setMinutes(11); //localStorage.clear();
 
 function calculate() {
 
@@ -530,9 +530,6 @@ showRules();
 calculate();
 updateHighscore();
 updateBadges();
-
-document.getElementById("main").style.display = "block";
-document.getElementById("loading").style.display = "none";
 
 setInterval(function () {
 
