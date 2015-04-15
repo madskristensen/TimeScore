@@ -52,6 +52,11 @@ ul {
         margin-top: .8em;
     }
 
+    ul li span{
+        display: inline-block;
+        width: 59px;
+    }
+
 #highscore {
     margin-top: 1em;
     margin-bottom: 1em;

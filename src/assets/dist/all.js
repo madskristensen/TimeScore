@@ -5,7 +5,8 @@ var Badges = (function () {
         var badges = [];
 
         for (var badge in allBadges) {
-            var points = localStorage["badge:" + allBadges[badge].id];
+
+            var points = localStorage["badge:" + badge];
 
             if (points) {
                 var b = parseInt(points, 10)
@@ -18,20 +19,12 @@ var Badges = (function () {
         return badges;
     }
 
-    function addBadge(name) {
-        var b = null;
+    function addBadge(badge) {
 
-        for (var badge in allBadges) {
-            if (badge === name || allBadges[badge] === name) {
-                b = badge;
-                break;
-            }
-        }
-
-        if (allBadges[b].type === "single" && localStorage["badge:" + b])
+        if (badge.type === "single" && localStorage["badge:" + badge.id])
             return;
 
-        localStorage["badge:" + b] = (localStorage["badge:" + b] ? parseInt(localStorage["badge:" + b], 10) : 1);
+        localStorage["badge:" + badge.id] = (localStorage["badge:" + badge.id] ? parseInt(localStorage["badge:" + badge.id], 10) : 1);
     }
 
     var allBadges = {
@@ -430,7 +423,7 @@ var elmTime = document.getElementById("time"),
     actives = [];
 
 var current = new Date();
-//current.setHours(7); current.setMinutes(11); //localStorage.clear();
+current.setHours(7); current.setMinutes(11); //localStorage.clear();
 
 //(function printAllCombinations() {
 //    current.setHours(0); current.setMinutes(0);
@@ -509,10 +502,10 @@ function showRules() {
     for (var name in ts.rules) {
         var rule = ts.rules[name];
 
-        var point = rule.points === 1 ? "point&nbsp;&nbsp;" : "points";
+        var point = rule.points === 1 ? "point" : "points";
 
         var li = document.createElement("li");
-        li.innerHTML = rule.points + " " + point + " - " + rule.rule;
+        li.innerHTML = "<span>" + rule.points + " " + point + "</span> - " + rule.rule;
         li.id = name;
 
         if (type != rule.type) {
