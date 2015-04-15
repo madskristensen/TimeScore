@@ -21,7 +21,7 @@ var Badges = (function () {
 
     function addBadge(badge) {
 
-        if (badge.type === "single" && localStorage["badge:" + badge.id])
+        if (testmode || (badge.type === "single" && localStorage["badge:" + badge.id]))
             return;
 
         localStorage["badge:" + badge.id] = (localStorage["badge:" + badge.id] ? parseInt(localStorage["badge:" + badge.id], 10) : 1);

@@ -21,7 +21,7 @@ var Badges = (function () {
 
     function addBadge(badge) {
 
-        if (badge.type === "single" && localStorage["badge:" + badge.id])
+        if (testmode || (badge.type === "single" && localStorage["badge:" + badge.id]))
             return;
 
         localStorage["badge:" + badge.id] = (localStorage["badge:" + badge.id] ? parseInt(localStorage["badge:" + badge.id], 10) : 1);
@@ -135,7 +135,7 @@ var Highscore = function () {
 
     function recordScore(date, points) {
 
-        if (isRecorded(date))
+        if (isRecorded(date) || testmode)
             return;
 
         var key = cleanDate(date);
@@ -282,8 +282,8 @@ var TimeScore = (function () {
 
         ruleMomentIntime(hits);
 
-        var half = parseInt(_hour) / 2;
-        if (_minute.length == 2 && _minute[0] == half && _minute[1] == half) {
+        if (_minute.length == 2 && parseInt(_minute[0], 10) + parseInt(_minute[1], 10) == realHours) {
+
             hits.push(rules.product);
         }
 

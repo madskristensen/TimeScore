@@ -24,12 +24,17 @@ QUnit.test("11:11", function (assert) { runTest(assert, 11, 11, 5) });
 QUnit.module("Mirror, mirror on the wall");
 QUnit.test("10:01", function (assert) { runTest(assert, 10, 01, 1) });
 QUnit.test("10:11", function (assert) { runTest(assert, 10, 11, 0) });
-QUnit.test("6:06", function (assert) { runTest(assert, 6, 6, 1) });
+QUnit.test("6:06", function (assert) { runTest(assert, 6, 6, 3) });
+QUnit.test("9:09", function (assert) { runTest(assert, 9, 9, 3) });
 
 
 QUnit.module("Pete : Repeat");
 QUnit.test("10:10", function (assert) { runTest(assert, 10, 10, 2) });
-QUnit.test("09:09", function (assert) { runTest(assert, 9, 9, 1) });
+QUnit.test("09:09", function (assert) { runTest(assert, 9, 9, 3) });
+
+
+QUnit.module("Minute is the product");
+QUnit.test("9:09", function (assert) { runTest(assert, 9, 9, 3) });
 
 
 QUnit.module("Special moment in time");
@@ -40,7 +45,7 @@ QUnit.test("PI pm", function (assert) { runTest(assert, 15, 14, 5) });
 QUnit.test("Beer o'clock", function (assert) { runTest(assert, 17, 30, 5) });
 QUnit.test("Battle of Ellendun am", function (assert) { runTest(assert, 8, 25, 5) });
 QUnit.test("Battle of Ellendun pm", function (assert) { runTest(assert, 20, 25, 5) });
-QUnit.test("Kingdom of Denmark am", function (assert) { runTest(assert, 9, 36, 5) });
+QUnit.test("Kingdom of Denmark am", function (assert) { runTest(assert, 9, 36, 7) });
 QUnit.test("Kingdom of Denmark pm", function (assert) { runTest(assert, 21, 36, 5) });
 QUnit.test("24/7 am", function (assert) { runTest(assert, 2, 47, 6) });
 QUnit.test("24/7 pm", function (assert) { runTest(assert, 14, 47, 5) });
@@ -57,7 +62,7 @@ QUnit.test("Emily's birthday", function (assert) { runTest(assert, 23, 7, 5) });
 
 
 QUnit.module("Top of the hour");
-QUnit.test("Midnight", function (assert) { runTest(assert, 0, 0, 1) });
+QUnit.test("Midnight", function (assert) { runTest(assert, 0, 0, 3) });
 QUnit.test("10:00", function (assert) { runTest(assert, 10, 0, 1) });
 QUnit.test("11:01", function (assert) { runTest(assert, 11, 1, 0) });
 

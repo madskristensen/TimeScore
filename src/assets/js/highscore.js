@@ -7,7 +7,7 @@ var Highscore = function () {
 
     function recordScore(date, points) {
 
-        if (isRecorded(date))
+        if (isRecorded(date) || testmode)
             return;
 
         var key = cleanDate(date);

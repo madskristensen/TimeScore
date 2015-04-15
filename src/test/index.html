@@ -11,11 +11,21 @@
     <div id="qunit-fixture"></div>
 
     <script src="//code.jquery.com/qunit/qunit-1.18.0.js"></script>
-    <script src="../assets/js/badges.js"></script>
-    <script src="../assets/js/highscore.js"></script>
-    <script src="../assets/js/timescore.js"></script>
+    <script src="../assets/js/badges.js?test"></script>
+    <script src="../assets/js/highscore.js?test"></script>
+    <script src="../assets/js/timescore.js?test"></script>
     <script src="tests.js"></script>
     <script>
+        testmode = true;
+        (function printLocalStorage() {
+
+            for (var key in localStorage) {
+                var pre = document.createElement("pre");
+                pre.innerHTML = key + " - " + localStorage[key];
+                document.body.appendChild(pre);
+            }
+        })();
+
         (function printAllCombinations() {
             var current = new Date();
             current.setHours(0); current.setMinutes(0);
