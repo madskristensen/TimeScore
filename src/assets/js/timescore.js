@@ -10,7 +10,6 @@ var TimeScore = (function () {
     function getScore(date) {
         _date = date;
         normalize(date);
-
         var score = runRules();
 
         return {
@@ -53,6 +52,7 @@ var TimeScore = (function () {
     }
 
     function runRules() {
+
         var reverseMinutes = _minute.split("").reverse().join("");
         var realHours = _date.getHours();
         var hits = [];

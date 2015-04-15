@@ -10,17 +10,20 @@ html {
 }
 
 body {
-    font: 16px/1.5 georgia;
+    font: 16px/1.5 "Trebuchet MS", Helvetica georgia, sans-serif;
     text-align: center;
     background: black;
-    color: white;
+    color: #dfdfdf;
     margin: 0 0 50px;
     min-width: 280px;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
 }
 
 #time {
     font-size: 6em;
     line-height: 1.2;
+    color: white;
 }
 
 p {
@@ -40,12 +43,8 @@ ul {
     display: inline-block;
 }
 
-    ul li {
-        opacity: .7;
-    }
-
     ul .active {
-        opacity: 1;
+        color: #eec04d;
     }
 
     ul strong {
@@ -83,6 +82,12 @@ footer {
         color: inherit;
     }
 
+    footer img{
+        position: relative;
+        top: 2px;
+        margin: 0 4px 
+    }
+
 #badges {
     width: 310px;
     margin: 0 auto 1em auto;
@@ -94,26 +99,30 @@ footer {
         height: 100px;
         display: inline-block;
         position: relative;
+        outline: 0;
+        cursor: default;
     }
 
-    #badges p:hover:after,
-    #badges p:active:after,
-    #badges p:focus:after {
-        content: attr(aria-label);
-        position: absolute;
-        top: 0;
-        left: 0;
-        font-size: 16px;
-        background-color: rgba(0, 0, 0, 0.54);
-    }
+        #badges p:hover:after,
+        #badges p:active:after {
+            content: attr(aria-label);
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            font-size: 16px;
+            background-color: rgba(0, 0, 0, 0.40);
+            text-shadow: 1px 1px #0c0c0c;
+        }
 
-    #badges p span{
-        position: absolute;
-        bottom: 5px;
-        right: 0;
-        text-align: left;
-        width: 30px;
-        display: block;
-        font-size: .4em;
-        opacity: .8;
-    }
+        #badges p span {
+            position: absolute;
+            bottom: 5px;
+            right: 0;
+            text-align: left;
+            width: 30px;
+            display: block;
+            font-size: .4em;
+            opacity: .8;
+        }

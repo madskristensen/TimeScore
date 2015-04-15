@@ -31,7 +31,7 @@ var Badges = (function () {
         if (allBadges[b].type === "single" && localStorage["badge:" + b])
             return;
 
-        localStorage["badge:" + b] = localStorage["badge:" + b] ? parseInt(localStorage["badge:" + b]) + 1 : 1;
+        localStorage["badge:" + b] = (localStorage["badge:" + b] ? parseInt(localStorage["badge:" + b], 10) : 1);
     }
 
     var allBadges = {

@@ -12,7 +12,7 @@ var elmTime = document.getElementById("time"),
     actives = [];
 
 var current = new Date();
-//current.setHours(7); current.setMinutes(11);
+//current.setHours(7); current.setMinutes(11); //localStorage.clear();
 
 //(function printAllCombinations() {
 //    current.setHours(0); current.setMinutes(0);
@@ -112,6 +112,7 @@ function updateBadges() {
     var badgesText = badges.length === 1 ? " badge" : " badges";
 
     elmBadges.firstElementChild.innerHTML = badges.length + badgesText;
+    elmBadges.innerHTML = elmBadges.firstElementChild.outerHTML;
 
     if (elmBadges.childElementCount === badges.length + 1)
         return;
@@ -121,6 +122,8 @@ function updateBadges() {
 
         var img = document.createElement("p")
         img.setAttribute("aria-label", badge.description);
+        img.id = badge.id;
+        img.tabIndex = 1;
 
         if (badge.user)
             img.className = "user";
@@ -142,7 +145,7 @@ updateBadges();
 
 setInterval(function () {
 
-    if (document.hidden || document["webkitHidden"] || document["mozHidden"] || document["msHidden"] || document["oHidden"])
+    if (document.hidden || document.webkitHidden || document.mozHidden || document.msHidden || document.oHidden)
         return;
 
     var date = new Date();
@@ -162,3 +165,5 @@ reset.addEventListener("click", function (e) {
         updateBadges();
     }
 });
+
+document.addEventListener("touchstart", function () { });

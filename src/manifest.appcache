@@ -5,6 +5,9 @@ CACHE:
 assets/dist/all.js
 assets/css/site.css
 assets/img/badge.svg
+assets/img/facebook.svg
+assets/img/googleplus.svg
+assets/img/twitter.svg
 
 
 NETWORK:
@@ -14,4 +17,4 @@ http://*
 SETTINGS:
 prefer-online
 
-# hash: 16045ad49879abeb9c634f6abf912b66be5e1d80b08f29617feff4d5545719ed
+# hash: 367898b793500a14c967275b1e3c0182ac665e2c20256fd02eff809e81d0d55a
