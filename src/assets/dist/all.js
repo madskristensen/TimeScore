@@ -21,7 +21,7 @@ var Badges = (function () {
 
     function addBadge(badge) {
 
-        if (testmode || (badge.type === "single" && localStorage["badge:" + badge.id]))
+        if (window.testmode || (badge.type === "single" && localStorage["badge:" + badge.id]))
             return;
 
         localStorage["badge:" + badge.id] = (localStorage["badge:" + badge.id] ? parseInt(localStorage["badge:" + badge.id], 10) : 1);
@@ -135,7 +135,7 @@ var Highscore = function () {
 
     function recordScore(date, points) {
 
-        if (isRecorded(date) || testmode)
+        if (isRecorded(date) || window.testmode)
             return;
 
         var key = cleanDate(date);
@@ -192,8 +192,7 @@ var Highscore = function () {
 
         return {
             daily: daily,
-            weekly: weekly,
-            total: 0
+            weekly: weekly
         }
     }
 

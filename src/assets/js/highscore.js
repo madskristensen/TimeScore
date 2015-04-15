@@ -7,7 +7,7 @@ var Highscore = function () {
 
     function recordScore(date, points) {
 
-        if (isRecorded(date) || testmode)
+        if (isRecorded(date) || window.testmode)
             return;
 
         var key = cleanDate(date);
@@ -64,8 +64,7 @@ var Highscore = function () {
 
         return {
             daily: daily,
-            weekly: weekly,
-            total: 0
+            weekly: weekly
         }
     }
 
