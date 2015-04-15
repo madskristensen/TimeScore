@@ -46,10 +46,16 @@ var Badges = (function () {
             description: "Congrats!! That's your first 50 points",
             type: "single"
         },
+        timebandit: {
+            id: "timebandit",
+            name: "Time Bandit",
+            description: "Time Bandit got 100 points in one week",
+            type: "single"
+        },
         timelord: {
             id: "timelord",
             name: "Time Lord",
-            description: "Congrats!! That's your first 100 points",
+            description: "500 points in one week. You are a Time Lord!!",
             type: "single"
         },
 
@@ -281,7 +287,7 @@ var TimeScore = (function () {
 
         ruleMomentIntime(hits);
 
-        if (_minute.length == 2 && parseInt(_minute[0], 10) + parseInt(_minute[1], 10) == realHours) {
+        if (_minute.length == 2 && parseInt(_minute[0], 10) + parseInt(_minute[1], 10) == _hour) {
 
             hits.push(rules.product);
         }

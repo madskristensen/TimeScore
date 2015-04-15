@@ -77,7 +77,7 @@ var TimeScore = (function () {
 
         ruleMomentIntime(hits);
 
-        if (_minute.length == 2 && parseInt(_minute[0], 10) + parseInt(_minute[1], 10) == realHours) {
+        if (_minute.length == 2 && parseInt(_minute[0], 10) + parseInt(_minute[1], 10) == _hour) {
 
             hits.push(rules.product);
         }
