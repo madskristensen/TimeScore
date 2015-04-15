@@ -126,7 +126,7 @@ var TimeScore = (function () {
             badge = badges.beer;
         else if (realHours === 4 && _minute === "55")
             badge = badges.caitlin;
-        else if (realHours === 11 && _minute === "07")
+        else if (realHours === 23 && _minute === "07")
             badge = badges.emily;
 
         if (badge && !hightscoreService.isRecorded(_date)) {

@@ -7,6 +7,7 @@ var elmTime = document.getElementById("time"),
     rules = document.getElementById("rules"),
     reset = document.getElementById("reset"),
     elmBadges = document.getElementById("badges"),
+    elmMeter = document.getElementById("meter"),
     ts = new TimeScore(),
     hs = new Highscore(),
     actives = [];
@@ -145,10 +146,12 @@ updateBadges();
 
 setInterval(function () {
 
+    var date = new Date();
+
+    elmMeter.style.width = (date.getSeconds() / 60 * 100) + "%";
+
     if (document.hidden || document.webkitHidden || document.mozHidden || document.msHidden || document.oHidden)
         return;
-
-    var date = new Date();
 
     if (date.getHours() != current.getHours() || date.getMinutes() != current.getMinutes()) {
         current = date;

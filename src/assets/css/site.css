@@ -127,3 +127,13 @@ footer {
             font-size: .4em;
             opacity: .8;
         }
+
+#meter {
+    height: 1px;
+    width: 0;
+    background: linear-gradient(to right, transparent , #dfdfdf);
+    -moz-transition: width 2s linear;
+    -o-transition: width 2s linear;
+    -webkit-transition: width 2s linear;
+    transition: width 2s linear;
+}

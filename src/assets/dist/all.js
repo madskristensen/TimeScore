@@ -338,7 +338,7 @@ var TimeScore = (function () {
             badge = badges.beer;
         else if (realHours === 4 && _minute === "55")
             badge = badges.caitlin;
-        else if (realHours === 11 && _minute === "07")
+        else if (realHours === 23 && _minute === "07")
             badge = badges.emily;
 
         if (badge && !hightscoreService.isRecorded(_date)) {
@@ -424,6 +424,7 @@ var elmTime = document.getElementById("time"),
     rules = document.getElementById("rules"),
     reset = document.getElementById("reset"),
     elmBadges = document.getElementById("badges"),
+    elmMeter = document.getElementById("meter"),
     ts = new TimeScore(),
     hs = new Highscore(),
     actives = [];
@@ -562,10 +563,12 @@ updateBadges();
 
 setInterval(function () {
 
+    var date = new Date();
+
+    elmMeter.style.width = (date.getSeconds() / 60 * 100) + "%";
+
     if (document.hidden || document.webkitHidden || document.mozHidden || document.msHidden || document.oHidden)
         return;
-
-    var date = new Date();
 
     if (date.getHours() != current.getHours() || date.getMinutes() != current.getMinutes()) {
         current = date;
