@@ -120,7 +120,7 @@ setInterval(function () {
     var date = new Date();
 
     elmMeter.style.width = (date.getSeconds() / 60 * 100) + "%";
-    elmMeter.style.visibility = date.getSeconds() <= 1 ? "hidden" : "";
+    //elmMeter.style.visibility = date.getSeconds() === 0 ? "hidden" : "";
 
     if (document.hidden || document.webkitHidden || document.mozHidden || document.msHidden || document.oHidden)
         return;
@@ -129,7 +129,7 @@ setInterval(function () {
         current = date;
         calculate();
     }
-}, 2000);
+}, 1000);
 
 reset.addEventListener("click", function (e) {
     e.preventDefault();

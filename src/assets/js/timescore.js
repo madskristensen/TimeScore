@@ -133,11 +133,13 @@ var TimeScore = (function () {
         else if (realHours === 23 && _minute === "07")
             badge = badges.emily;
 
-        if (badge && !hightscoreService.isRecorded(_date)) {
+        if (badge) {
             rule = rules.momentInTime;
             rule.badge = badge;
             hits.push(rule);
-            badgeService.addBadge(badge);
+
+            if (!hightscoreService.isRecorded(_date))
+                badgeService.addBadge(badge);
         }
     }
 

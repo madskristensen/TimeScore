@@ -135,11 +135,11 @@ footer {
         }
 
 #meter {
-    height: 1px;
+    height: 2px;
     width: 0;
     background: linear-gradient(to right, transparent, #919191);
-    -moz-transition: width 2s linear;
-    -o-transition: width 2s linear;
-    -webkit-transition: width 2s linear;
-    transition: width 2s linear;
+    /*-moz-transition: width 1s linear;
+    -o-transition: width 1s linear;
+    -webkit-transition: width 1s linear;
+    transition: width 1s linear;*/
 }
