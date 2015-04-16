@@ -21,8 +21,10 @@ body {
 }
 
 #time {
+    display:inline-block;
     font-size: 6em;
-    line-height: 1.2;
+    margin-top:.2em;
+    line-height: 1em;
 }
 
 p {
@@ -141,3 +143,6 @@ footer {
     -webkit-transition: width 1s linear;
     transition: width 1s linear;*/
 }
+
+#timeContainer {
+    display: inline-block;
