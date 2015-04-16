@@ -94,6 +94,20 @@ var TimeScore = (function () {
             hits.push(rules.today);
         }
 
+        var combined = _hour + _minute;
+        var isPrime = true;
+        for (var i = 0; i < combined.length; i++) {
+            var digit = combined[i];
+            if (digit != 1 && digit != 3 && digit != 5 && digit != 7) {
+                isPrime = false;
+                break;
+            }
+        }
+
+        if (isPrime) {
+            hits.push(rules.prime);
+        }
+
         if (_hour.length === 2 && _hour[0] === _hour[1] && _minute[0] === _minute[1]) {
             hits.push(rules.twopairs);
         }
@@ -195,7 +209,7 @@ var TimeScore = (function () {
 
         tophour: {
             id: "tophour",
-            points: 2,
+            points: 3,
             rule: "Top of the hour"
         },
 
@@ -203,6 +217,12 @@ var TimeScore = (function () {
             id: "divide",
             points: 2,
             rule: "Double digit divide"
+        },
+
+        prime: {
+            id: "prime",
+            points: 2,
+            rule: "Nothing but primes"
         },
 
         product: {

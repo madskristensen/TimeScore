@@ -21,10 +21,14 @@ body {
 }
 
 #time {
-    display:inline-block;
+    display: inline-block;
     font-size: 6em;
-    margin-top:.2em;
+    margin-top: .1em;
     line-height: 1em;
+}
+
+#timescore {
+    margin-bottom: 0;
 }
 
 p {
@@ -40,7 +44,7 @@ ul {
     text-align: left;
     list-style: none;
     padding: 0;
-    margin: 1em auto 0 auto;
+    margin: .5em auto 0 auto;
     display: inline-block;
 }
 
@@ -59,8 +63,8 @@ ul {
 }
 
 #highscore {
-    margin-top: 1em;
-    margin-bottom: 1em;
+    margin-top: .8em;
+    margin-bottom: .8em;
     font-size: 1.3em;
 }
 

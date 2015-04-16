@@ -89,11 +89,6 @@ var Badges = (function () {
             name: "Wonderful day for PI",
             description: "It's a wonderful day for PI",
         },
-        prime: {
-            id: "prime",
-            name: "Optimus Prime",
-            description: "Gotta love them prime numbers",
-        },
         redsea: {
             id: "redsea",
             name: "What color is the sea?",
