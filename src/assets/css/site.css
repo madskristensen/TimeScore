@@ -16,8 +16,8 @@ body {
     color: #dfdfdf;
     margin: 0 0 50px;
     min-width: 280px;
-    -ms-touch-action: manipulation;
-    touch-action: manipulation;
+    -ms-touch-action: auto;
+    touch-action: auto;
 }
 
 #time {

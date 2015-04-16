@@ -1,11 +1,11 @@
-/// <reference path="badges.js" />
-/// <reference path="highscore.js" />
+/// <reference path="badgeService.js" />
+/// <reference path="highscoreService.js" />
 
 var TimeScore = (function () {
 
     var _hour, _minute, _date,
-        badgeService = new Badges(),
-        hightscoreService = new Highscore();
+        badgeService = new BadgeService(),
+        hightscoreService = new HighscoreService();
 
     function getScore(date) {
         _date = date;

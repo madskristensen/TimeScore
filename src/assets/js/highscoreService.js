@@ -1,9 +1,9 @@
-﻿/// <reference path="badges.js" />
+﻿/// <reference path="badgeService.js" />
 
-var Highscore = function () {
+var HighscoreService = function () {
 
     var _score
-    badgeService = new Badges();
+    badgeService = new BadgeService();
 
     function recordScore(date, points) {
 

@@ -1,4 +1,4 @@
-var Badges = (function () {
+var BadgeService = (function () {
 
     function getBadges() {
 
@@ -132,12 +132,12 @@ var Badges = (function () {
         addBadge: addBadge,
     }
 });
-/// <reference path="badges.js" />
+/// <reference path="badgeService.js" />
 
-var Highscore = function () {
+var HighscoreService = function () {
 
     var _score
-    badgeService = new Badges();
+    badgeService = new BadgeService();
 
     function recordScore(date, points) {
 
@@ -210,14 +210,14 @@ var Highscore = function () {
         isRecorded: isRecorded
     }
 }
-/// <reference path="badges.js" />
-/// <reference path="highscore.js" />
+/// <reference path="badgeService.js" />
+/// <reference path="highscoreService.js" />
 
 var TimeScore = (function () {
 
     var _hour, _minute, _date,
-        badgeService = new Badges(),
-        hightscoreService = new Highscore();
+        badgeService = new BadgeService(),
+        hightscoreService = new HighscoreService();
 
     function getScore(date) {
         _date = date;
@@ -456,9 +456,9 @@ var TimeScore = (function () {
         date: _date
     };
 });
-/// <reference path="badges.js" />
+/// <reference path="badgeService.js" />
+/// <reference path="highscoreService.js" />
 /// <reference path="timescore.js" />
-/// <reference path="highscore.js" />
 
 var elmTime = document.getElementById("time"),
     elmScore = document.getElementById("score"),
@@ -467,7 +467,7 @@ var elmTime = document.getElementById("time"),
     elmBadges = document.getElementById("badges"),
     elmMeter = document.getElementById("meter"),
     ts = new TimeScore(),
-    hs = new Highscore(),
+    hs = new HighscoreService(),
     actives = [];
 
 var current = new Date();
@@ -539,7 +539,7 @@ function showRules() {
 
 function updateBadges() {
 
-    var badges = new Badges().getBadges();
+    var badges = new BadgeService().getBadges();
     var badgesText = badges.length === 1 ? " badge" : " badges";
 
     elmBadges.firstElementChild.innerHTML = badges.length + badgesText;

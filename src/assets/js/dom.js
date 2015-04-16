@@ -1,6 +1,6 @@
-﻿/// <reference path="badges.js" />
+﻿/// <reference path="badgeService.js" />
+/// <reference path="highscoreService.js" />
 /// <reference path="timescore.js" />
-/// <reference path="highscore.js" />
 
 var elmTime = document.getElementById("time"),
     elmScore = document.getElementById("score"),
@@ -9,7 +9,7 @@ var elmTime = document.getElementById("time"),
     elmBadges = document.getElementById("badges"),
     elmMeter = document.getElementById("meter"),
     ts = new TimeScore(),
-    hs = new Highscore(),
+    hs = new HighscoreService(),
     actives = [];
 
 var current = new Date();
@@ -81,7 +81,7 @@ function showRules() {
 
 function updateBadges() {
 
-    var badges = new Badges().getBadges();
+    var badges = new BadgeService().getBadges();
     var badgesText = badges.length === 1 ? " badge" : " badges";
 
     elmBadges.firstElementChild.innerHTML = badges.length + badgesText;

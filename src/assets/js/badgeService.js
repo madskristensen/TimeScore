@@ -1,4 +1,4 @@
-var Badges = (function () {
+var BadgeService = (function () {
 
     function getBadges() {
 
