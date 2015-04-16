@@ -98,8 +98,8 @@ var TimeScore = (function () {
             hits.push(rules.twopairs);
         }
 
-        if (hits.length > 0 && realHours >= 2 && realHours < 5) {
-            hits.push(rules.nightowl);
+        if (_hour.length == 2 && _date.getMinutes() % parseInt(_hour, 10) === 0) {
+            hits.push(rules.divide);
         }
 
         return hits;
@@ -199,6 +199,12 @@ var TimeScore = (function () {
             rule: "Top of the hour"
         },
 
+        divide: {
+            id: "divide",
+            points: 2,
+            rule: "Double digit divide"
+        },
+
         product: {
             id: "product",
             points: 1,
@@ -210,13 +216,6 @@ var TimeScore = (function () {
             points: 1,
             rule: "Mirror, mirror on the wall"
         },
-
-        nightowl: {
-            id: "nightowl",
-            points: 1,
-            rule: "Knight owl (bonus)"
-        },
-
     };
 
     return {
