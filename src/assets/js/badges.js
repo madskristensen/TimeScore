@@ -122,7 +122,7 @@ var Badges = (function () {
         youknow: {
             id: "youknow",
             name: "You know if you know",
-            description: "you know if you know"
+            description: "You know if you know"
         },
     }
 

@@ -120,7 +120,6 @@ setInterval(function () {
     var date = new Date();
 
     elmMeter.style.width = (date.getSeconds() / 60 * 100) + "%";
-    //elmMeter.style.visibility = date.getSeconds() === 0 ? "hidden" : "";
 
     if (document.hidden || document.webkitHidden || document.mozHidden || document.msHidden || document.oHidden)
         return;

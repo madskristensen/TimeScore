@@ -37,13 +37,17 @@
             while (current.getDate() == day) {
                 var result = ts.getScore(current);
                 var points = 0;
+                var rules = [];
 
                 for (var i = 0; i < result.score.length; i++) {
                     points += result.score[i].points;
+                    rules.push(result.score[i].rule)
                 }
 
-                if (points > 0)
-                    pre.innerHTML += result.time + "\t" + points + "\r\n";
+                if (points > 0) {
+                    var pad = points < 10 ? " " : "";
+                    pre.innerHTML += result.time + "\t" + pad + points + " points [" + rules.join(", ") + "]\r\n";
+                }
 
                 current = new Date(current.getTime() + 60000);
             }

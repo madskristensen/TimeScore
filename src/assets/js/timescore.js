@@ -90,7 +90,7 @@ var TimeScore = (function () {
             hits.push(rules.eleveneleven);
         }
 
-        if (_hour.length === 2 && _minute[0] === _minute[1]) {
+        if (_hour.length === 2 && _hour[0] === _hour[1] && _minute[0] === _minute[1]) {
             hits.push(rules.twopairs);
         }
 
@@ -169,22 +169,16 @@ var TimeScore = (function () {
             rule: "Three of a kind"
         },
 
-        product: {
-            id: "product",
-            points: 4,
-            rule: "Minute is the product"
-        },
-
-        mirrormirror: {
-            id: "mirrormirror",
-            points: 3,
-            rule: "Mirror, mirror on the wall"
-        },
-
         equals: {
             id: "equals",
-            points: 2,
+            points: 4,
             rule: "Pete : Repeat"
+        },
+
+        twopairs: {
+            id: "twopairs",
+            points: 3,
+            rule: "Two pairs"
         },
 
         tophour: {
@@ -193,10 +187,16 @@ var TimeScore = (function () {
             rule: "Top of the hour"
         },
 
-        twopairs: {
-            id: "twopairs",
+        product: {
+            id: "product",
             points: 1,
-            rule: "Two pairs"
+            rule: "Minute is the product"
+        },
+
+        mirrormirror: {
+            id: "mirrormirror",
+            points: 1,
+            rule: "Mirror, mirror on the wall"
         },
 
         nightowl: {

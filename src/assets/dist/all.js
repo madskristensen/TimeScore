@@ -122,7 +122,7 @@ var Badges = (function () {
         youknow: {
             id: "youknow",
             name: "You know if you know",
-            description: "you know if you know"
+            description: "You know if you know"
         },
     }
 
@@ -300,7 +300,7 @@ var TimeScore = (function () {
             hits.push(rules.eleveneleven);
         }
 
-        if (_hour.length === 2 && _minute[0] === _minute[1]) {
+        if (_hour.length === 2 && _hour[0] === _hour[1] && _minute[0] === _minute[1]) {
             hits.push(rules.twopairs);
         }
 
@@ -379,22 +379,16 @@ var TimeScore = (function () {
             rule: "Three of a kind"
         },
 
-        product: {
-            id: "product",
-            points: 4,
-            rule: "Minute is the product"
-        },
-
-        mirrormirror: {
-            id: "mirrormirror",
-            points: 3,
-            rule: "Mirror, mirror on the wall"
-        },
-
         equals: {
             id: "equals",
-            points: 2,
+            points: 4,
             rule: "Pete : Repeat"
+        },
+
+        twopairs: {
+            id: "twopairs",
+            points: 3,
+            rule: "Two pairs"
         },
 
         tophour: {
@@ -403,10 +397,16 @@ var TimeScore = (function () {
             rule: "Top of the hour"
         },
 
-        twopairs: {
-            id: "twopairs",
+        product: {
+            id: "product",
             points: 1,
-            rule: "Two pairs"
+            rule: "Minute is the product"
+        },
+
+        mirrormirror: {
+            id: "mirrormirror",
+            points: 1,
+            rule: "Mirror, mirror on the wall"
         },
 
         nightowl: {
@@ -545,7 +545,6 @@ setInterval(function () {
     var date = new Date();
 
     elmMeter.style.width = (date.getSeconds() / 60 * 100) + "%";
-    //elmMeter.style.visibility = date.getSeconds() === 0 ? "hidden" : "";
 
     if (document.hidden || document.webkitHidden || document.mozHidden || document.msHidden || document.oHidden)
         return;
