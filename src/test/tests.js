@@ -58,7 +58,6 @@ QUnit.test("What color is the sea", function (assert) { runTest(assert, 23, 37, 
 QUnit.test("Macbeth murders Duncan am", function (assert) { runTest(assert, 10, 40, 7) });
 QUnit.test("Macbeth murders Duncan pm", function (assert) { runTest(assert, 22, 40, 7) });
 QUnit.test("Caitlin's birthday", function (assert) { runTest(assert, 4, 55, 8) });
-QUnit.test("Emily's birthday", function (assert) { runTest(assert, 23, 7, 7) });
 
 
 QUnit.module("Two pairs");

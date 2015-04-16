@@ -130,8 +130,10 @@ var TimeScore = (function () {
             badge = badges.beer;
         else if (realHours === 4 && _minute === "55")
             badge = badges.caitlin;
-        else if (realHours === 23 && _minute === "07")
-            badge = badges.emily;
+        else if (realHours === 1 && _minute === "20")
+            badge = badges.martydeparts;
+        else if (realHours === 16 && _minute === "29")
+            badge = badges.martyarrives;
 
         if (badge) {
             rule = rules.momentInTime;

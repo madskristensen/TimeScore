@@ -72,7 +72,7 @@ var Badges = (function () {
         caitlin: {
             id: "caitlin",
             name: "Caitlin's birthday",
-            description: "Caitlin was born on this time of day."
+            description: "The inspiration was born at this time."
         },
         denmark: {
             id: "denmark",
@@ -83,11 +83,6 @@ var Badges = (function () {
             id: "ellendun",
             name: "Battle of Ellendun",
             description: "Battle of Ellendun which united England"
-        },
-        emily: {
-            id: "emily",
-            name: "Emily's birthday",
-            description: "Emily was born on this time of day"
         },
         pi: {
             id: "pi",
@@ -123,6 +118,16 @@ var Badges = (function () {
             id: "youknow",
             name: "You know if you know",
             description: "You know if you know"
+        },
+        martydeparts: {
+            id: "martydeparts",
+            name: "Marty McFly leaves for the future",
+            description: "Marty McFly leaves for the future"
+        },
+        martyarrives: {
+            id: "martyarrives",
+            name: "Marty McFly arrives in the future",
+            description: "Marty McFly arrives in the future"
         },
     }
 
@@ -340,8 +345,10 @@ var TimeScore = (function () {
             badge = badges.beer;
         else if (realHours === 4 && _minute === "55")
             badge = badges.caitlin;
-        else if (realHours === 23 && _minute === "07")
-            badge = badges.emily;
+        else if (realHours === 1 && _minute === "20")
+            badge = badges.martydeparts;
+        else if (realHours === 16 && _minute === "29")
+            badge = badges.martyarrives;
 
         if (badge) {
             rule = rules.momentInTime;
