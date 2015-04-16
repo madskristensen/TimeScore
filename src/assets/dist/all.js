@@ -43,7 +43,7 @@ var Badges = (function () {
         timetraveller: {
             id: "timetraveller",
             name: "Time traveller",
-            description: "Congrats!! That's your first 50 points",
+            description: "You're a Time Traveller! That's 50 points",
             type: "single"
         },
         timebandit: {
@@ -307,6 +307,10 @@ var TimeScore = (function () {
             hits.push(rules.eleveneleven);
         }
 
+        if (_date.getMonth() == _hour && _date.getDate() == _date.getMinutes()) {
+            hits.push(rules.today);
+        }
+
         if (_hour.length === 2 && _hour[0] === _hour[1] && _minute[0] === _minute[1]) {
             hits.push(rules.twopairs);
         }
@@ -374,6 +378,12 @@ var TimeScore = (function () {
             id: "momentintime",
             points: 7,
             rule: "Special moment in time"
+        },
+
+        today: {
+            id: "today",
+            points: 6,
+            rule: "Today in time"
         },
 
         eleveneleven: {
@@ -447,6 +457,7 @@ var elmTime = document.getElementById("time"),
     actives = [];
 
 var current = new Date();
+//current = new Date(2015, 4, 16, 4, 16);
 //current.setHours(7); current.setMinutes(11); //localStorage.clear();
 
 function calculate() {

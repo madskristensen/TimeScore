@@ -90,6 +90,10 @@ var TimeScore = (function () {
             hits.push(rules.eleveneleven);
         }
 
+        if (_date.getMonth() == _hour && _date.getDate() == _date.getMinutes()) {
+            hits.push(rules.today);
+        }
+
         if (_hour.length === 2 && _hour[0] === _hour[1] && _minute[0] === _minute[1]) {
             hits.push(rules.twopairs);
         }
@@ -157,6 +161,12 @@ var TimeScore = (function () {
             id: "momentintime",
             points: 7,
             rule: "Special moment in time"
+        },
+
+        today: {
+            id: "today",
+            points: 6,
+            rule: "Today in time"
         },
 
         eleveneleven: {

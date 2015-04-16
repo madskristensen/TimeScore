@@ -43,7 +43,7 @@ var Badges = (function () {
         timetraveller: {
             id: "timetraveller",
             name: "Time traveller",
-            description: "Congrats!! That's your first 50 points",
+            description: "You're a Time Traveller! That's 50 points",
             type: "single"
         },
         timebandit: {

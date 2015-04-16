@@ -70,6 +70,23 @@ QUnit.test("10:00", function (assert) { runTest(assert, 10, 0, 2) });
 QUnit.test("11:01", function (assert) { runTest(assert, 11, 1, 0) });
 
 
+QUnit.test("Today in time", function (assert) {
+    var date = new Date(2015, 4, 16, 4, 16);
+
+    var result = ts.getScore(date)
+    var total = 0;
+    var rules = [];
+
+    for (var i = 0; i < result.score.length; i++) {
+        total += result.score[i].points;
+        rules.push("'" + result.score[i].rule + "'");
+    }
+
+    assert.equal(total, 7, total + " points - (" + rules.join(", ") + ")");
+
+});
+
+
 function runTest(assert, hour, minutes, points) {
 
     var result = ts.getScore(new Date(2015, 1, 1, hour, minutes))

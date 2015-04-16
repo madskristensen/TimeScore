@@ -13,6 +13,7 @@ var elmTime = document.getElementById("time"),
     actives = [];
 
 var current = new Date();
+//current = new Date(2015, 4, 16, 4, 16);
 //current.setHours(7); current.setMinutes(11); //localStorage.clear();
 
 function calculate() {
