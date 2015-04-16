@@ -153,7 +153,7 @@ var TimeScore = (function () {
 
         onetwothreefour: {
             id: "royalstraightflush",
-            points: 10,
+            points: 9,
             rule: "Royal Straight Flush"
         },
 

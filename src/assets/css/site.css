@@ -51,7 +51,7 @@ ul {
 
     ul li span {
         display: inline-block;
-        width: 66px;
+        width: 58px;
     }
 
 .active {
@@ -66,7 +66,7 @@ ul {
 
     #highscore > span:first-child {
         display: inline-block;
-        margin-right: 1.5em;
+        margin-right: 1em;
     }
 
     #highscore > span span {

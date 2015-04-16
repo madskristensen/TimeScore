@@ -8,7 +8,7 @@ QUnit.testStart(function () {
 });
 
 QUnit.module("Royal Straight Flush");
-QUnit.test("12:34", function (assert) { runTest(assert, 12, 34, 10) });
+QUnit.test("12:34", function (assert) { runTest(assert, 12, 34, 9) });
 QUnit.test("2:23", function (assert) { runTest(assert, 2, 34, 0) });
 
 
