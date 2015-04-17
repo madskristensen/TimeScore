@@ -398,13 +398,13 @@ var TimeScore = (function () {
         eleveneleven: {
             id: "fourofakind",
             points: 6,
-            rule: "Four of a kind"
+            rule: "Four pillars of the earth"
         },
 
         threeofakind: {
             id: "threeofakind",
             points: 5,
-            rule: "Three of a kind"
+            rule: "Three strikes and you're in"
         },
 
         equals: {
@@ -416,7 +416,7 @@ var TimeScore = (function () {
         twopairs: {
             id: "twopairs",
             points: 3,
-            rule: "Two pairs"
+            rule: "A couple of couples"
         },
 
         tophour: {
@@ -440,7 +440,7 @@ var TimeScore = (function () {
         product: {
             id: "product",
             points: 1,
-            rule: "Minute is the product"
+            rule: "Minute sums it up"
         },
 
         mirrormirror: {
