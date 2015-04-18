@@ -30,5 +30,5 @@ gulp.task("manifest", function () {
 gulp.task("watch", ["concat", "manifest"], function () {
     gulp.watch("./assets/js/*", ["concat", "manifest"]);
     gulp.watch("./assets/css/*", ["manifest"]);
-    gulp.watch(["./index.html", "./web.config"], ["manifest"]);
+    gulp.watch(["./index.html", "./web.config", "./assets/img/*"], ["manifest"]);
 });
