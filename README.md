@@ -1,6 +1,6 @@
-## TimeScore - because not all time is equal
+## Game The Time - because not all time is equal
 
-Find the website at [TimeScore.azurewebsites.net](http://timescore.azurewebsites.net)
+Find the website at [gamethetime.com](http://gamethetime.com)
 
 TimeScore gives you an instant answer to one of the universe' oldest questions:
 
