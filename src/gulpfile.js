@@ -14,7 +14,7 @@ gulp.task("concat", function () {
 });
 
 gulp.task("manifest", function () {
-    gulp.src(["./assets/{dist,css,img}/*.{js,css,svgz,svg}", "./index.html", "web.config"])
+    gulp.src(["./assets/{dist,css,img}/*.{js,css,svg}", "./index.html", "web.config"])
     .pipe(manifest({
         timestamp: true,
         relativePath: "/assets",
