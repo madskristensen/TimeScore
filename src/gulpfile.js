@@ -19,7 +19,7 @@ gulp.task("manifest", function () {
         timestamp: true,
         relativePath: "assets",
         preferOnline: true,
-        network: ["https://google-analytics.com/analytics.js", "*"],
+        network: ["*"],
         filename: "manifest.appcache",
 
         exclude: ["index.html", "web.config"]
