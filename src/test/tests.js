@@ -13,7 +13,7 @@ QUnit.test("2:23", function (assert) { runTest(assert, 2, 34, 0) });
 
 
 QUnit.module("Four of a kind");
-QUnit.test("11:11", function (assert) { runTest(assert, 11, 11, 14) });
+QUnit.test("11:11", function (assert) { runTest(assert, 11, 11, 12) });
 
 
 QUnit.module("Three of a kind");
@@ -69,7 +69,7 @@ QUnit.test("11:01", function (assert) { runTest(assert, 11, 1, 0) });
 
 
 QUnit.test("Today in time", function (assert) {
-    var date = new Date(2015, 4, 16, 4, 16);
+    var date = new Date(2015, 3, 16, 4, 16); // month is zero-based
 
     var result = ts.getScore(date)
     var total = 0;

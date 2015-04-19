@@ -275,7 +275,8 @@ var TimeScore = (function () {
             hits.push(rules.mirrormirror);
 
         }
-        else if (_hour === _minute) {
+
+        if (_hour === _minute) {
             hits.push(rules.equals);
         }
 
@@ -298,11 +299,8 @@ var TimeScore = (function () {
             hits.push(rules.onetwothreefour);
         }
 
-        if (_hour === "11" && _minute === "11") {
-            hits.push(rules.eleveneleven);
-        }
 
-        if (_date.getMonth() == _hour && _date.getDate() == _date.getMinutes()) {
+        if (_date.getMonth() + 1 /*getMonth() is zero-based*/ == _hour && _date.getDate() == _date.getMinutes()) {
             hits.push(rules.today);
         }
 
@@ -393,12 +391,6 @@ var TimeScore = (function () {
             id: "today",
             points: 6,
             rule: "Today in time"
-        },
-
-        eleveneleven: {
-            id: "fourofakind",
-            points: 6,
-            rule: "Four pillars of the earth"
         },
 
         threeofakind: {
