@@ -104,7 +104,7 @@ footer {
 }
 
     #badges p {
-        background: url(/assets/img/badge.svgz) no-repeat;
+        background: url(/assets/img/badge.svg) no-repeat;
         width: 100px;
         height: 100px;
         display: inline-block;

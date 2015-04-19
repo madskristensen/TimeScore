@@ -1,7 +1,4 @@
-﻿(function (window, undefined) {
-
-    if (!window.applicationCache)
-        return;
+﻿(function (undefined) {
 
     var lastCheck = new Date();
     //lastCheck = new Date("2015-04-19T12:00");
@@ -16,4 +13,4 @@
         lastCheck = new Date();
     }, checkInterval)
 
-})(window, undefined);
+})(undefined);
