@@ -98,9 +98,6 @@ function updateBadges() {
         img.id = badge.id;
         img.tabIndex = 1;
 
-        if (badge.user)
-            img.className = "user";
-
         if (badge.level > 1) {
             var span = document.createElement("span");
             span.innerHTML = badge.level + "x";
