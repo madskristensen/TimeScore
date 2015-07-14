@@ -9,7 +9,6 @@ QUnit.testStart(function () {
 
 QUnit.module("Royal Straight Flush");
 QUnit.test("12:34", function (assert) { runTest(assert, 12, 34, 9) });
-QUnit.test("2:23", function (assert) { runTest(assert, 2, 34, 0) });
 
 
 QUnit.module("Four of a kind");
@@ -19,6 +18,10 @@ QUnit.test("11:11", function (assert) { runTest(assert, 11, 11, 12) });
 QUnit.module("Three of a kind");
 QUnit.test("02:22", function (assert) { runTest(assert, 2, 22, 6) });
 QUnit.test("05:55", function (assert) { runTest(assert, 5, 55, 8) });
+
+QUnit.module("A run in time");
+QUnit.test("01:23", function (assert) { runTest(assert, 1, 23, 5) });
+QUnit.test("2:34", function (assert) { runTest(assert, 2, 34, 5) });
 
 
 QUnit.module("Mirror, mirror on the wall");
@@ -56,6 +59,8 @@ QUnit.test("What color is the sea", function (assert) { runTest(assert, 23, 37, 
 QUnit.test("Macbeth murders Duncan am", function (assert) { runTest(assert, 10, 40, 9) });
 QUnit.test("Macbeth murders Duncan pm", function (assert) { runTest(assert, 22, 40, 9) });
 QUnit.test("Caitlin's birthday", function (assert) { runTest(assert, 4, 55, 7) });
+QUnit.test("404 not found", function (assert) { runTest(assert, 4, 4, 9) });
+QUnit.test("Hacker", function (assert) { runTest(assert, 13, 37, 9) });
 
 
 QUnit.module("Two pairs");

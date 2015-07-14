@@ -124,6 +124,16 @@ var BadgeService = (function () {
             name: "Marty McFly arrives in the future",
             description: "Marty McFly arrives in the future"
         },
+        notfound: {
+            id: "notfound",
+            name: "The page that couldn't be found",
+            description: "The page that couldn't be found"
+        },
+        hacker: {
+            id: "Hacker lingo",
+            name: "You speak hacker",
+            description: "You speak hacker"
+        },
     }
 
     return {

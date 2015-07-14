@@ -92,6 +92,13 @@ var TimeScore = (function () {
             hits.push(rules.today);
         }
 
+
+        // Runs
+        var intHour = parseInt(_hour, 10);
+        if (_minute[0] == intHour + 1 && _minute[1] == intHour + 2 || _minute[0] == intHour - 1 && _minute[1] == intHour -2) {
+            hits.push(rules.runs);
+        }
+
         var combined = _hour + _minute;
         var isPrime = true;
         for (var i = 0; i < combined.length; i++) {
@@ -102,6 +109,7 @@ var TimeScore = (function () {
             }
         }
 
+        // Primes
         if (isPrime) {
             hits.push(rules.prime);
         }
@@ -150,6 +158,10 @@ var TimeScore = (function () {
             badge = badges.martydeparts;
         else if (realHours === 16 && _minute === "29")
             badge = badges.martyarrives;
+        else if (_hour === "4" && _minute === "04")
+            badge = badges.notfound;
+        else if (realHours === 13 && _minute === "37")
+            badge = badges.hacker;
 
         if (badge) {
             rule = rules.momentInTime;
@@ -185,6 +197,12 @@ var TimeScore = (function () {
             id: "threeofakind",
             points: 5,
             rule: "Three strikes and you're in"
+        },
+
+        runs: {
+            id: "runs",
+            points: 5,
+            rule: "A run in time"
         },
 
         equals: {
