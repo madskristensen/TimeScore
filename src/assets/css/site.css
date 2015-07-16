@@ -14,7 +14,7 @@ body {
     text-align: center;
     background: black;
     color: #dfdfdf;
-    margin: 0 0 50px;
+    margin: 1em 0 50px;
     min-width: 280px;
     -ms-touch-action: manipulation;
     touch-action: manipulation;
@@ -146,10 +146,6 @@ footer {
     height: 2px;
     width: 0;
     background: linear-gradient(to right, transparent, #919191);
-    /*-moz-transition: width 1s linear;
-    -o-transition: width 1s linear;
-    -webkit-transition: width 1s linear;
-    transition: width 1s linear;*/
 }
 
 #timeContainer {
