@@ -16,8 +16,12 @@ body {
     color: #dfdfdf;
     margin: 0 0 50px;
     min-width: 280px;
-    -ms-touch-action: auto;
-    touch-action: auto;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 #time {
