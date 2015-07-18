@@ -95,7 +95,7 @@ var TimeScore = (function () {
 
         // Runs
         var intHour = parseInt(_hour, 10);
-        if (_minute[0] == intHour + 1 && _minute[1] == intHour + 2 || _minute[0] == intHour - 1 && _minute[1] == intHour -2) {
+        if (_minute[0] == intHour + 1 && _minute[1] == intHour + 2 || _minute[0] == intHour - 1 && _minute[1] == intHour - 2) {
             hits.push(rules.runs);
         }
 
@@ -162,6 +162,8 @@ var TimeScore = (function () {
             badge = badges.notfound;
         else if (realHours === 13 && _minute === "37")
             badge = badges.hacker;
+        else if (_hour === "7" && _minute === "37")
+            badge = badges.jumbo;
 
         if (badge) {
             rule = rules.momentInTime;

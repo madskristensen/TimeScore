@@ -130,10 +130,15 @@ var BadgeService = (function () {
             description: "The page that couldn't be found"
         },
         hacker: {
-            id: "Hacker lingo",
+            id: "hacker",
             name: "You speak hacker",
             description: "You speak hacker"
         },
+        jumbo: {
+            id: "jumbo",
+            name: "Jumbo",
+            description: "The Jumbo Jet"
+        }
     }
 
     return {
@@ -317,7 +322,7 @@ var TimeScore = (function () {
 
         // Runs
         var intHour = parseInt(_hour, 10);
-        if (_minute[0] == intHour + 1 && _minute[1] == intHour + 2 || _minute[0] == intHour - 1 && _minute[1] == intHour -2) {
+        if (_minute[0] == intHour + 1 && _minute[1] == intHour + 2 || _minute[0] == intHour - 1 && _minute[1] == intHour - 2) {
             hits.push(rules.runs);
         }
 
@@ -384,6 +389,8 @@ var TimeScore = (function () {
             badge = badges.notfound;
         else if (realHours === 13 && _minute === "37")
             badge = badges.hacker;
+        else if (_hour === "7" && _minute === "37")
+            badge = badges.jumbo;
 
         if (badge) {
             rule = rules.momentInTime;
@@ -492,7 +499,7 @@ var elmTime = document.getElementById("time"),
 
 var current = new Date();
 //current = new Date(2015, 4, 16, 4, 16);
-//current.setHours(7); current.setMinutes(11); //localStorage.clear();
+current.setHours(13); current.setMinutes(37); //localStorage.clear();
 
 function calculate() {
 

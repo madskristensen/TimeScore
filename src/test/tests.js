@@ -61,6 +61,7 @@ QUnit.test("Macbeth murders Duncan pm", function (assert) { runTest(assert, 22, 
 QUnit.test("Caitlin's birthday", function (assert) { runTest(assert, 4, 55, 7) });
 QUnit.test("404 not found", function (assert) { runTest(assert, 4, 4, 9) });
 QUnit.test("Hacker", function (assert) { runTest(assert, 13, 37, 9) });
+QUnit.test("Jumbo", function (assert) { runTest(assert, 7, 37, 10) });
 
 
 QUnit.module("Two pairs");

@@ -130,10 +130,15 @@ var BadgeService = (function () {
             description: "The page that couldn't be found"
         },
         hacker: {
-            id: "Hacker lingo",
+            id: "hacker",
             name: "You speak hacker",
             description: "You speak hacker"
         },
+        jumbo: {
+            id: "jumbo",
+            name: "Jumbo",
+            description: "The Jumbo Jet"
+        }
     }
 
     return {
