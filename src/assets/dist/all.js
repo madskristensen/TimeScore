@@ -499,7 +499,7 @@ var elmTime = document.getElementById("time"),
 
 var current = new Date();
 //current = new Date(2015, 4, 16, 4, 16);
-current.setHours(13); current.setMinutes(37); //localStorage.clear();
+//current.setHours(7); current.setMinutes(11); //localStorage.clear();
 
 function calculate() {
 
