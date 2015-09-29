@@ -61,11 +61,11 @@ QUnit.test("Macbeth murders Duncan pm", function (assert) { runTest(assert, 22, 
 QUnit.test("Caitlin's birthday", function (assert) { runTest(assert, 4, 55, 7) });
 QUnit.test("404 not found", function (assert) { runTest(assert, 4, 4, 9) });
 QUnit.test("Hacker", function (assert) { runTest(assert, 13, 37, 9) });
-QUnit.test("Jumbo", function (assert) { runTest(assert, 7, 37, 10) });
+QUnit.test("Jumbo", function (assert) { runTest(assert, 7, 47, 8) });
 
 
 QUnit.module("Two pairs");
-QUnit.test("11:22", function (assert) { runTest(assert, 11, 22, 5) });
+QUnit.test("11:22", function (assert) { runTest(assert, 11, 22, 12) });
 
 
 QUnit.module("Top of the hour");

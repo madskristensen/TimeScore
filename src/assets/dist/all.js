@@ -138,6 +138,36 @@ var BadgeService = (function () {
             id: "jumbo",
             name: "Jumbo",
             description: "The Jumbo Jet"
+        },
+        concordat: {
+            id: "concordat",
+            name: "Concordat of Worms",
+            description: "Concordat of Worms",
+        },
+        genghis: {
+            id: "genghis",
+            name: "Genghis Khan becomes great",
+            description: "Genghis Khan becomes great",
+        },
+        paris: {
+            id: "paris",
+            name: "Treaty of Paris",
+            description: "Treaty of Paris",
+        },
+        hadrian: {
+            id: "hadrian",
+            name: "Hadrian's Wall",
+            description: "Hadrian's Wall",
+        },
+        alarm: {
+            id: "alarm",
+            name: "The alarm clock was invented",
+            description: "The alarm clock was invented",
+        },
+        seattle: {
+            id: "seattle",
+            name: "Rain City got its name",
+            description: "Rain City got its name",
         }
     }
 
@@ -389,8 +419,20 @@ var TimeScore = (function () {
             badge = badges.notfound;
         else if (realHours === 13 && _minute === "37")
             badge = badges.hacker;
-        else if (_hour === "7" && _minute === "37")
+        else if (_hour === "7" && _minute === "47")
             badge = badges.jumbo;
+        else if (_hour === "11" && _minute === "22")
+            badge = badges.concordat;
+        else if (_hour === "12" && _minute === "06")
+            badge = badges.genghis;
+        else if (_hour === "12" && _minute === "59")
+            badge = badges.paris;
+        else if (_hour === "1" && _minute === "22")
+            badge = badges.hadrian;
+        else if (_hour === "2" && _minute === "50")
+            badge = badges.alarm;
+        else if (realHours === 18 && _minute === "52")
+            badge = badges.seattle;
 
         if (badge) {
             rule = rules.momentInTime;

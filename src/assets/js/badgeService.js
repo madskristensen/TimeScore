@@ -138,6 +138,36 @@ var BadgeService = (function () {
             id: "jumbo",
             name: "Jumbo",
             description: "The Jumbo Jet"
+        },
+        concordat: {
+            id: "concordat",
+            name: "Concordat of Worms",
+            description: "Concordat of Worms",
+        },
+        genghis: {
+            id: "genghis",
+            name: "Genghis Khan becomes great",
+            description: "Genghis Khan becomes great",
+        },
+        paris: {
+            id: "paris",
+            name: "Treaty of Paris",
+            description: "Treaty of Paris",
+        },
+        hadrian: {
+            id: "hadrian",
+            name: "Hadrian's Wall",
+            description: "Hadrian's Wall",
+        },
+        alarm: {
+            id: "alarm",
+            name: "The alarm clock was invented",
+            description: "The alarm clock was invented",
+        },
+        seattle: {
+            id: "seattle",
+            name: "Rain City got its name",
+            description: "Rain City got its name",
         }
     }
 
