@@ -53,7 +53,9 @@ var HighscoreService = function () {
             }
         }
 
-        if (weekly >= 500)
+        if (weekly >= 1000)
+            badgeService.addBadge(badgeService.badges.timegamer)
+        else if (weekly >= 500)
             badgeService.addBadge(badgeService.badges.timelord)
         else if (weekly >= 100)
             badgeService.addBadge(badgeService.badges.timebandit)

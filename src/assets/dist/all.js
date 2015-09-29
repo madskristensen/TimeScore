@@ -58,6 +58,12 @@ var BadgeService = (function () {
             description: "500 points in one week. You are a Time Lord!!",
             type: "single"
         },
+        timegamer: {
+            id: "timegamer",
+            name: "Time gamer",
+            description: "1000 points in one week. You are a Time Gamer!!",
+            type: "single"
+        },
 
         twentyfourseven: {
             id: "twentyfourseven",
@@ -232,7 +238,9 @@ var HighscoreService = function () {
             }
         }
 
-        if (weekly >= 500)
+        if (weekly >= 1000)
+            badgeService.addBadge(badgeService.badges.timegamer)
+        else if (weekly >= 500)
             badgeService.addBadge(badgeService.badges.timelord)
         else if (weekly >= 100)
             badgeService.addBadge(badgeService.badges.timebandit)

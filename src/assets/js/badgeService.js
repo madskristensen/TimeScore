@@ -58,6 +58,12 @@ var BadgeService = (function () {
             description: "500 points in one week. You are a Time Lord!!",
             type: "single"
         },
+        timegamer: {
+            id: "timegamer",
+            name: "Time gamer",
+            description: "1000 points in one week. You are a Time Gamer!!",
+            type: "single"
+        },
 
         twentyfourseven: {
             id: "twentyfourseven",

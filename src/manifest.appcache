@@ -1,10 +1,10 @@
 CACHE MANIFEST
-# Time: Mon Sep 28 2015 19:41:06 GMT-0700 (Pacific Daylight Time)
+# Time: Tue Sep 29 2015 15:58:33 GMT-0700 (Pacific Daylight Time)
 
 
 CACHE:
-/assets/css/site.css
 /assets/dist/all.js
+/assets/css/site.css
 /assets/img/badge.svg
 /assets/img/facebook.svg
 /assets/img/googleplus.svg
