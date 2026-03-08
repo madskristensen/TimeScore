@@ -3,7 +3,8 @@
 	"version": "1.0.0",
 	"private": true,
 	"devDependencies": {
-		"gulp": "3.8.11",
+       "gulp": "4.0.2",
+		"gulp-cli": "3.1.0",
 		"gulp-cache-manifest": "0.0.1",
 		"gulp-concat": "2.5.2"
 	}
