@@ -3,14 +3,15 @@
 var HighscoreService = function () {
 
     var _score,
-        badgeService = new BadgeService();
+        badgeService = new BadgeService(),
+        scorePrefix = "score:";
 
     function recordScore(date, points) {
 
         if (isRecorded(date) || window.testmode)
             return;
 
-        var key = cleanDate(date);
+        var key = getStorageKey(cleanDate(date));
         localStorage.setItem(key, points);
     }
 
@@ -23,12 +24,21 @@ var HighscoreService = function () {
     function isRecorded(date) {
         var clean = cleanDate(date);
 
-        return localStorage.getItem(clean) != null;
+        return localStorage.getItem(getStorageKey(clean)) != null || localStorage.getItem(clean) != null;
+    }
+
+    function getStorageKey(date) {
+        return scorePrefix + Math.floor(date.getTime() / 60000);
+    }
+
+    function isLegacyScoreKey(key) {
+        return /^(Sun|Mon|Tue|Wed|Thu|Fri|Sat)\s/.test(key);
     }
 
     function getScore(date) {
 
         date = cleanDate(date);
+        var currentMinute = Math.floor(date.getTime() / 60000);
         var daily = 0;
         var weekly = 0;
 
@@ -37,23 +47,49 @@ var HighscoreService = function () {
             if (hash.indexOf("badge:") === 0)
                 return;
 
-            var timestamp = new Date(hash);
-            var timeDiff = Math.abs(date.getTime() - timestamp.getTime());
-            var diffDays = timeDiff / (1000 * 3600 * 24);
-            var points = parseInt(localStorage.getItem(hash), 10);
+            if (hash.indexOf(scorePrefix) !== 0 && !isLegacyScoreKey(hash))
+                return;
+
+            var minuteKey = 0;
+            var scoreKey = hash;
+
+            if (hash.indexOf(scorePrefix) === 0) {
+                minuteKey = parseInt(hash.substring(scorePrefix.length), 10);
+                if (isNaN(minuteKey)) {
+                    localStorage.removeItem(hash);
+                    return;
+                }
+            }
+            else {
+                var legacyTimestamp = Date.parse(hash);
+                if (isNaN(legacyTimestamp))
+                    return;
+
+                minuteKey = Math.floor(legacyTimestamp / 60000);
+                scoreKey = getStorageKey(new Date(legacyTimestamp));
+
+                if (localStorage.getItem(scoreKey) == null) {
+                    localStorage.setItem(scoreKey, localStorage.getItem(hash));
+                }
+
+                localStorage.removeItem(hash);
+            }
+
+            var diffMinutes = Math.abs(currentMinute - minuteKey);
+            var points = parseInt(localStorage.getItem(scoreKey), 10);
 
             if (isNaN(points))
                 return;
 
-            if (diffDays <= 1) {
+            if (diffMinutes <= 60 * 24) {
                 daily += points;
                 weekly += points;
             }
-            else if (diffDays <= 7) {
+            else if (diffMinutes <= 60 * 24 * 7) {
                 weekly += points;
             }
             else {
-                localStorage.removeItem(hash);
+                localStorage.removeItem(scoreKey);
             }
         });
 

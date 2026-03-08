@@ -7,6 +7,7 @@
 html {
     min-height: 100%;
     position: relative;
+    background: #050608;
 }
 
 body {
@@ -16,6 +17,14 @@ body {
     background-attachment: fixed;
     color: #dfdfdf;
     margin: 1em 0 50px;
+    padding-top: env(safe-area-inset-top);
+    padding-top: constant(safe-area-inset-top);
+    padding-left: env(safe-area-inset-left);
+    padding-left: constant(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+    padding-right: constant(safe-area-inset-right);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-bottom: constant(safe-area-inset-bottom);
     min-width: 280px;
     transition: background 350ms ease, color 250ms ease;
     -ms-touch-action: manipulation;

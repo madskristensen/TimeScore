@@ -7,7 +7,7 @@ var APP_SHELL = [
     "/assets/js/highscoreService.js",
     "/assets/js/timescore.js",
     "/assets/js/dom.js",
-    "/assets/js/appcacheHandler.js"
+    "/assets/js/serviceWorkerHandler.js"
 ];
 
 self.addEventListener("install", function (event) {

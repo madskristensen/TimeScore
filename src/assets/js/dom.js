@@ -16,7 +16,9 @@ var elmTime = document.getElementById("time"),
     elmCloseInstall = document.getElementById("closeInstall"),
     ts = new TimeScore(),
     hs = new HighscoreService(),
-    actives = [];
+    badgeService = new BadgeService(),
+    actives = [],
+    ruleElementsById = {};
 
 var helpSeenKey = "timescoreHelpSeen",
     installDismissedKey = "timescoreInstallDismissed",
@@ -31,8 +33,7 @@ var current = new Date();
 function calculate() {
 
     var result = ts.getScore(current),
-        points = 0,
-        lis = rules.getElementsByTagName("li");
+        points = 0;
 
     elmTime.textContent = result.time;
     clearResults();
@@ -42,13 +43,11 @@ function calculate() {
         var score = result.score[i];
         points += score.points;
 
-        for (var a = 0; a < lis.length; a++) {
-            var li = lis[a];
-
-            if (score.points > 0 && li.textContent.indexOf(score.rule) > -1) {
+        if (score.points > 0) {
+            var li = ruleElementsById[score.id];
+            if (li) {
                 li.className = "active";
                 actives.push(li);
-                break;
             }
         }
     }
@@ -190,7 +189,8 @@ function showRules() {
         pointSpan.textContent = `${rule.points} ${point}`;
         li.appendChild(pointSpan);
         li.appendChild(document.createTextNode(` - ${rule.rule}`));
-        li.id = name;
+        li.id = rule.id;
+        ruleElementsById[rule.id] = li;
 
         rules.appendChild(li);
     }
@@ -198,7 +198,7 @@ function showRules() {
 
 function updateBadges() {
 
-    var badges = new BadgeService().getBadges();
+    var badges = badgeService.getBadges();
     var badgesText = badges.length === 1 ? " badge" : " badges";
 
     elmBadges.firstElementChild.textContent = badges.length + badgesText;
