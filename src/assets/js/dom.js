@@ -34,7 +34,7 @@ function calculate() {
         points = 0,
         lis = rules.getElementsByTagName("li");
 
-    elmTime.innerHTML = result.time;
+    elmTime.textContent = result.time;
     clearResults();
 
     for (var i = 0; i < result.score.length; i++) {
@@ -45,7 +45,7 @@ function calculate() {
         for (var a = 0; a < lis.length; a++) {
             var li = lis[a];
 
-            if (score.points > 0 && li.innerHTML.lastIndexOf(score.rule) > -1) {
+            if (score.points > 0 && li.textContent.indexOf(score.rule) > -1) {
                 li.className = "active";
                 actives.push(li);
                 break;
@@ -111,6 +111,7 @@ function maybeShowHelpOnFirstVisit() {
     if (readFlag(helpSeenKey))
         return;
 
+    writeFlag(helpSeenKey, true);
     setModalVisible(elmHelpModal, true);
 }
 
@@ -125,8 +126,8 @@ function clearResults() {
 
 function updateHighscore() {
     var score = hs.getScore(current);
-    document.getElementById("daily").firstElementChild.innerHTML = score.daily;
-    document.getElementById("weekly").firstElementChild.innerHTML = score.weekly;
+    document.getElementById("daily").firstElementChild.textContent = score.daily;
+    document.getElementById("weekly").firstElementChild.textContent = score.weekly;
 }
 
 function showRules() {
@@ -137,7 +138,10 @@ function showRules() {
         var point = rule.points === 1 ? "point" : "points";
 
         var li = document.createElement("li");
-        li.innerHTML = "<span>" + rule.points + " " + point + "</span> - " + rule.rule;
+        var pointSpan = document.createElement("span");
+        pointSpan.textContent = `${rule.points} ${point}`;
+        li.appendChild(pointSpan);
+        li.appendChild(document.createTextNode(` - ${rule.rule}`));
         li.id = name;
 
         rules.appendChild(li);
@@ -149,7 +153,7 @@ function updateBadges() {
     var badges = new BadgeService().getBadges();
     var badgesText = badges.length === 1 ? " badge" : " badges";
 
-    elmBadges.firstElementChild.innerHTML = badges.length + badgesText;
+    elmBadges.firstElementChild.textContent = badges.length + badgesText;
     elmBadges.innerHTML = elmBadges.firstElementChild.outerHTML;
 
     if (elmBadges.childElementCount === badges.length + 1)
@@ -165,7 +169,7 @@ function updateBadges() {
 
         if (badge.level > 1) {
             var span = document.createElement("span");
-            span.innerHTML = badge.level + "x";
+            span.textContent = badge.level + "x";
             img.appendChild(span);
         }
 
@@ -186,7 +190,7 @@ setInterval(function () {
 
     elmMeter.style.width = (date.getSeconds() / 60 * 100) + "%";
 
-    if (document.hidden || document.webkitHidden || document.mozHidden || document.msHidden || document.oHidden)
+    if (document.hidden)
         return;
 
     if (date.getHours() != current.getHours() || date.getMinutes() != current.getMinutes()) {

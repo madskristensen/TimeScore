@@ -1,9 +1,9 @@
-﻿/// <reference path="badgeService.js" />
+/// <reference path="badgeService.js" />
 
 var HighscoreService = function () {
 
-    var _score
-    badgeService = new BadgeService();
+    var _score,
+        badgeService = new BadgeService();
 
     function recordScore(date, points) {
 
@@ -11,19 +11,19 @@ var HighscoreService = function () {
             return;
 
         var key = cleanDate(date);
-        localStorage[key] = points;
+        localStorage.setItem(key, points);
     }
 
     function cleanDate(date) {
-        date.setSeconds(0);
-        date.setMilliseconds(0);
-        return date;
+        var clean = new Date(date);
+        clean.setSeconds(0, 0);
+        return clean;
     }
 
     function isRecorded(date) {
         var clean = cleanDate(date);
 
-        return localStorage[clean] != undefined;
+        return localStorage.getItem(clean) != null;
     }
 
     function getScore(date) {
@@ -32,26 +32,30 @@ var HighscoreService = function () {
         var daily = 0;
         var weekly = 0;
 
-        for (var hash in localStorage) {
+        Object.keys(localStorage).forEach(function (hash) {
 
             if (hash.indexOf("badge:") === 0)
-                continue;
+                return;
 
             var timestamp = new Date(hash);
             var timeDiff = Math.abs(date.getTime() - timestamp.getTime());
             var diffDays = timeDiff / (1000 * 3600 * 24);
+            var points = parseInt(localStorage.getItem(hash), 10);
+
+            if (isNaN(points))
+                return;
 
             if (diffDays <= 1) {
-                daily += parseInt(localStorage[hash], 10);
-                weekly += parseInt(localStorage[hash], 10);
+                daily += points;
+                weekly += points;
             }
             else if (diffDays <= 7) {
-                weekly += parseInt(localStorage[hash], 10);
+                weekly += points;
             }
             else {
                 localStorage.removeItem(hash);
             }
-        }
+        });
 
         if (weekly >= 1000)
             badgeService.addBadge(badgeService.badges.timegamer)

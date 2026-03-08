@@ -13,7 +13,7 @@ var TimeScore = (function () {
         var score = runRules();
 
         return {
-            time: _hour + ":" + _minute,
+            time: `${_hour}:${_minute}`,
             score: score
         }
     }
@@ -22,39 +22,13 @@ var TimeScore = (function () {
         var minute = date.getMinutes();
         var hour = date.getHours();
 
-        if (minute < 10) {
-            _minute = "0" + minute;
-        }
-        else {
-            _minute = minute.toString();
-        }
+        _minute = String(minute).padStart(2, "0");
 
-        if (hour === 0) {
-            _hour = "12";
-        }
-        else if (hour < 10) {
-            _hour = "0" + hour;
-        }
-        else if (hour > 12) {
-            var imperial = (hour - 12).toString();
-
-            if (imperial < 10) {
-                imperial = "0" + imperial;
-            }
-
-            _hour = imperial.indexOf("0") == 0 ? imperial.substr(1) : imperial;
-        }
-        else {
-            _hour = hour.toString();
-        }
-
-        _hour = _hour.indexOf("0") == 0 ? _hour.substr(1) : _hour;
+        var imperial = hour % 12;
+        _hour = String(imperial === 0 ? 12 : imperial);
     }
 
     function runRules() {
-
-        var reverseMinutes = _minute.split("").reverse().join("");
-        var realHours = _date.getHours();
         var hits = [];
 
         var all = (_hour + _minute);
@@ -78,7 +52,7 @@ var TimeScore = (function () {
 
         ruleMomentIntime(hits);
 
-        if (_minute.length == 2 && parseInt(_minute[0], 10) + parseInt(_minute[1], 10) == _hour) {
+        if (_minute.length === 2 && parseInt(_minute[0], 10) + parseInt(_minute[1], 10) === parseInt(_hour, 10)) {
 
             hits.push(rules.product);
         }
@@ -88,26 +62,24 @@ var TimeScore = (function () {
         }
 
 
-        if (_date.getMonth() + 1 /*getMonth() is zero-based*/ == _hour && _date.getDate() == _date.getMinutes()) {
+        if (_date.getMonth() + 1 /*getMonth() is zero-based*/ === parseInt(_hour, 10) && _date.getDate() === _date.getMinutes()) {
             hits.push(rules.today);
         }
 
 
         // Runs
         var intHour = parseInt(_hour, 10);
-        if (_minute[0] == intHour + 1 && _minute[1] == intHour + 2 || _minute[0] == intHour - 1 && _minute[1] == intHour - 2) {
+        var firstMinuteDigit = parseInt(_minute[0], 10);
+        var secondMinuteDigit = parseInt(_minute[1], 10);
+        if (firstMinuteDigit === intHour + 1 && secondMinuteDigit === intHour + 2 || firstMinuteDigit === intHour - 1 && secondMinuteDigit === intHour - 2) {
             hits.push(rules.runs);
         }
 
         var combined = _hour + _minute;
-        var isPrime = true;
-        for (var i = 0; i < combined.length; i++) {
-            var digit = combined[i];
-            if (digit != 1 && digit != 3 && digit != 5 && digit != 7) {
-                isPrime = false;
-                break;
-            }
-        }
+        var primeDigits = ["2", "3", "5", "7"];
+        var isPrime = combined.split("").every(function (digit) {
+            return primeDigits.indexOf(digit) > -1;
+        });
 
         // Primes
         if (isPrime) {
@@ -118,7 +90,7 @@ var TimeScore = (function () {
             hits.push(rules.twopairs);
         }
 
-        if (_hour.length == 2 && _date.getMinutes() % parseInt(_hour, 10) === 0) {
+        if (_hour.length === 2 && _date.getMinutes() % parseInt(_hour, 10) === 0) {
             hits.push(rules.divide);
         }
 
@@ -128,60 +100,41 @@ var TimeScore = (function () {
     function ruleMomentIntime(hits) {
         var realHours = _date.getHours();
         var badges = badgeService.badges;
-        var badge = null;
-
-        if (_hour === "7" && _minute === "11")
-            badge = badges.seveneleven;
-        else if (_hour === "3" && _minute === "14")
-            badge = badges.pi;
-        else if (_hour === "10" && _minute === "40")
-            badge = badges.shakespeare;
-        else if ((_hour === "1" && _minute === "35") || _hour === "5" && _minute === "31")
-            badge = badges.prime;
-        else if (_hour === "8" && _minute === "25")
-            badge = badges.ellendun;
-        else if (_hour === "9" && _minute === "36")
-            badge = badges.denmark;
-        else if (_hour === "2" && _minute === "47")
-            badge = badges.twentyfourseven;
-        else if (_hour === "9" && _minute === "46")
-            badge = badges.scooter;
-        else if (realHours === 16 && _minute === "20")
-            badge = badges.youknow;
-        else if (realHours === 23 && _minute === "37")
-            badge = badges.redsea;
-        else if (realHours === 17 && _minute === "30")
-            badge = badges.beer;
-        else if (realHours === 4 && _minute === "55")
-            badge = badges.caitlin;
-        else if (realHours === 1 && _minute === "20")
-            badge = badges.martydeparts;
-        else if (realHours === 16 && _minute === "29")
-            badge = badges.martyarrives;
-        else if (_hour === "4" && _minute === "04")
-            badge = badges.notfound;
-        else if (realHours === 13 && _minute === "37")
-            badge = badges.hacker;
-        else if (_hour === "7" && _minute === "47")
-            badge = badges.jumbo;
-        else if (_hour === "11" && _minute === "22")
-            badge = badges.concordat;
-        else if (_hour === "12" && _minute === "06")
-            badge = badges.genghis;
-        else if (_hour === "12" && _minute === "59")
-            badge = badges.paris;
-        else if (_hour === "1" && _minute === "22")
-            badge = badges.hadrian;
-        else if (_hour === "2" && _minute === "50")
-            badge = badges.alarm;
-        else if (_hour === "6" && _minute === "07")
-            badge = badges.sixseven;
-        else if (realHours === 18 && _minute === "52")
-            badge = badges.seattle;
+        var key12 = `${_hour}:${_minute}`;
+        var key24 = `${realHours}:${_minute}`;
+        var badgeBy12Hour = {
+            "7:11": badges.seveneleven,
+            "3:14": badges.pi,
+            "10:40": badges.shakespeare,
+            "1:35": badges.prime,
+            "5:31": badges.prime,
+            "8:25": badges.ellendun,
+            "9:36": badges.denmark,
+            "2:47": badges.twentyfourseven,
+            "9:46": badges.scooter,
+            "4:04": badges.notfound,
+            "7:47": badges.jumbo,
+            "11:22": badges.concordat,
+            "12:06": badges.genghis,
+            "12:59": badges.paris,
+            "1:22": badges.hadrian,
+            "2:50": badges.alarm,
+            "6:07": badges.sixseven
+        };
+        var badgeBy24Hour = {
+            "16:20": badges.youknow,
+            "23:37": badges.redsea,
+            "17:30": badges.beer,
+            "4:55": badges.caitlin,
+            "1:20": badges.martydeparts,
+            "16:29": badges.martyarrives,
+            "13:37": badges.hacker,
+            "18:52": badges.seattle
+        };
+        var badge = badgeBy24Hour[key24] || badgeBy12Hour[key12] || null;
 
         if (badge) {
-            rule = rules.momentInTime;
-            rule.badge = badge;
+            var rule = Object.assign({}, rules.momentInTime, { badge: badge });
             hits.push(rule);
 
             if (!hightscoreService.isRecorded(_date))
