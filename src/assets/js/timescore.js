@@ -174,6 +174,8 @@ var TimeScore = (function () {
             badge = badges.hadrian;
         else if (_hour === "2" && _minute === "50")
             badge = badges.alarm;
+        else if (_hour === "6" && _minute === "07")
+            badge = badges.sixseven;
         else if (realHours === 18 && _minute === "52")
             badge = badges.seattle;
 

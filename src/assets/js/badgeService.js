@@ -170,6 +170,11 @@ var BadgeService = (function () {
             name: "The alarm clock was invented",
             description: "The alarm clock was invented",
         },
+        sixseven: {
+            id: "sixseven",
+            name: "¯\\_(ツ)_/¯",
+            description: "Siiiiix seeeeven?",
+        },
         seattle: {
             id: "seattle",
             name: "Rain City got its name",

@@ -170,6 +170,11 @@ var BadgeService = (function () {
             name: "The alarm clock was invented",
             description: "The alarm clock was invented",
         },
+        sixseven: {
+            id: "sixseven",
+            name: "¯\\_(ツ)_/¯",
+            description: "Siiiiix seeeeven?",
+        },
         seattle: {
             id: "seattle",
             name: "Rain City got its name",
@@ -439,6 +444,8 @@ var TimeScore = (function () {
             badge = badges.hadrian;
         else if (_hour === "2" && _minute === "50")
             badge = badges.alarm;
+        else if (_hour === "6" && _minute === "07")
+            badge = badges.sixseven;
         else if (realHours === 18 && _minute === "52")
             badge = badges.seattle;
 
