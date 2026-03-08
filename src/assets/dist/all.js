@@ -554,6 +554,7 @@ function calculate() {
 
     elmScore.innerHTML = points == 0 ? points : "<span class=\"active\">" + points + "</span>";
     if (points > 0) {
+        triggerCelebration();
         markEngaged();
         hs.recordScore(current, points);
         updateHighscore();
@@ -561,21 +562,68 @@ function calculate() {
     }
 }
 
+function triggerCelebration() {
+    document.body.className = document.body.className.replace(/\bcelebrate\b/g, "").replace(/\s{2,}/g, " ").trim();
+    document.body.className = (document.body.className ? document.body.className + " " : "") + "celebrate";
+
+    window.clearTimeout(triggerCelebration._timer);
+    triggerCelebration._timer = window.setTimeout(function () {
+        document.body.className = document.body.className.replace(/\bcelebrate\b/g, "").replace(/\s{2,}/g, " ").trim();
+    }, 500);
+}
+
 function readFlag(key) {
+    var value = null;
+
     try {
-        return window.localStorage.getItem(key) === "1";
+        value = window.localStorage.getItem(key);
     }
     catch (e) {
-        return false;
     }
+
+    if (value === null) {
+        value = readCookie(key);
+    }
+
+    return value === "1";
 }
 
 function writeFlag(key, value) {
+    var stringValue = value ? "1" : "0";
+
     try {
-        window.localStorage.setItem(key, value ? "1" : "0");
+        window.localStorage.setItem(key, stringValue);
     }
     catch (e) {
     }
+
+    writeCookie(key, stringValue, 3650);
+}
+
+function readCookie(name) {
+    var prefix = name + "=";
+    var pairs = document.cookie ? document.cookie.split(";") : [];
+
+    for (var i = 0; i < pairs.length; i++) {
+        var entry = pairs[i].replace(/^\s+/, "");
+        if (entry.indexOf(prefix) === 0) {
+            return entry.substring(prefix.length);
+        }
+    }
+
+    return null;
+}
+
+function writeCookie(name, value, days) {
+    var expires = "";
+
+    if (typeof days === "number") {
+        var date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+
+    document.cookie = name + "=" + value + expires + "; path=/; SameSite=Lax";
 }
 
 function isStandalone() {
@@ -702,7 +750,17 @@ reset.addEventListener("click", function (e) {
     e.preventDefault();
 
     if (confirm("This will reset the score. Are you sure?")) {
-        localStorage.clear();
+        var helpSeen = readFlag(helpSeenKey);
+        var installDismissed = readFlag(installDismissedKey);
+
+        try {
+            localStorage.clear();
+        }
+        catch (err) {
+        }
+
+        writeFlag(helpSeenKey, helpSeen);
+        writeFlag(installDismissedKey, installDismissed);
         updateHighscore();
         updateBadges();
     }

@@ -12,10 +12,12 @@ html {
 body {
     font: 16px/1.5 "Trebuchet MS", Helvetica georgia, sans-serif;
     text-align: center;
-    background: black;
+    background: radial-gradient(circle at 20% 20%, #1f233f 0%, #0d1020 45%, #050608 100%);
+    background-attachment: fixed;
     color: #dfdfdf;
     margin: 1em 0 50px;
     min-width: 280px;
+    transition: background 350ms ease, color 250ms ease;
     -ms-touch-action: manipulation;
     touch-action: manipulation;
     -moz-user-select: none;
@@ -24,11 +26,36 @@ body {
     user-select: none;
 }
 
+body:before {
+    content: "";
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    pointer-events: none;
+    background: radial-gradient(circle at 70% 10%, rgba(98, 210, 255, .13), transparent 45%), radial-gradient(circle at 15% 80%, rgba(238, 192, 77, .1), transparent 40%);
+    animation: skyPulse 8s ease-in-out infinite;
+}
+
+@keyframes skyPulse {
+    0%,
+    100% {
+        opacity: .55;
+    }
+
+    50% {
+        opacity: .9;
+    }
+}
+
 #time {
     display: inline-block;
     font-size: 6em;
     margin-top: .1em;
     line-height: 1em;
+    color: #ffffff;
+    text-shadow: 0 0 14px rgba(165, 225, 255, .35), 0 0 30px rgba(238, 192, 77, .14);
 }
 
 #timescore {
@@ -40,13 +67,15 @@ body {
 }
 
     #quickActions button {
-        border: 1px solid #666;
-        background: #121212;
+        border: 1px solid #3d4b68;
+        background: linear-gradient(180deg, #182033, #0d111b);
         color: #dfdfdf;
         padding: .45em .8em;
         margin: 0 .2em;
         font-size: .95em;
-        border-radius: 3px;
+        border-radius: 5px;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08), 0 3px 10px rgba(0, 0, 0, .25);
+        transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
     }
 
         #quickActions button:hover,
@@ -54,6 +83,8 @@ body {
             border-color: #eec04d;
             color: #eec04d;
             outline: 0;
+            transform: translateY(-1px);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, .12), 0 5px 14px rgba(0, 0, 0, .35);
         }
 
 p {
@@ -85,6 +116,7 @@ ul {
 
 .active {
     color: #eec04d;
+    text-shadow: 0 0 12px rgba(238, 192, 77, .45);
 }
 
 #highscore {
@@ -164,13 +196,19 @@ footer {
         }
 
 #meter {
-    height: 2px;
+    height: 4px;
     width: 0;
-    background: linear-gradient(to right, transparent, #919191);
+    border-radius: 6px;
+    background: linear-gradient(to right, #3cb5ff, #eec04d);
+    box-shadow: 0 0 10px rgba(60, 181, 255, .45);
 }
 
 #timeContainer {
     display: inline-block;
+    padding: .2em .6em;
+    border-radius: 12px;
+    background: rgba(9, 11, 18, .45);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, .35), inset 0 1px 0 rgba(255, 255, 255, .05);
 }
 
 .modal {
@@ -225,4 +263,27 @@ footer {
 
 .hidden {
     display: none;
+}
+
+body.celebrate #timeContainer {
+    animation: celebratePulse 450ms ease;
+}
+
+body.celebrate #time {
+    color: #fff8d7;
+    text-shadow: 0 0 16px rgba(255, 220, 110, .55), 0 0 34px rgba(255, 152, 65, .25);
+}
+
+@keyframes celebratePulse {
+    0% {
+        transform: scale(1);
+    }
+
+    35% {
+        transform: scale(1.04);
+    }
+
+    100% {
+        transform: scale(1);
+    }
 }
