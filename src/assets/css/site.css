@@ -7,7 +7,6 @@
 html {
     min-height: 100%;
     position: relative;
-    background: #050608;
 }
 
 body {
@@ -16,9 +15,10 @@ body {
     background: radial-gradient(circle at 20% 20%, #1f233f 0%, #0d1020 45%, #050608 100%);
     background-attachment: fixed;
     color: #dfdfdf;
-    margin: 1em 0 50px;
-    padding-top: env(safe-area-inset-top);
-    padding-top: constant(safe-area-inset-top);
+    margin: 0 0 50px;
+    padding-top: 1em;
+    padding-top: calc(1em + constant(safe-area-inset-top));
+    padding-top: calc(1em + env(safe-area-inset-top));
     padding-left: env(safe-area-inset-left);
     padding-left: constant(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
@@ -214,10 +214,10 @@ footer {
 
 #timeContainer {
     display: inline-block;
-    padding: .2em .6em;
-    border-radius: 12px;
-    background: rgba(9, 11, 18, .45);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, .35), inset 0 1px 0 rgba(255, 255, 255, .05);
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
 }
 
 .modal {
