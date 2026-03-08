@@ -550,9 +550,21 @@ var elmTime = document.getElementById("time"),
     reset = document.getElementById("reset"),
     elmBadges = document.getElementById("badges"),
     elmMeter = document.getElementById("meter"),
+    elmHowToPlay = document.getElementById("howToPlay"),
+    elmInstallApp = document.getElementById("installApp"),
+    elmHelpModal = document.getElementById("helpModal"),
+    elmInstallModal = document.getElementById("installModal"),
+    elmCloseHelp = document.getElementById("closeHelp"),
+    elmCloseInstall = document.getElementById("closeInstall"),
     ts = new TimeScore(),
     hs = new HighscoreService(),
     actives = [];
+
+var helpSeenKey = "timescoreHelpSeen",
+    installDismissedKey = "timescoreInstallDismissed",
+    deferredInstallPrompt = null,
+    hasEngaged = false,
+    isIOS = /iphone|ipad|ipod/i.test(window.navigator.userAgent);
 
 var current = new Date();
 //current = new Date(2015, 4, 16, 4, 16);
@@ -573,7 +585,7 @@ function calculate() {
         points += score.points;
 
         for (var a = 0; a < lis.length; a++) {
-            li = lis[a];
+            var li = lis[a];
 
             if (score.points > 0 && li.innerHTML.lastIndexOf(score.rule) > -1) {
                 li.className = "active";
@@ -585,10 +597,63 @@ function calculate() {
 
     elmScore.innerHTML = points == 0 ? points : "<span class=\"active\">" + points + "</span>";
     if (points > 0) {
+        markEngaged();
         hs.recordScore(current, points);
         updateHighscore();
         updateBadges();
     }
+}
+
+function readFlag(key) {
+    try {
+        return window.localStorage.getItem(key) === "1";
+    }
+    catch (e) {
+        return false;
+    }
+}
+
+function writeFlag(key, value) {
+    try {
+        window.localStorage.setItem(key, value ? "1" : "0");
+    }
+    catch (e) {
+    }
+}
+
+function isStandalone() {
+    var displayMode = window.matchMedia && window.matchMedia("(display-mode: standalone)").matches;
+    return !!displayMode || window.navigator.standalone === true;
+}
+
+function setModalVisible(modal, show) {
+    if (!modal)
+        return;
+
+    modal.className = show ? "modal" : "modal hidden";
+}
+
+function markEngaged() {
+    if (hasEngaged)
+        return;
+
+    hasEngaged = true;
+    updateInstallButton();
+}
+
+function updateInstallButton() {
+    if (!elmInstallApp)
+        return;
+
+    var shouldShow = hasEngaged && !isStandalone() && !readFlag(installDismissedKey) && (isIOS || !!deferredInstallPrompt);
+    elmInstallApp.style.display = shouldShow ? "inline-block" : "none";
+}
+
+function maybeShowHelpOnFirstVisit() {
+    if (readFlag(helpSeenKey))
+        return;
+
+    setModalVisible(elmHelpModal, true);
 }
 
 function clearResults() {
@@ -654,6 +719,8 @@ showRules();
 calculate();
 updateHighscore();
 updateBadges();
+setTimeout(markEngaged, 45000);
+setTimeout(maybeShowHelpOnFirstVisit, 1200);
 
 setInterval(function () {
 
@@ -678,6 +745,60 @@ reset.addEventListener("click", function (e) {
         updateHighscore();
         updateBadges();
     }
+});
+
+if (elmHowToPlay) {
+    elmHowToPlay.addEventListener("click", function () {
+        setModalVisible(elmHelpModal, true);
+    });
+}
+
+if (elmCloseHelp) {
+    elmCloseHelp.addEventListener("click", function () {
+        writeFlag(helpSeenKey, true);
+        setModalVisible(elmHelpModal, false);
+    });
+}
+
+if (elmInstallApp) {
+    elmInstallApp.addEventListener("click", function () {
+        if (deferredInstallPrompt) {
+            deferredInstallPrompt.prompt();
+            deferredInstallPrompt.userChoice.then(function (choice) {
+                if (!choice || choice.outcome !== "accepted") {
+                    writeFlag(installDismissedKey, true);
+                }
+
+                deferredInstallPrompt = null;
+                updateInstallButton();
+            });
+            return;
+        }
+
+        if (isIOS) {
+            setModalVisible(elmInstallModal, true);
+        }
+    });
+}
+
+if (elmCloseInstall) {
+    elmCloseInstall.addEventListener("click", function () {
+        writeFlag(installDismissedKey, true);
+        setModalVisible(elmInstallModal, false);
+        updateInstallButton();
+    });
+}
+
+window.addEventListener("beforeinstallprompt", function (e) {
+    e.preventDefault();
+    deferredInstallPrompt = e;
+    updateInstallButton();
+});
+
+window.addEventListener("appinstalled", function () {
+    writeFlag(installDismissedKey, true);
+    deferredInstallPrompt = null;
+    updateInstallButton();
 });
 
 document.addEventListener("touchstart", function () { });
