@@ -7,13 +7,14 @@
 html {
     min-height: 100%;
     position: relative;
+    background: radial-gradient(circle at 20% 20%, #1f233f 0%, #0d1020 45%, #050608 100%);
+    background-attachment: fixed;
 }
 
 body {
     font: 16px/1.5 "Trebuchet MS", Helvetica georgia, sans-serif;
     text-align: center;
-    background: radial-gradient(circle at 20% 20%, #1f233f 0%, #0d1020 45%, #050608 100%);
-    background-attachment: fixed;
+    background: transparent;
     color: #dfdfdf;
     margin: 0 0 50px;
     padding-top: 1em;
