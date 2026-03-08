@@ -1,9 +1,13 @@
-var CACHE_NAME = "timescore-shell-v1";
+var CACHE_NAME = "timescore-shell-v2";
 var APP_SHELL = [
     "/",
     "/index.html",
     "/assets/css/site.css",
-    "/assets/dist/all.js"
+    "/assets/js/badgeService.js",
+    "/assets/js/highscoreService.js",
+    "/assets/js/timescore.js",
+    "/assets/js/dom.js",
+    "/assets/js/appcacheHandler.js"
 ];
 
 self.addEventListener("install", function (event) {

@@ -1,0 +1,19 @@
+CACHE MANIFEST
+# Time: Sun Mar 08 2026 14:34:25 GMT-0700 (Pacific Daylight Time)
+
+
+CACHE:
+/assets/dist/all.js
+/assets/css/site.css
+/assets/img/badge.svg
+/assets/img/facebook.svg
+/assets/img/googleplus.svg
+/assets/img/twitter.svg
+
+
+NETWORK:
+*
+
+
+SETTINGS:
+prefer-online
