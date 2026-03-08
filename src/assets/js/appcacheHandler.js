@@ -1,36 +1,53 @@
 (function (undefined) {
 
-    var lastCheck = new Date();
-    //lastCheck = new Date("2015-04-19T12:00");
-    var checkInterval = (1000 * 60 * 60 /* 1 hour*/) * 2;
+    if (!("serviceWorker" in navigator))
+        return;
 
-    function checkForUpdate() {
-        if (!window.applicationCache)
+    var refreshing = false;
+
+    function promptForRefresh(worker) {
+        if (!worker)
             return;
 
-        if (window.applicationCache.status === window.applicationCache.UNCACHED)
-            return;
-
-        window.applicationCache.update();
-        lastCheck = new Date();
+        if (confirm("A new version is available. Reload now?")) {
+            worker.postMessage({ type: "SKIP_WAITING" });
+        }
     }
 
-    window.applicationCache.addEventListener('updateready', function (e) {
-        window.location.reload();
-    }, false);
+    function watchForUpdate(registration) {
+        if (!registration)
+            return;
+
+        if (registration.waiting) {
+            promptForRefresh(registration.waiting);
+        }
+
+        registration.addEventListener("updatefound", function () {
+            var newWorker = registration.installing;
+            if (!newWorker)
+                return;
+
+            newWorker.addEventListener("statechange", function () {
+                if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
+                    promptForRefresh(newWorker);
+                }
+            });
+        });
+    }
 
     window.addEventListener("load", function () {
-        checkForUpdate();
+        navigator.serviceWorker.register("/service-worker.js").then(function (registration) {
+            watchForUpdate(registration);
+            registration.update();
+        });
     });
 
-    document.addEventListener("visibilitychange", function () {
-        if (!document.hidden) {
-            checkForUpdate();
-        }
-    });
+    navigator.serviceWorker.addEventListener("controllerchange", function () {
+        if (refreshing)
+            return;
 
-    setInterval(function () {
-        checkForUpdate();
-    }, checkInterval)
+        refreshing = true;
+        window.location.reload();
+    });
 
 })(undefined);
