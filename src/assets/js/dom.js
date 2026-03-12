@@ -261,18 +261,23 @@ function initializeTimeRing() {
 
     var radius = parseFloat(elmRingProgress.getAttribute("r")) || 106;
     ringCircumference = 2 * Math.PI * radius;
-    elmRingProgress.style.strokeDasharray = ringCircumference;
-    elmRingProgress.style.strokeDashoffset = ringCircumference;
+    elmRingProgress.style.strokeDasharray = "0 " + ringCircumference;
+    elmRingProgress.style.strokeDashoffset = 0;
 }
 
-function setSecondProgress(seconds) {
-    var percent = Math.max(0, Math.min(seconds / 60, 1));
+function setSecondProgress(seconds, minutes) {
+    var secondPercent = Math.max(0, Math.min(seconds / 60, 1));
+    var isRemovingBlue = (minutes % 2) === 1;
+    var ringPercent = isRemovingBlue ? (1 - secondPercent) : secondPercent;
+    var visibleLength = ringCircumference * ringPercent;
+    var dashOffset = isRemovingBlue ? -(ringCircumference * secondPercent) : 0;
 
     if (elmMeter)
-        elmMeter.style.width = (percent * 100) + "%";
+        elmMeter.style.width = (secondPercent * 100) + "%";
 
     if (elmRingProgress && ringCircumference > 0) {
-        elmRingProgress.style.strokeDashoffset = (ringCircumference * (1 - percent));
+        elmRingProgress.style.strokeDasharray = visibleLength + " " + ringCircumference;
+        elmRingProgress.style.strokeDashoffset = dashOffset;
     }
 }
 
@@ -280,10 +285,13 @@ function startRingAnimation() {
     function frame() {
         var now = new Date();
         var seconds = now.getSeconds() + (now.getMilliseconds() / 1000);
-        setSecondProgress(seconds);
+        setSecondProgress(seconds, now.getMinutes());
         window.requestAnimationFrame(frame);
     }
 
+    var now = new Date();
+    var seconds = now.getSeconds() + (now.getMilliseconds() / 1000);
+    setSecondProgress(seconds, now.getMinutes());
     window.requestAnimationFrame(frame);
 }
 
