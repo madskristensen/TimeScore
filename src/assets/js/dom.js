@@ -9,6 +9,8 @@ var elmTime = document.getElementById("time"),
     elmBadges = document.getElementById("badges"),
     elmMeter = document.getElementById("meter"),
     elmRingProgress = document.getElementById("ringProgress"),
+    elmRingHead = document.getElementById("ringHead"),
+    elmRingHeadTrail = document.getElementById("ringHeadTrail"),
     elmHowToPlay = document.getElementById("howToPlay"),
     elmInstallApp = document.getElementById("installApp"),
     elmHelpModal = document.getElementById("helpModal"),
@@ -28,13 +30,23 @@ var elmTime = document.getElementById("time"),
     challengeService = null,
     ruleElementsById = {},
     elmScoreToast = null,
-    ringCircumference = 0;
+    ringCircumference = 0,
+    ringRadius = 106,
+    ringCenter = 130,
+    ringHeadX = ringCenter + ringRadius,
+    ringHeadY = ringCenter,
+    ringTrailX = ringCenter + ringRadius,
+    ringTrailY = ringCenter,
+    lastWholeSecond = null;
 
 var helpSeenKey = "timescoreHelpSeen",
     installDismissedKey = "timescoreInstallDismissed",
     deferredInstallPrompt = null,
     hasEngaged = false,
     isIOS = /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+
+var reducedMotionQuery = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null,
+    prefersReducedMotion = reducedMotionQuery ? reducedMotionQuery.matches : false;
 
 var current = new Date();
 //current = new Date(2015, 4, 16, 4, 16);
@@ -259,40 +271,101 @@ function initializeTimeRing() {
     if (!elmRingProgress)
         return;
 
-    var radius = parseFloat(elmRingProgress.getAttribute("r")) || 106;
-    ringCircumference = 2 * Math.PI * radius;
+    ringRadius = parseFloat(elmRingProgress.getAttribute("r")) || 106;
+    ringCircumference = 2 * Math.PI * ringRadius;
     elmRingProgress.style.strokeDasharray = "0 " + ringCircumference;
     elmRingProgress.style.strokeDashoffset = 0;
+
+    if (elmRingHead) {
+        elmRingHead.setAttribute("cx", ringCenter + ringRadius);
+        elmRingHead.setAttribute("cy", ringCenter);
+    }
+
+    if (elmRingHeadTrail) {
+        elmRingHeadTrail.setAttribute("cx", ringCenter + ringRadius);
+        elmRingHeadTrail.setAttribute("cy", ringCenter);
+    }
 }
 
-function setSecondProgress(seconds, minutes) {
+function setSecondProgress(seconds) {
     var secondPercent = Math.max(0, Math.min(seconds / 60, 1));
-    var isRemovingBlue = (minutes % 2) === 1;
-    var ringPercent = isRemovingBlue ? (1 - secondPercent) : secondPercent;
-    var visibleLength = ringCircumference * ringPercent;
-    var dashOffset = isRemovingBlue ? -(ringCircumference * secondPercent) : 0;
+    var visibleLength = ringCircumference * secondPercent;
+    var angle = secondPercent * (2 * Math.PI);
+    ringHeadX = ringCenter + Math.cos(angle) * ringRadius;
+    ringHeadY = ringCenter + Math.sin(angle) * ringRadius;
+
+    if (prefersReducedMotion) {
+        ringTrailX = ringHeadX;
+        ringTrailY = ringHeadY;
+    } else {
+        ringTrailX += (ringHeadX - ringTrailX) * 0.2;
+        ringTrailY += (ringHeadY - ringTrailY) * 0.2;
+    }
 
     if (elmMeter)
         elmMeter.style.width = (secondPercent * 100) + "%";
 
     if (elmRingProgress && ringCircumference > 0) {
         elmRingProgress.style.strokeDasharray = visibleLength + " " + ringCircumference;
-        elmRingProgress.style.strokeDashoffset = dashOffset;
+        elmRingProgress.style.strokeDashoffset = 0;
     }
+
+    if (elmRingHeadTrail) {
+        elmRingHeadTrail.setAttribute("cx", ringTrailX);
+        elmRingHeadTrail.setAttribute("cy", ringTrailY);
+        elmRingHeadTrail.style.opacity = secondPercent > 0.003 ? "0.65" : "0.25";
+    }
+
+    if (elmRingHead) {
+        elmRingHead.setAttribute("cx", ringHeadX);
+        elmRingHead.setAttribute("cy", ringHeadY);
+        elmRingHead.style.opacity = secondPercent > 0.003 ? "0.95" : "0.35";
+    }
+}
+
+function triggerMinutePulse() {
+    if (!elmTimeContainer)
+        return;
+
+    elmTimeContainer.className = elmTimeContainer.className.replace(/\bminutePulse\b/g, "").replace(/\s{2,}/g, " ").trim();
+    elmTimeContainer.className = (elmTimeContainer.className ? elmTimeContainer.className + " " : "") + "minutePulse";
+
+    window.clearTimeout(triggerMinutePulse._timer);
+    triggerMinutePulse._timer = window.setTimeout(function () {
+        elmTimeContainer.className = elmTimeContainer.className.replace(/\bminutePulse\b/g, "").replace(/\s{2,}/g, " ").trim();
+    }, 360);
 }
 
 function startRingAnimation() {
     function frame() {
         var now = new Date();
-        var seconds = now.getSeconds() + (now.getMilliseconds() / 1000);
-        setSecondProgress(seconds, now.getMinutes());
-        window.requestAnimationFrame(frame);
+        var seconds = prefersReducedMotion ? now.getSeconds() : now.getSeconds() + (now.getMilliseconds() / 1000);
+        var wholeSeconds = now.getSeconds();
+
+        if (!prefersReducedMotion && lastWholeSecond !== null && wholeSeconds < lastWholeSecond) {
+            triggerMinutePulse();
+        }
+
+        lastWholeSecond = wholeSeconds;
+        setSecondProgress(seconds);
+
+        if (prefersReducedMotion) {
+            window.setTimeout(frame, 250);
+        } else {
+            window.requestAnimationFrame(frame);
+        }
     }
 
     var now = new Date();
-    var seconds = now.getSeconds() + (now.getMilliseconds() / 1000);
-    setSecondProgress(seconds, now.getMinutes());
-    window.requestAnimationFrame(frame);
+    var seconds = prefersReducedMotion ? now.getSeconds() : now.getSeconds() + (now.getMilliseconds() / 1000);
+    lastWholeSecond = now.getSeconds();
+    setSecondProgress(seconds);
+
+    if (prefersReducedMotion) {
+        window.setTimeout(frame, 250);
+    } else {
+        window.requestAnimationFrame(frame);
+    }
 }
 
 function updateBadges() {
@@ -399,6 +472,20 @@ function renderChallenge(challenge) {
     } else {
         elmChallengeStatus.textContent = challenge.progress + " / " + challenge.target;
         elmChallenge.className = "";
+    }
+}
+
+if (reducedMotionQuery) {
+    var onReducedMotionChange = function (e) {
+        prefersReducedMotion = !!e.matches;
+        ringTrailX = ringHeadX;
+        ringTrailY = ringHeadY;
+    };
+
+    if (typeof reducedMotionQuery.addEventListener === "function") {
+        reducedMotionQuery.addEventListener("change", onReducedMotionChange);
+    } else if (typeof reducedMotionQuery.addListener === "function") {
+        reducedMotionQuery.addListener(onReducedMotionChange);
     }
 }
 

@@ -317,6 +317,16 @@ footer {
     box-shadow: none;
 }
 
+#timeContainer:before {
+    content: "";
+    position: absolute;
+    inset: 16%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(126, 214, 255, .2) 0%, rgba(75, 121, 220, .08) 40%, rgba(0, 0, 0, 0) 72%);
+    pointer-events: none;
+    z-index: 1;
+}
+
 #timeRing {
     position: absolute;
     inset: 0;
@@ -327,16 +337,100 @@ footer {
 
 #timeRing .ringTrack {
     fill: none;
-    stroke: rgba(120, 146, 197, .2);
+    stroke: rgba(120, 146, 197, .24);
     stroke-width: 6;
+    filter: drop-shadow(0 0 4px rgba(77, 104, 162, .25));
+}
+
+#timeRing .ringTicksMinor,
+#timeRing .ringTicksMajor {
+    fill: none;
+    stroke-linecap: round;
+}
+
+#timeRing .ringTicksMinor {
+    stroke: rgba(167, 203, 255, .22);
+    stroke-width: 1.5;
+    stroke-dasharray: 1.6 9.5;
+}
+
+#timeRing .ringTicksMajor {
+    stroke: rgba(199, 226, 255, .34);
+    stroke-width: 2;
+    stroke-dasharray: 4.2 51.3;
+}
+
+#timeRing .ringHalo {
+    fill: none;
+    stroke: rgba(126, 217, 255, .25);
+    stroke-width: 6;
+    opacity: .28;
+    filter: blur(2px);
 }
 
 #timeRing .ringProgress {
     fill: none;
-    stroke: #60c4ff;
+    stroke: url(#ringGradient);
     stroke-width: 6;
     stroke-linecap: round;
-    filter: drop-shadow(0 0 6px rgba(96, 196, 255, .55));
+    filter: drop-shadow(0 0 6px rgba(96, 196, 255, .55)) drop-shadow(0 0 14px rgba(96, 196, 255, .28));
+}
+
+#timeRing .ringHead {
+    fill: #d8f4ff;
+    filter: drop-shadow(0 0 8px rgba(128, 224, 255, .95));
+    transition: opacity 120ms ease;
+    opacity: .95;
+}
+
+#timeRing .ringHeadTrail {
+    fill: rgba(156, 230, 255, .35);
+    filter: blur(2.4px);
+    opacity: .65;
+}
+
+#timeContainer.minutePulse #timeRing .ringProgress {
+    animation: ringPulse 320ms ease-out;
+}
+
+#timeContainer.minutePulse #timeRing .ringHead {
+    animation: ringHeadPulse 320ms ease-out;
+}
+
+@keyframes ringPulse {
+    0% {
+        filter: drop-shadow(0 0 7px rgba(96, 196, 255, .7)) drop-shadow(0 0 18px rgba(130, 225, 255, .55));
+    }
+
+    100% {
+        filter: drop-shadow(0 0 6px rgba(96, 196, 255, .55)) drop-shadow(0 0 14px rgba(96, 196, 255, .28));
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #timeRing .ringProgress,
+    #timeRing .ringHead,
+    #timeRing .ringHeadTrail {
+        transition: none;
+        animation: none !important;
+    }
+
+    #timeContainer.minutePulse #timeRing .ringProgress,
+    #timeContainer.minutePulse #timeRing .ringHead {
+        animation: none !important;
+    }
+}
+
+@keyframes ringHeadPulse {
+    0% {
+        transform: scale(1.35);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: .95;
+    }
 }
 
 #scoreToast {
