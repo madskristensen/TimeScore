@@ -57,7 +57,6 @@
         </p>
 
         <div id="quickActions">
-            <button id="howToPlay" type="button">How to play</button>
             <button id="installApp" type="button" style="display:none">Save to home screen</button>
         </div>
 
@@ -68,8 +67,28 @@
             <span id="weekly">This week: <span>0</span></span>
         </div>
 
+        <div id="streak">
+            <span id="streakIcon">🔥</span>
+            <span id="streakCount">0</span> day streak
+            <span id="streakSave" class="hidden" title="Streak save available this week">🛡️</span>
+        </div>
+
+        <div id="challenge">
+            <h3>Daily Challenge</h3>
+            <p id="challengeDesc">Loading...</p>
+            <div id="challengeProgress">
+                <div id="challengeBar"></div>
+            </div>
+            <span id="challengeStatus"></span>
+        </div>
+
         <div id="badges">
             <h2>Badges</h2>
+            <div id="badgeLegend">
+                <span class="legendCommon">Common</span>
+                <span class="legendRare">Rare</span>
+                <span class="legendLegendary">Legendary</span>
+            </div>
         </div>
 
         <div id="helpModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
@@ -101,6 +120,7 @@
 
     <footer>
         <a href="#" id="reset">Reset score</a> |
+        <button id="howToPlay" type="button" class="footerButton">How to play</button> |
         Share
         <a href="http://twitter.com/intent/tweet?text=Time+Score+-+The+most+addictive+online+temporal+game+http%3a%2f%2fgamethetime.com" target="_blank"><img src="assets/img/twitter.svg" width="16" height="16" alt="Twitter" /></a>
         <a href="https://www.facebook.com/sharer/sharer.php?u=http%3a%2f%2fgamethetime.com" target="_blank"><img src="/assets/img/facebook.svg" width="16" height="16" alt="Facebook" /></a>
@@ -108,6 +128,8 @@
 
     <script src="assets/js/badgeService.js"></script>
     <script src="assets/js/highscoreService.js"></script>
+    <script src="assets/js/streakService.js"></script>
+    <script src="assets/js/dailyChallengeService.js"></script>
     <script src="assets/js/timescore.js"></script>
     <script src="assets/js/dom.js"></script>
     <script src="assets/js/serviceWorkerHandler.js"></script>

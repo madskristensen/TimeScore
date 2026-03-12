@@ -4,6 +4,8 @@
 
 var elmTime = document.getElementById("time"),
     elmScore = document.getElementById("score"),
+    elmTimeScore = document.getElementById("timescore"),
+    elmTimeContainer = document.getElementById("timeContainer"),
     rules = document.getElementById("rules"),
     reset = document.getElementById("reset"),
     elmBadges = document.getElementById("badges"),
@@ -14,11 +16,20 @@ var elmTime = document.getElementById("time"),
     elmInstallModal = document.getElementById("installModal"),
     elmCloseHelp = document.getElementById("closeHelp"),
     elmCloseInstall = document.getElementById("closeInstall"),
+    elmStreakCount = document.getElementById("streakCount"),
+    elmStreakSave = document.getElementById("streakSave"),
+    elmChallenge = document.getElementById("challenge"),
+    elmChallengeDesc = document.getElementById("challengeDesc"),
+    elmChallengeBar = document.getElementById("challengeBar"),
+    elmChallengeStatus = document.getElementById("challengeStatus"),
     ts = new TimeScore(),
     hs = new HighscoreService(),
     badgeService = new BadgeService(),
+    streakService = new StreakService(),
+    challengeService = new DailyChallengeService(),
     actives = [],
-    ruleElementsById = {};
+    ruleElementsById = {},
+    elmScoreToast = null;
 
 var helpSeenKey = "timescoreHelpSeen",
     installDismissedKey = "timescoreInstallDismissed",
@@ -46,20 +57,49 @@ function calculate() {
         if (score.points > 0) {
             var li = ruleElementsById[score.id];
             if (li) {
-                li.className = "active";
+                li.className = "ruleRow active";
                 actives.push(li);
             }
         }
     }
 
-    elmScore.innerHTML = points == 0 ? points : "<span class=\"active\">" + points + "</span>";
+    setMinuteScore(points);
+
     if (points > 0) {
         triggerCelebration();
+        showScoreToast(points);
         markEngaged();
         hs.recordScore(current, points);
         updateHighscore();
         updateBadges();
+        updateChallenge(result.score, points);
     }
+}
+
+function initializeScoreFeedback() {
+    if (!elmTimeContainer)
+        return;
+
+    elmScoreToast = document.createElement("span");
+    elmScoreToast.id = "scoreToast";
+    elmScoreToast.className = "scoreToast";
+    elmTimeContainer.appendChild(elmScoreToast);
+}
+
+function setMinuteScore(points) {
+    elmScore.textContent = points;
+    elmScore.className = points > 0 ? "scoreValue active" : "scoreValue";
+    elmTimeScore.className = points > 0 ? "scoreVisible" : "";
+}
+
+function showScoreToast(points) {
+    if (!elmScoreToast)
+        return;
+
+    elmScoreToast.textContent = "+" + points;
+    elmScoreToast.className = "scoreToast";
+    void elmScoreToast.offsetWidth;
+    elmScoreToast.className = "scoreToast show";
 }
 
 function triggerCelebration() {
@@ -165,7 +205,7 @@ function maybeShowHelpOnFirstVisit() {
 function clearResults() {
 
     for (var i = 0; i < actives.length; i++) {
-        actives[i].className = "";
+        actives[i].className = "ruleRow";
     }
 
     actives = [];
@@ -182,13 +222,16 @@ function showRules() {
     for (var name in ts.rules) {
         var rule = ts.rules[name];
 
-        var point = rule.points === 1 ? "point" : "points";
-
         var li = document.createElement("li");
+        li.className = "ruleRow";
         var pointSpan = document.createElement("span");
-        pointSpan.textContent = `${rule.points} ${point}`;
+        pointSpan.className = "rulePoints";
+        pointSpan.textContent = `${rule.points}pt`;
         li.appendChild(pointSpan);
-        li.appendChild(document.createTextNode(` - ${rule.rule}`));
+        var textSpan = document.createElement("span");
+        textSpan.className = "ruleText";
+        textSpan.textContent = rule.rule;
+        li.appendChild(textSpan);
         li.id = rule.id;
         ruleElementsById[rule.id] = li;
 
@@ -201,11 +244,11 @@ function updateBadges() {
     var badges = badgeService.getBadges();
     var badgesText = badges.length === 1 ? " badge" : " badges";
 
-    elmBadges.firstElementChild.textContent = badges.length + badgesText;
-    elmBadges.innerHTML = elmBadges.firstElementChild.outerHTML;
+    var title = elmBadges.querySelector("h2");
+    var legend = document.getElementById("badgeLegend");
 
-    if (elmBadges.childElementCount === badges.length + 1)
-        return;
+    title.textContent = badges.length + badgesText;
+    elmBadges.innerHTML = title.outerHTML + (legend ? legend.outerHTML : "");
 
     for (var i = 0; i < badges.length; i++) {
         var badge = badges[i];
@@ -214,6 +257,7 @@ function updateBadges() {
         img.setAttribute("aria-label", badge.description);
         img.id = badge.id;
         img.tabIndex = 1;
+        img.className = "rarity-" + (badge.rarity || "common");
 
         if (badge.level > 1) {
             var span = document.createElement("span");
@@ -225,10 +269,49 @@ function updateBadges() {
     }
 }
 
+function updateStreak() {
+    streakService.recordVisit(new Date());
+    var count = streakService.getStreak();
+    elmStreakCount.textContent = count;
+
+    if (streakService.hasStreakSave()) {
+        elmStreakSave.className = "";
+    } else {
+        elmStreakSave.className = "hidden";
+    }
+}
+
+function initChallenge() {
+    var challenge = challengeService.getChallenge(current);
+    renderChallenge(challenge);
+}
+
+function updateChallenge(hits, totalPoints) {
+    var challenge = challengeService.recordProgress(current, hits, totalPoints);
+    renderChallenge(challenge);
+}
+
+function renderChallenge(challenge) {
+    elmChallengeDesc.textContent = challenge.description;
+    var pct = Math.min(challenge.progress / challenge.target * 100, 100);
+    elmChallengeBar.style.width = pct + "%";
+
+    if (challenge.completed) {
+        elmChallengeStatus.textContent = "\u2714 Completed!";
+        elmChallenge.className = "challengeComplete";
+    } else {
+        elmChallengeStatus.textContent = challenge.progress + " / " + challenge.target;
+        elmChallenge.className = "";
+    }
+}
+
+initializeScoreFeedback();
 showRules();
 calculate();
 updateHighscore();
 updateBadges();
+updateStreak();
+initChallenge();
 setTimeout(markEngaged, 45000);
 setTimeout(maybeShowHelpOnFirstVisit, 1200);
 
@@ -253,6 +336,10 @@ reset.addEventListener("click", function (e) {
     if (confirm("This will reset the score. Are you sure?")) {
         var helpSeen = readFlag(helpSeenKey);
         var installDismissed = readFlag(installDismissedKey);
+        var streakCount = localStorage.getItem("streak:count");
+        var streakLast = localStorage.getItem("streak:lastVisit");
+        var streakSave = localStorage.getItem("streak:saveAvailable");
+        var streakSaveWeek = localStorage.getItem("streak:saveWeek");
 
         try {
             localStorage.clear();
@@ -262,6 +349,12 @@ reset.addEventListener("click", function (e) {
 
         writeFlag(helpSeenKey, helpSeen);
         writeFlag(installDismissedKey, installDismissed);
+
+        if (streakCount) localStorage.setItem("streak:count", streakCount);
+        if (streakLast) localStorage.setItem("streak:lastVisit", streakLast);
+        if (streakSave) localStorage.setItem("streak:saveAvailable", streakSave);
+        if (streakSaveWeek) localStorage.setItem("streak:saveWeek", streakSaveWeek);
+
         updateHighscore();
         updateBadges();
     }

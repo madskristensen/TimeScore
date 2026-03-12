@@ -104,31 +104,33 @@ var TimeScore = (function () {
         var key24 = `${realHours}:${_minute}`;
         var badgeBy12Hour = {
             "7:11": badges.seveneleven,
+            "1:23": badges.counting,
             "3:14": badges.pi,
+            "4:20": badges.fourtwenty,
+            "5:00": badges.beer,
+            "8:08": badges.lucky,
+            "9:41": badges.keynote,
+            "10:10": badges.watchface,
+            "11:11": badges.makeawish,
             "10:40": badges.shakespeare,
             "1:35": badges.prime,
             "5:31": badges.prime,
-            "8:25": badges.ellendun,
-            "9:36": badges.denmark,
             "2:47": badges.twentyfourseven,
             "9:46": badges.scooter,
             "4:04": badges.notfound,
             "7:47": badges.jumbo,
-            "11:22": badges.concordat,
-            "12:06": badges.genghis,
-            "12:59": badges.paris,
-            "1:22": badges.hadrian,
-            "2:50": badges.alarm,
             "6:07": badges.sixseven
         };
         var badgeBy24Hour = {
+            "0:00": badges.midnight,
+            "12:00": badges.noon,
             "16:20": badges.youknow,
-            "23:37": badges.redsea,
             "17:30": badges.beer,
             "4:55": badges.caitlin,
             "1:20": badges.martydeparts,
             "16:29": badges.martyarrives,
             "13:37": badges.hacker,
+            "20:24": badges.currentyear,
             "18:52": badges.seattle
         };
         var badge = badgeBy24Hour[key24] || badgeBy12Hour[key12] || null;

@@ -1,0 +1,28 @@
+{
+  "add": [
+    { "time": "00:00", "label": "Midnight", "category": "daily-life", "popularity": 0.95, "badgeId": "midnight" },
+    { "time": "01:23", "label": "Counting Sequence", "category": "pattern", "popularity": 0.74, "badgeId": "counting" },
+    { "time": "03:14", "label": "Pi Time", "category": "math", "popularity": 0.9, "badgeId": "pi" },
+    { "time": "04:20", "label": "420", "category": "culture", "popularity": 0.96, "badgeId": "fourtwenty" },
+    { "time": "05:00", "label": "Beer O'Clock", "category": "social", "popularity": 0.89, "badgeId": "beer" },
+    { "time": "06:07", "label": "Six-Oh-Seven", "category": "fun", "popularity": 0.7, "badgeId": "sixseven" },
+    { "time": "07:47", "label": "Jumbo Jet (747)", "category": "aviation", "popularity": 0.86, "badgeId": "jumbo" },
+    { "time": "08:08", "label": "Lucky Time", "category": "culture", "popularity": 0.78, "badgeId": "lucky" },
+    { "time": "09:41", "label": "Keynote Time", "category": "tech", "popularity": 0.82, "badgeId": "keynote" },
+    { "time": "10:10", "label": "Watch Face Time", "category": "design", "popularity": 0.8, "badgeId": "watchface" },
+    { "time": "11:11", "label": "Make-a-Wish", "category": "culture", "popularity": 0.97, "badgeId": "makeawish" },
+    { "time": "12:00", "label": "Noon", "category": "daily-life", "popularity": 0.93, "badgeId": "noon" },
+    { "time": "13:37", "label": "Leet Time", "category": "internet", "popularity": 0.84, "badgeId": "hacker" },
+    { "time": "20:24", "label": "Current Year Nod", "category": "dynamic", "popularity": 0.68, "badgeId": "currentyear" }
+  ],
+  "remove": [
+    { "badgeId": "ellendun", "time": "08:25", "reason": "Low recognition, requires explanation" },
+    { "badgeId": "denmark", "time": "09:36", "reason": "Niche historical context" },
+    { "badgeId": "concordat", "time": "11:22", "reason": "Outdated historical relevance" },
+    { "badgeId": "genghis", "time": "12:06", "reason": "Niche historical context" },
+    { "badgeId": "paris", "time": "12:59", "reason": "Niche historical context" },
+    { "badgeId": "hadrian", "time": "01:22", "reason": "Niche historical context" },
+    { "badgeId": "alarm", "time": "02:50", "reason": "Low modern recognition" },
+    { "badgeId": "redsea", "time": "23:37", "reason": "Low recognition, requires explanation" }
+  ]
+}
