@@ -124,6 +124,7 @@ var TimeScore = (function () {
             "10:40": badges.shakespeare,
             "1:35": badges.prime,
             "5:31": badges.prime,
+            "2:46": badges.twofoursixeight,
             "2:47": badges.twentyfourseven,
             "9:46": badges.scooter,
             "4:04": badges.notfound,

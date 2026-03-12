@@ -76,6 +76,12 @@ var BadgeService = (function () {
         twentyfourseven: {
             id: "twentyfourseven",
             name: "We're open 24 hours a day",
+            description: "24/7 never sleeps",
+            rarity: "rare"
+        },
+        twofoursixeight: {
+            id: "twofoursixeight",
+            name: "2-4-6-8",
             description: "Who do we appreciate",
             rarity: "rare"
         },

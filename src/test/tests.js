@@ -1,4 +1,4 @@
-﻿/// <reference path="http://code.jquery.com/qunit/qunit-1.18.0.js" />
+/// <reference path="http://code.jquery.com/qunit/qunit-1.18.0.js" />
 /// <reference path="../timescore.js" />
 
 var ts;
@@ -50,6 +50,8 @@ QUnit.test("Battle of Ellendun am", function (assert) { runTest(assert, 8, 25, 7
 QUnit.test("Battle of Ellendun pm", function (assert) { runTest(assert, 20, 25, 7) });
 QUnit.test("Kingdom of Denmark am", function (assert) { runTest(assert, 9, 36, 8) });
 QUnit.test("Kingdom of Denmark pm", function (assert) { runTest(assert, 21, 36, 8) });
+QUnit.test("2-4-6-8 am", function (assert) { runTest(assert, 2, 46, 7) });
+QUnit.test("2-4-6-8 pm", function (assert) { runTest(assert, 14, 46, 7) });
 QUnit.test("24/7 am", function (assert) { runTest(assert, 2, 47, 7) });
 QUnit.test("24/7 pm", function (assert) { runTest(assert, 14, 47, 7) });
 QUnit.test("Retro scooter am", function (assert) { runTest(assert, 9, 46, 7) });
