@@ -9,9 +9,9 @@ var BadgeService = (function () {
             var points = localStorage["badge:" + badge];
 
             if (points) {
-                var b = parseInt(points, 10)
-                var thisBadge = allBadges[badge]
-                thisBadge.level = Math.floor(points / 5);
+                var numericPoints = parseInt(points, 10);
+                var thisBadge = allBadges[badge];
+                thisBadge.level = Math.floor(numericPoints / 5);
                 badges.push(thisBadge);
             }
         }
@@ -24,7 +24,9 @@ var BadgeService = (function () {
         if (window.testmode || (badge.type === "single" && localStorage["badge:" + badge.id]))
             return;
 
-        localStorage["badge:" + badge.id] = (localStorage["badge:" + badge.id] ? parseInt(localStorage["badge:" + badge.id], 10) : 1);
+        var key = "badge:" + badge.id;
+        var existingCount = parseInt(localStorage[key], 10) || 0;
+        localStorage[key] = String(existingCount + 1);
     }
 
     var allBadges = {
@@ -150,7 +152,7 @@ var BadgeService = (function () {
             rarity: "rare"
         },
         scooter: {
-            id: "scotter",
+            id: "scooter",
             name: "Retro scooter",
             description: "Retro scooter",
             rarity: "rare"
