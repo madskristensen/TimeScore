@@ -128,13 +128,13 @@ var BadgeService = (function () {
         makeawish: {
             id: "makeawish",
             name: "Make-a-Wish",
-            description: "11:11",
+            description: "Catch the wish time",
             rarity: "rare"
         },
         currentyear: {
             id: "currentyear",
             name: "Current Year Nod",
-            description: "20:24",
+            description: "A nod to the current year",
             rarity: "rare"
         },
         caitlin: {

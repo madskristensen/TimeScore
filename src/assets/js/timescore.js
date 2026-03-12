@@ -8,14 +8,18 @@ var TimeScore = (function () {
         hightscoreService = new HighscoreService();
 
     function getScore(date) {
-        _date = date;
-        normalize(date);
-        var score = runRules();
+        var score = calculateHits(date, true);
 
         return {
             time: `${_hour}:${_minute}`,
             score: score
         }
+    }
+
+    function calculateHits(date, allowSideEffects) {
+        _date = date;
+        normalize(date);
+        return runRules(allowSideEffects !== false);
     }
 
     function normalize(date) {
@@ -28,7 +32,7 @@ var TimeScore = (function () {
         _hour = String(imperial === 0 ? 12 : imperial);
     }
 
-    function runRules() {
+    function runRules(allowSideEffects) {
         var hits = [];
 
         var all = (_hour + _minute);
@@ -50,7 +54,7 @@ var TimeScore = (function () {
             hits.push(rules.tophour);
         }
 
-        ruleMomentIntime(hits);
+        ruleMomentIntime(hits, allowSideEffects);
 
         if (_minute.length === 2 && parseInt(_minute[0], 10) + parseInt(_minute[1], 10) === parseInt(_hour, 10)) {
 
@@ -97,8 +101,10 @@ var TimeScore = (function () {
         return hits;
     }
 
-    function ruleMomentIntime(hits) {
+    function ruleMomentIntime(hits, allowSideEffects) {
         var realHours = _date.getHours();
+        var year = _date.getFullYear().toString();
+        var currentYearKey = year.substring(0, 2) + ":" + year.substring(2, 4);
         var badges = badgeService.badges;
         var key12 = `${_hour}:${_minute}`;
         var key24 = `${realHours}:${_minute}`;
@@ -130,7 +136,7 @@ var TimeScore = (function () {
             "1:20": badges.martydeparts,
             "16:29": badges.martyarrives,
             "13:37": badges.hacker,
-            "20:24": badges.currentyear,
+            [currentYearKey]: badges.currentyear,
             "18:52": badges.seattle
         };
         var badge = badgeBy24Hour[key24] || badgeBy12Hour[key12] || null;
@@ -139,7 +145,7 @@ var TimeScore = (function () {
             var rule = Object.assign({}, rules.momentInTime, { badge: badge });
             hits.push(rule);
 
-            if (!hightscoreService.isRecorded(_date))
+            if (allowSideEffects && !hightscoreService.isRecorded(_date))
                 badgeService.addBadge(badge);
         }
     }

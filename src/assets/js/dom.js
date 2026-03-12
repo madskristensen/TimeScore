@@ -3,13 +3,12 @@
 /// <reference path="timescore.js" />
 
 var elmTime = document.getElementById("time"),
-    elmScore = document.getElementById("score"),
-    elmTimeScore = document.getElementById("timescore"),
     elmTimeContainer = document.getElementById("timeContainer"),
     rules = document.getElementById("rules"),
     reset = document.getElementById("reset"),
     elmBadges = document.getElementById("badges"),
     elmMeter = document.getElementById("meter"),
+    elmRingProgress = document.getElementById("ringProgress"),
     elmHowToPlay = document.getElementById("howToPlay"),
     elmInstallApp = document.getElementById("installApp"),
     elmHelpModal = document.getElementById("helpModal"),
@@ -26,10 +25,10 @@ var elmTime = document.getElementById("time"),
     hs = new HighscoreService(),
     badgeService = new BadgeService(),
     streakService = new StreakService(),
-    challengeService = new DailyChallengeService(),
-    actives = [],
+    challengeService = null,
     ruleElementsById = {},
-    elmScoreToast = null;
+    elmScoreToast = null,
+    ringCircumference = 0;
 
 var helpSeenKey = "timescoreHelpSeen",
     installDismissedKey = "timescoreInstallDismissed",
@@ -44,10 +43,11 @@ var current = new Date();
 function calculate() {
 
     var result = ts.getScore(current),
-        points = 0;
+        points = 0,
+        activeRuleIds = {};
 
     elmTime.textContent = result.time;
-    clearResults();
+    fitTimeToRing();
 
     for (var i = 0; i < result.score.length; i++) {
 
@@ -55,15 +55,11 @@ function calculate() {
         points += score.points;
 
         if (score.points > 0) {
-            var li = ruleElementsById[score.id];
-            if (li) {
-                li.className = "ruleRow active";
-                actives.push(li);
-            }
+            activeRuleIds[score.id] = true;
         }
     }
 
-    setMinuteScore(points);
+    updateRuleStates(activeRuleIds);
 
     if (points > 0) {
         triggerCelebration();
@@ -76,6 +72,19 @@ function calculate() {
     }
 }
 
+function fitTimeToRing() {
+    if (!elmTime || !elmTimeContainer)
+        return;
+
+    elmTime.style.transform = "scale(1)";
+
+    var maxWidth = elmTimeContainer.clientWidth * 0.76;
+    var timeWidth = elmTime.getBoundingClientRect().width;
+    var scale = timeWidth > maxWidth ? (maxWidth / timeWidth) : 1;
+
+    elmTime.style.transform = "scale(" + scale.toFixed(3) + ")";
+}
+
 function initializeScoreFeedback() {
     if (!elmTimeContainer)
         return;
@@ -84,12 +93,6 @@ function initializeScoreFeedback() {
     elmScoreToast.id = "scoreToast";
     elmScoreToast.className = "scoreToast";
     elmTimeContainer.appendChild(elmScoreToast);
-}
-
-function setMinuteScore(points) {
-    elmScore.textContent = points;
-    elmScore.className = points > 0 ? "scoreValue active" : "scoreValue";
-    elmTimeScore.className = points > 0 ? "scoreVisible" : "";
 }
 
 function showScoreToast(points) {
@@ -203,12 +206,25 @@ function maybeShowHelpOnFirstVisit() {
 }
 
 function clearResults() {
-
-    for (var i = 0; i < actives.length; i++) {
-        actives[i].className = "ruleRow";
+    for (var id in ruleElementsById) {
+        if (ruleElementsById.hasOwnProperty(id)) {
+            ruleElementsById[id].className = "ruleRow muted";
+        }
     }
+}
 
-    actives = [];
+function updateRuleStates(activeRuleIds) {
+    for (var id in ruleElementsById) {
+        if (!ruleElementsById.hasOwnProperty(id))
+            continue;
+
+        var row = ruleElementsById[id];
+        if (activeRuleIds[id]) {
+            row.className = "ruleRow active";
+        } else {
+            row.className = "ruleRow muted";
+        }
+    }
 }
 
 function updateHighscore() {
@@ -223,7 +239,7 @@ function showRules() {
         var rule = ts.rules[name];
 
         var li = document.createElement("li");
-        li.className = "ruleRow";
+        li.className = "ruleRow muted";
         var pointSpan = document.createElement("span");
         pointSpan.className = "rulePoints";
         pointSpan.textContent = `${rule.points}pt`;
@@ -238,6 +254,38 @@ function showRules() {
         rules.appendChild(li);
     }
 };
+
+function initializeTimeRing() {
+    if (!elmRingProgress)
+        return;
+
+    var radius = parseFloat(elmRingProgress.getAttribute("r")) || 106;
+    ringCircumference = 2 * Math.PI * radius;
+    elmRingProgress.style.strokeDasharray = ringCircumference;
+    elmRingProgress.style.strokeDashoffset = ringCircumference;
+}
+
+function setSecondProgress(seconds) {
+    var percent = Math.max(0, Math.min(seconds / 60, 1));
+
+    if (elmMeter)
+        elmMeter.style.width = (percent * 100) + "%";
+
+    if (elmRingProgress && ringCircumference > 0) {
+        elmRingProgress.style.strokeDashoffset = (ringCircumference * (1 - percent));
+    }
+}
+
+function startRingAnimation() {
+    function frame() {
+        var now = new Date();
+        var seconds = now.getSeconds() + (now.getMilliseconds() / 1000);
+        setSecondProgress(seconds);
+        window.requestAnimationFrame(frame);
+    }
+
+    window.requestAnimationFrame(frame);
+}
 
 function updateBadges() {
 
@@ -282,13 +330,54 @@ function updateStreak() {
 }
 
 function initChallenge() {
-    var challenge = challengeService.getChallenge(current);
-    renderChallenge(challenge);
+    try {
+        var service = getChallengeService();
+        if (!service) {
+            renderChallengeFallback();
+            return;
+        }
+
+        var challenge = service.getChallenge(current);
+        renderChallenge(challenge);
+    }
+    catch (e) {
+        renderChallengeFallback();
+    }
 }
 
 function updateChallenge(hits, totalPoints) {
-    var challenge = challengeService.recordProgress(current, hits, totalPoints);
-    renderChallenge(challenge);
+    try {
+        var service = getChallengeService();
+        if (!service)
+            return;
+
+        var challenge = service.recordProgress(current, hits, totalPoints);
+        renderChallenge(challenge);
+    }
+    catch (e) {
+        renderChallengeFallback();
+    }
+}
+
+function getChallengeService() {
+    if (challengeService)
+        return challengeService;
+
+    if (typeof DailyChallengeService !== "function")
+        return null;
+
+    challengeService = new DailyChallengeService();
+    return challengeService;
+}
+
+function renderChallengeFallback() {
+    if (!elmChallengeDesc || !elmChallengeBar || !elmChallengeStatus)
+        return;
+
+    elmChallengeDesc.textContent = "Challenge unavailable";
+    elmChallengeBar.style.width = "0%";
+    elmChallengeStatus.textContent = "Refresh to retry";
+    elmChallenge.className = "";
 }
 
 function renderChallenge(challenge) {
@@ -307,6 +396,8 @@ function renderChallenge(challenge) {
 
 initializeScoreFeedback();
 showRules();
+initializeTimeRing();
+startRingAnimation();
 calculate();
 updateHighscore();
 updateBadges();
@@ -315,11 +406,11 @@ initChallenge();
 setTimeout(markEngaged, 45000);
 setTimeout(maybeShowHelpOnFirstVisit, 1200);
 
+window.addEventListener("resize", fitTimeToRing);
+
 setInterval(function () {
 
     var date = new Date();
-
-    elmMeter.style.width = (date.getSeconds() / 60 * 100) + "%";
 
     if (document.hidden)
         return;
