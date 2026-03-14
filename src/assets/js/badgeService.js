@@ -222,6 +222,12 @@ var BadgeService = (function () {
             name: "Rain City got its name",
             description: "Rain City got its name",
             rarity: "legendary"
+        },
+        scottishdentist: {
+            id: "scottishdentist",
+            name: "Scottish dentist appointment",
+            description: "Scottish dentist appointment",
+            rarity: "legendary"
         }
     }
 

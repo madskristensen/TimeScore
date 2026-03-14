@@ -134,6 +134,7 @@ var TimeScore = (function () {
         var badgeBy24Hour = {
             "0:00": badges.midnight,
             "12:00": badges.noon,
+            "14:30": badges.scottishdentist,
             "16:20": badges.youknow,
             "17:30": badges.beer,
             "4:55": badges.caitlin,
