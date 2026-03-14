@@ -128,7 +128,6 @@ function renderCurrentScore(points) {
         elmCurrentScoreValue.textContent = "+" + points;
         elmCurrentScore.className = "";
     } else {
-        elmCurrentScoreValue.textContent = "+0";
         elmCurrentScore.className = "hidden";
     }
 }

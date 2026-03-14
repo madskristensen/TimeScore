@@ -465,6 +465,10 @@ footer {
     text-shadow: 0 0 10px rgba(238, 192, 77, .22);
 }
 
+#currentScore.hidden {
+    display: none;
+}
+
     #currentScore span {
         font-weight: 700;
         color: #fff3c7;
