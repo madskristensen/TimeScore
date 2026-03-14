@@ -450,6 +450,26 @@ footer {
     animation: scoreToastPop 900ms ease-out forwards;
 }
 
+#currentScore {
+    position: absolute;
+    left: 50%;
+    bottom: 54px;
+    transform: translateX(-50%);
+    display: inline-flex;
+    align-items: baseline;
+    gap: .35em;
+    z-index: 2;
+    color: #f4d98d;
+    font-size: .88em;
+    white-space: nowrap;
+    text-shadow: 0 0 10px rgba(238, 192, 77, .22);
+}
+
+    #currentScore span {
+        font-weight: 700;
+        color: #fff3c7;
+    }
+
 @keyframes scoreToastPop {
     0% {
         opacity: 0;

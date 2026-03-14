@@ -11,6 +11,8 @@ var elmTime = document.getElementById("time"),
     elmRingProgress = document.getElementById("ringProgress"),
     elmRingHead = document.getElementById("ringHead"),
     elmRingHeadTrail = document.getElementById("ringHeadTrail"),
+    elmCurrentScore = document.getElementById("currentScore"),
+    elmCurrentScoreValue = document.getElementById("currentScoreValue"),
     elmHowToPlay = document.getElementById("howToPlay"),
     elmInstallApp = document.getElementById("installApp"),
     elmHelpModal = document.getElementById("helpModal"),
@@ -72,6 +74,7 @@ function calculate() {
     }
 
     updateRuleStates(activeRuleIds);
+    renderCurrentScore(points);
 
     if (points > 0) {
         triggerCelebration();
@@ -115,6 +118,19 @@ function showScoreToast(points) {
     elmScoreToast.className = "scoreToast";
     void elmScoreToast.offsetWidth;
     elmScoreToast.className = "scoreToast show";
+}
+
+function renderCurrentScore(points) {
+    if (!elmCurrentScore || !elmCurrentScoreValue)
+        return;
+
+    if (points > 0) {
+        elmCurrentScoreValue.textContent = "+" + points;
+        elmCurrentScore.className = "";
+    } else {
+        elmCurrentScoreValue.textContent = "+0";
+        elmCurrentScore.className = "hidden";
+    }
 }
 
 function triggerCelebration() {
