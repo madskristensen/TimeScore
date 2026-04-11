@@ -172,7 +172,7 @@ var BadgeService = (function () {
         emergency: {
             id: "emergency",
             name: "It's an emergency",
-            description: "9:11 - it's an emergency",
+            description: "9:11 - It's an emergency",
             rarity: "rare"
         },
         shakespeare: {
