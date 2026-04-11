@@ -66,6 +66,8 @@ QUnit.test("Caitlin's birthday", function (assert) { runTest(assert, 4, 55, 7) }
 QUnit.test("404 not found", function (assert) { runTest(assert, 4, 4, 9) });
 QUnit.test("Hacker", function (assert) { runTest(assert, 13, 37, 9) });
 QUnit.test("Jumbo", function (assert) { runTest(assert, 7, 47, 8) });
+QUnit.test("Emergency am", function (assert) { runTest(assert, 9, 11, 7) });
+QUnit.test("Emergency pm", function (assert) { runTest(assert, 21, 11, 7) });
 
 
 QUnit.module("Two pairs");

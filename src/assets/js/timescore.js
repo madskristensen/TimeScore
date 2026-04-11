@@ -118,6 +118,7 @@ var TimeScore = (function () {
             "4:20": badges.fourtwenty,
             "5:00": badges.beer,
             "8:08": badges.lucky,
+            "9:11": badges.emergency,
             "9:41": badges.keynote,
             "10:10": badges.watchface,
             "11:11": badges.makeawish,

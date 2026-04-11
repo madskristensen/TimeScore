@@ -169,6 +169,12 @@ var BadgeService = (function () {
             description: "Thank heaven for this corner store",
             rarity: "common"
         },
+        emergency: {
+            id: "emergency",
+            name: "It's an emergency",
+            description: "9:11 - it's an emergency",
+            rarity: "rare"
+        },
         shakespeare: {
             id: "shakespeare",
             name: "Shakespeare FTW!",
