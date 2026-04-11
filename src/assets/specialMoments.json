@@ -4,7 +4,6 @@
     { "time": "01:23", "label": "Counting Sequence", "category": "pattern", "popularity": 0.74, "badgeId": "counting" },
     { "time": "03:14", "label": "Pi Time", "category": "math", "popularity": 0.9, "badgeId": "pi" },
     { "time": "04:20", "label": "420", "category": "culture", "popularity": 0.96, "badgeId": "fourtwenty" },
-    { "time": "05:00", "label": "Beer O'Clock", "category": "social", "popularity": 0.89, "badgeId": "beer" },
     { "time": "06:07", "label": "Six-Oh-Seven", "category": "fun", "popularity": 0.7, "badgeId": "sixseven" },
     { "time": "07:47", "label": "Jumbo Jet (747)", "category": "aviation", "popularity": 0.86, "badgeId": "jumbo" },
     { "time": "08:08", "label": "Lucky Time", "category": "culture", "popularity": 0.78, "badgeId": "lucky" },
@@ -13,6 +12,7 @@
     { "time": "11:11", "label": "Make-a-Wish", "category": "culture", "popularity": 0.97, "badgeId": "makeawish" },
     { "time": "12:00", "label": "Noon", "category": "daily-life", "popularity": 0.93, "badgeId": "noon" },
     { "time": "13:37", "label": "Leet Time", "category": "internet", "popularity": 0.84, "badgeId": "hacker" },
+    { "time": "17:30", "label": "Beer O'Clock", "category": "social", "popularity": 0.89, "badgeId": "beer" },
     { "time": "20:24", "label": "Current Year Nod", "category": "dynamic", "popularity": 0.68, "badgeId": "currentyear" }
   ],
   "remove": [

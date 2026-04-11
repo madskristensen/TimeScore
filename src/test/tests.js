@@ -47,6 +47,7 @@ QUnit.test("PI am", function (assert) { runTest(assert, 3, 14, 7) });
 QUnit.test("PI pm", function (assert) { runTest(assert, 15, 14, 7) });
 QUnit.test("Scottish dentist appointment am", function (assert) { runTest(assert, 2, 30, 0) });
 QUnit.test("Scottish dentist appointment pm", function (assert) { runTest(assert, 14, 30, 7) });
+QUnit.test("Beer o'clock am", function (assert) { runTest(assert, 5, 0, 3) });
 QUnit.test("Beer o'clock", function (assert) { runTest(assert, 17, 30, 7) });
 QUnit.test("Battle of Ellendun am", function (assert) { runTest(assert, 8, 25, 7) });
 QUnit.test("Battle of Ellendun pm", function (assert) { runTest(assert, 20, 25, 7) });
