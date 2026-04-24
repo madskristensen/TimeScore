@@ -1,4 +1,4 @@
-var CACHE_NAME = "timescore-shell-v4";
+var CACHE_NAME = "timescore-shell-v5";
 var APP_SHELL = [
     "/",
     "/index.html",
