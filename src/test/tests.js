@@ -78,7 +78,7 @@ QUnit.test("11:22", function (assert) { runTest(assert, 11, 22, 12) });
 
 QUnit.module("Top of the hour");
 QUnit.test("Midnight", function (assert) { runTest(assert, 0, 0, 5) });
-QUnit.test("10:00", function (assert) { runTest(assert, 10, 0, 5) });
+QUnit.test("10:00", function (assert) { runTest(assert, 10, 0, 3) });
 QUnit.test("11:01", function (assert) { runTest(assert, 11, 1, 0) });
 
 

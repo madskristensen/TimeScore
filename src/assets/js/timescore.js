@@ -98,7 +98,7 @@ var TimeScore = (function () {
             hits.push(rules.twopairs);
         }
 
-        if (hour.length === 2 && date.getMinutes() % parseInt(hour, 10) === 0) {
+        if (hour.length === 2 && date.getMinutes() > 0 && date.getMinutes() % parseInt(hour, 10) === 0) {
             hits.push(rules.divide);
         }
 
