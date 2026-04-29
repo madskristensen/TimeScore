@@ -31,20 +31,36 @@ function updateCache(request, response) {
     return response;
 }
 
-function networkFirst(request, fallbackUrl) {
+function refreshCache(request) {
     return fetch(request)
         .then(function (response) {
             return updateCache(request, response);
         })
-        .catch(function () {
-            return caches.match(request).then(function (cachedResponse) {
-                if (cachedResponse)
-                    return cachedResponse;
+        .catch(function () { });
+}
 
-                if (fallbackUrl)
-                    return caches.match(fallbackUrl);
-            });
+function staleWhileRevalidate(request, fallbackUrl, event) {
+    return caches.match(request).then(function (cachedResponse) {
+        var cachedResponsePromise = cachedResponse
+            ? Promise.resolve(cachedResponse)
+            : fallbackUrl ? caches.match(fallbackUrl) : Promise.resolve();
+
+        return cachedResponsePromise.then(function (response) {
+            if (response) {
+                event.waitUntil(refreshCache(request));
+                return response;
+            }
+
+            return fetch(request)
+                .then(function (response) {
+                    return updateCache(request, response);
+                })
+                .catch(function () {
+                    if (fallbackUrl)
+                        return caches.match(fallbackUrl);
+                });
         });
+    });
 }
 
 self.addEventListener("install", function (event) {
@@ -82,14 +98,14 @@ self.addEventListener("fetch", function (event) {
         return;
 
     if (event.request.mode === "navigate") {
-        event.respondWith(networkFirst(event.request, "/index.html"));
+        event.respondWith(staleWhileRevalidate(event.request, "/index.html", event));
         return;
     }
 
     if (!isAppShellRequest(event.request))
         return;
 
-    event.respondWith(networkFirst(event.request));
+    event.respondWith(staleWhileRevalidate(event.request, null, event));
 });
 
 self.addEventListener("message", function (event) {
