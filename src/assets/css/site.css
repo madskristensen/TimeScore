@@ -1,28 +1,3 @@
-#quickActions {
-    margin: .1em 0 0;
-}
-
-    #quickActions button {
-        border: 1px solid #3d4b68;
-        background: linear-gradient(180deg, #182033, #0d111b);
-        color: #dfdfdf;
-        padding: .45em .8em;
-        margin: 0 .2em;
-        font-size: .95em;
-        border-radius: 5px;
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08), 0 3px 10px rgba(0, 0, 0, .25);
-        transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
-    }
-
-        #quickActions button:hover,
-        #quickActions button:focus {
-            border-color: #eec04d;
-            color: #eec04d;
-            outline: 0;
-            transform: translateY(-1px);
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, .12), 0 5px 14px rgba(0, 0, 0, .35);
-        }
-
 p {
     font-size: 2.5em;
     margin: .3em 0;
@@ -366,12 +341,6 @@ a:focus-visible {
     outline-offset: 2px;
 }
 
-#quickActions button.clockToggle {
-    font-size: .85em;
-    padding: .45em .6em;
-    min-width: 3.4em;
-}
-
 /* Streak */
 
 #streak.atRisk #streakIcon {
@@ -467,17 +436,25 @@ a:focus-visible {
     }
 
 .linkButton {
-    margin-top: .6em;
-    border: 1px solid #3d4b68;
-    background: linear-gradient(180deg, #182033, #0d111b);
-    color: #dfdfdf;
-    padding: .4em .9em;
-    border-radius: 5px;
+    margin-top: .7em;
+    min-height: 44px;
+    padding: 0 1.2em;
+    border-radius: 999px;
+    border: 1px solid rgba(120, 146, 197, .32);
+    background: linear-gradient(180deg, rgba(31, 38, 66, .72), rgba(10, 14, 28, .72));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .07), 0 6px 18px rgba(0, 0, 0, .3);
+    color: #dfe7fa;
+    font-weight: 600;
+    transition: transform 140ms ease, border-color 160ms ease, box-shadow 160ms ease;
 }
 
     .linkButton:hover {
-        border-color: #eec04d;
-        color: #eec04d;
+        border-color: rgba(157, 229, 255, .55);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1), 0 6px 18px rgba(0, 0, 0, .3), 0 0 16px rgba(96, 196, 255, .28);
+    }
+
+    .linkButton:active {
+        transform: scale(.96);
     }
 
 #collectionModal .modalContent {
@@ -831,4 +808,138 @@ a:focus-visible {
 
 #challengeHistory.hidden {
     display: none;
+}
+
+/* Quick actions: a matched pair of glassy pills (clock format + share) */
+
+#quickActions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .6em;
+    margin: .35em auto .2em;
+}
+
+.pill {
+    --pill-h: 44px;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    height: var(--pill-h);
+    box-sizing: border-box;
+    border-radius: 999px;
+    border: 1px solid rgba(120, 146, 197, .32);
+    background: linear-gradient(180deg, rgba(31, 38, 66, .72), rgba(10, 14, 28, .72));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .07), 0 6px 18px rgba(0, 0, 0, .35), 0 0 0 1px rgba(0, 0, 0, .25);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    color: #dfe7fa;
+    font: 600 .95em/1 "Trebuchet MS", -apple-system, system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    letter-spacing: .02em;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.pillButton {
+    gap: .5em;
+    min-width: 124px;
+    justify-content: center;
+    padding: 0 1.15em 0 1em;
+    cursor: pointer;
+    transition: transform 140ms ease, border-color 160ms ease, box-shadow 160ms ease, color 160ms ease;
+}
+
+    .pillButton:hover {
+        border-color: rgba(157, 229, 255, .55);
+        color: #ffffff;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1), 0 6px 18px rgba(0, 0, 0, .35), 0 0 16px rgba(96, 196, 255, .28);
+    }
+
+    .pillButton:active {
+        transform: scale(.96);
+    }
+
+.pillIcon {
+    width: 18px;
+    height: 18px;
+    flex: 0 0 18px;
+    fill: none;
+    stroke: #9de5ff;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    filter: drop-shadow(0 0 4px rgba(96, 196, 255, .55));
+}
+
+.pillButton:hover .pillIcon {
+    stroke: #eec04d;
+    filter: drop-shadow(0 0 5px rgba(238, 192, 77, .6));
+}
+
+/* Segmented 12h / 24h toggle with a sliding, ring-colored thumb */
+
+.segmented {
+    padding: 3px;
+    min-width: 124px;
+}
+
+    .segmented .seg {
+        position: relative;
+        z-index: 1;
+        flex: 1 1 0;
+        height: 100%;
+        min-width: 58px;
+        padding: 0 .75em;
+        border: 0;
+        border-radius: 999px;
+        background: transparent;
+        color: #8b9cc4;
+        font: inherit;
+        cursor: pointer;
+        transition: color 200ms ease;
+    }
+
+        .segmented .seg:hover {
+            color: #dfe7fa;
+        }
+
+        .segmented .seg[aria-pressed="true"] {
+            color: #071226;
+        }
+
+    .segmented .segThumb {
+        position: absolute;
+        top: 3px;
+        bottom: 3px;
+        left: 3px;
+        width: calc(50% - 3px);
+        border-radius: 999px;
+        background: linear-gradient(180deg, #9de5ff, #3aa4ff);
+        box-shadow: 0 0 12px rgba(96, 196, 255, .55), inset 0 1px 0 rgba(255, 255, 255, .5);
+        transition: transform 260ms cubic-bezier(.3, 1.3, .5, 1);
+    }
+
+    .segmented.is24 .segThumb {
+        transform: translateX(100%);
+    }
+
+    .segmented .seg:active {
+        transform: scale(.96);
+    }
+
+.pill button:focus-visible,
+.pillButton:focus-visible {
+    outline: 2px solid #eec04d;
+    outline-offset: 3px;
+}
+
+#installApp.hidden {
+    display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .segmented .segThumb,
+    .pillButton {
+        transition: none;
+    }
 }

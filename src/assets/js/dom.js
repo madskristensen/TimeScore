@@ -18,6 +18,7 @@
         elmTimeContainer = $("timeContainer"),
         elmRules = $("rules"),
         elmRingProgress = $("ringProgress"),
+        elmRingProgressGold = $("ringProgressGold"),
         elmRingHead = $("ringHead"),
         elmRingHeadTrail = $("ringHeadTrail"),
         elmCurrentScore = $("currentScore"),
@@ -107,9 +108,12 @@
 
     function renderClockToggle() {
         var is24 = clockPref === "24";
-        elmClockToggle.textContent = is24 ? "24h" : "12h";
-        elmClockToggle.setAttribute("aria-pressed", is24 ? "true" : "false");
-        elmClockToggle.setAttribute("aria-label", is24 ? "24-hour clock on. Switch to 12-hour clock" : "12-hour clock on. Switch to 24-hour clock");
+        toggleClass(elmClockToggle, "is24", is24);
+
+        var segments = elmClockToggle.querySelectorAll(".seg");
+        for (var i = 0; i < segments.length; i++) {
+            segments[i].setAttribute("aria-pressed", segments[i].getAttribute("data-clock") === clockPref ? "true" : "false");
+        }
     }
 
     /* ---------- Scoring ---------- */
@@ -130,6 +134,9 @@
 
         updateRuleStates(activeRuleIds);
         renderCurrentScore(result.points);
+
+        // The seconds ring glows gold for the whole of a scoring minute.
+        toggleClass(elmTimeContainer, "scoring", result.points > 0);
 
         if (result.points <= 0)
             return;
@@ -521,8 +528,6 @@
     function initializeTimeRing() {
         ringRadius = parseFloat(elmRingProgress.getAttribute("r")) || 106;
         ringCircumference = 2 * Math.PI * ringRadius;
-        elmRingProgress.style.strokeDasharray = "0 " + ringCircumference;
-        elmRingProgress.style.strokeDashoffset = 0;
     }
 
     function setSecondProgress(seconds) {
@@ -542,6 +547,7 @@
 
         elmRingProgress.style.strokeDasharray = visibleLength + " " + ringCircumference;
         elmRingProgress.style.strokeDashoffset = 0;
+        elmRingProgressGold.style.strokeDasharray = elmRingProgress.style.strokeDasharray;
 
         elmRingHeadTrail.setAttribute("cx", ringTrailX);
         elmRingHeadTrail.setAttribute("cy", ringTrailY);
@@ -810,7 +816,7 @@
 
     function updateInstallButton() {
         var shouldShow = hasEngaged && !isStandalone() && !readFlag(installDismissedKey) && (isIOS || !!deferredInstallPrompt);
-        elmInstallApp.className = shouldShow ? "" : "hidden";
+        elmInstallApp.className = "pill pillButton" + (shouldShow ? "" : " hidden");
     }
 
     /* ---------- Wiring ---------- */
@@ -884,12 +890,16 @@
     document.addEventListener("visibilitychange", onTick);
     window.addEventListener("resize", fitTimeToRing);
 
-    elmClockToggle.addEventListener("click", function () {
-        clockPref = clockPref === "24" ? "12" : "24";
+    elmClockToggle.addEventListener("click", function (e) {
+        var target = e.target.closest ? e.target.closest(".seg") : null;
+        if (!target || target.getAttribute("data-clock") === clockPref)
+            return;
+
+        clockPref = target.getAttribute("data-clock");
         try {
             localStorage.setItem(clockPrefKey, clockPref);
         }
-        catch (e) {
+        catch (err) {
         }
 
         renderClockToggle();
