@@ -55,7 +55,9 @@ opacity: .65;
 display: inline-block;
 position: relative;
 z-index: 2;
-font-size: clamp(4.4em, 20vw, 6em);
+font-size: calc(var(--ring) * .28);
+font-variant-numeric: tabular-nums;
+white-space: nowrap;
 margin-top: 0;
 line-height: 1em;
 transform-origin: center center;
@@ -63,12 +65,13 @@ color: #ffffff;
 text-shadow: 0 0 14px rgba(165, 225, 255, .35), 0 0 30px rgba(238, 192, 77, .14);
 }
 #timeContainer {
+--ring: clamp(220px, 70vw, 280px);
 display: inline-flex;
 align-items: center;
 justify-content: center;
 position: relative;
-width: clamp(220px, 70vw, 280px);
-height: clamp(220px, 70vw, 280px);
+width: var(--ring);
+height: var(--ring);
 margin-bottom: .15em;
 padding: 0;
 border-radius: 0;
@@ -216,9 +219,21 @@ transform: scale(1);
 #timeContainer.scoring #timeRing .ringHalo{stroke:rgba(238,192,77,.35)}
 @media (prefers-reduced-motion:reduce){#timeRing #ringProgress,#timeRing .ringGold,#timeRing .ringHead,#timeRing .ringHeadTrail,#timeRing .ringHalo{transition:none}}
 .hidden{display:none}
-#clockFace{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center}
-#ampm{font-size:.95em;font-weight:700;letter-spacing:.12em;color:#9fb2de;min-height:1.2em;margin-top:.15em}
-#faceHint{font-size:.72em;color:#8b9cc4;min-height:1.1em}
+/* The clock is the 12h/24h switch. The time sits dead centre in the ring and the
+   meta line hangs below it, so the widest chord of the ring is available to the digits. */
+#clockFace{position:relative;z-index:2;display:block;margin:0;padding:.06em .12em;border:0;border-radius:18px;background:none;color:inherit;font:inherit;line-height:1;cursor:pointer;-webkit-tap-highlight-color:transparent}
+#clockFace:focus{outline:none}
+#clockFace:focus-visible{outline:2px solid #eec04d;outline-offset:4px}
+#clockMeta{position:absolute;top:100%;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.2em;margin-top:.35em;white-space:nowrap}
+#ampm{font-size:.95em;font-weight:700;letter-spacing:.12em;color:#9fb2de}
+#faceHint{font-size:.72em;color:#8b9cc4}
+#ampm:empty,#faceHint:empty{display:none}
+#clockMode{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);margin-bottom:1em;white-space:nowrap;font-size:.66em;letter-spacing:.08em;color:#6f7fa6;opacity:.75;transition:color 200ms ease,opacity 200ms ease}
+#clockFace:hover #clockMode,#clockFace:focus-visible #clockMode{opacity:1;color:#9fb2de}
+#clockMode.flash{opacity:1;color:#eec04d}
+#time.switching{animation:fmtSwitch 260ms ease-out}
+@keyframes fmtSwitch{0%{opacity:.15}100%{opacity:1}}
+@media (prefers-reduced-motion:reduce){#time.switching{animation:none}#clockMode{transition:none}}
     </style>
     <script>
         /* The page restores its own scroll position once the panels have rendered
@@ -249,6 +264,11 @@ transform: scale(1);
                 if (date.getMonth() + 1 === (h % 12 || 12) && date.getDate() === m) return true;
                 if (h === parseInt(y.substring(0, 2), 10) && m === parseInt(y.substring(2, 4), 10)) return true;
                 try { return (atob(this.scoringMap).charCodeAt(i >> 3) >> (i & 7) & 1) === 1; } catch (e) { return false; }
+            },
+            renderMode: function (pref) {
+                document.getElementById("clockModeText").textContent = pref === "24" ? "24h" : "12h";
+                document.getElementById("clockHelp").textContent = "Tap the time to switch to the " + (pref === "24" ? "12" : "24") + "-hour clock";
+                document.getElementById("clockFace").title = "Switch to " + (pref === "24" ? "12" : "24") + "-hour clock";
             },
             format: function (date, pref) {
                 var h = date.getHours(), m = ("0" + date.getMinutes()).slice(-2), h12 = h % 12 || 12;
@@ -334,11 +354,15 @@ transform: scale(1);
                 <circle id="ringHeadTrail" class="ringHeadTrail" cx="130" cy="24" r="6.2"></circle>
                 <circle id="ringHead" class="ringHead" cx="130" cy="24" r="4.3"></circle>
             </svg>
-            <div id="clockFace">
+            <button id="clockFace" type="button" aria-describedby="clockHelp">
                 <span id="time"></span>
-                <span id="ampm"></span>
-                <span id="faceHint"></span>
-            </div>
+                <span id="clockMeta">
+                    <span id="ampm"></span>
+                    <span id="faceHint"></span>
+                </span>
+                <span id="clockMode"><span id="clockModeText"></span> <span aria-hidden="true">&#8644;</span></span>
+            </button>
+            <span id="clockHelp" class="srOnly"></span>
             <script>
                 (function () {
                     var now = new Date(), f = GTT.format(now, GTT.clockPref());
@@ -355,6 +379,7 @@ transform: scale(1);
                     document.getElementById("time").textContent = f.time;
                     document.getElementById("ampm").textContent = f.suffix;
                     document.getElementById("faceHint").textContent = f.hint;
+                    GTT.renderMode(GTT.clockPref());
                 })();
             </script>
             <div id="currentScore" class="hidden">
@@ -366,11 +391,6 @@ transform: scale(1);
             <div id="announcer" class="srOnly" role="status" aria-live="polite" aria-atomic="true"></div>
 
             <div id="quickActions">
-                <div id="clockToggle" class="pill segmented" role="group" aria-label="Clock format (12-hour or 24-hour)">
-                    <span class="segThumb" aria-hidden="true"></span>
-                    <button type="button" class="seg" data-clock="12" aria-pressed="true">12h</button>
-                    <button type="button" class="seg" data-clock="24" aria-pressed="false">24h</button>
-                </div>
                 <button id="shareButton" type="button" class="pill pillButton">
                     <svg class="pillIcon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3v12M12 3l-4.5 4.5M12 3l4.5 4.5" /><path d="M5 12.5V18a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5.5" /></svg>
                     <span>Share</span>
