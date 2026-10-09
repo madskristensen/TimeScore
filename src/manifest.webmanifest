@@ -1,0 +1,19 @@
+{
+    "id": "/",
+    "name": "Game The Time",
+    "short_name": "Game Time",
+    "description": "How many points is right now worth? Catch special times, keep your streak and collect badges.",
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone",
+    "orientation": "portrait",
+    "background_color": "#050608",
+    "theme_color": "#050608",
+    "categories": [ "games", "entertainment" ],
+    "icons": [
+        { "src": "/favicon/android-chrome-192x192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+        { "src": "/favicon/android-chrome-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+        { "src": "/favicon/maskable-192x192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+        { "src": "/favicon/maskable-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    ]
+}
