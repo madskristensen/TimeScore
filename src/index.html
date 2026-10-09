@@ -205,6 +205,7 @@ transform: scale(1);
 }
 }
 #below{visibility:hidden}
+.srOnly{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 #timeRing .ringGold{stroke:url(#ringGradientGold);opacity:0;filter:drop-shadow(0 0 6px rgba(238,192,77,.6)) drop-shadow(0 0 16px rgba(238,192,77,.3))}
 #timeRing #ringProgress,#timeRing .ringGold{transition:opacity 700ms ease}
 #timeRing .ringHead,#timeRing .ringHeadTrail,#timeRing .ringHalo{transition:fill 700ms ease,stroke 700ms ease,opacity 120ms ease}
@@ -220,6 +221,10 @@ transform: scale(1);
 #faceHint{font-size:.72em;color:#8b9cc4;min-height:1.1em}
     </style>
     <script>
+        /* The page restores its own scroll position once the panels have rendered
+           (see dom.js), so the browser can't restore it against a half-built layout. */
+        if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+
         /* Shared by the inline first paint below and dom.js. */
         window.GTT = {
             clockPref: function () {
@@ -254,7 +259,7 @@ transform: scale(1);
         };
     </script>
     <link rel="preload" href="/assets/css/site.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
-    <noscript><link rel="stylesheet" href="/assets/css/site.css" /></noscript>
+    <noscript><link rel="stylesheet" href="/assets/css/site.css" /><style>#below{visibility:visible}</style></noscript>
 
     <meta name="description" content="Game The Time - how many points is right now worth? Catch special times, keep your streak and collect badges." />
     <meta name="author" content="Mads Kristensen (madskristensen.net)" />
@@ -360,10 +365,10 @@ transform: scale(1);
             <div id="announcer" class="srOnly" role="status" aria-live="polite" aria-atomic="true"></div>
 
             <div id="quickActions">
-                <div id="clockToggle" class="pill segmented" role="group" aria-label="Clock format">
+                <div id="clockToggle" class="pill segmented" role="group" aria-label="Clock format (12-hour or 24-hour)">
                     <span class="segThumb" aria-hidden="true"></span>
-                    <button type="button" class="seg" data-clock="12" aria-pressed="true" aria-label="12-hour clock">12h</button>
-                    <button type="button" class="seg" data-clock="24" aria-pressed="false" aria-label="24-hour clock">24h</button>
+                    <button type="button" class="seg" data-clock="12" aria-pressed="true">12h</button>
+                    <button type="button" class="seg" data-clock="24" aria-pressed="false">24h</button>
                 </div>
                 <button id="shareButton" type="button" class="pill pillButton">
                     <svg class="pillIcon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3v12M12 3l-4.5 4.5M12 3l4.5 4.5" /><path d="M5 12.5V18a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5.5" /></svg>
@@ -407,7 +412,7 @@ transform: scale(1);
                     <span class="legendRare">Rare</span>
                     <span class="legendLegendary">Legendary</span>
                 </div>
-                <div id="badgeGrid" role="list"></div>
+                <div id="badgeGrid"></div>
                 <p id="badgeDetail" aria-live="polite"></p>
             </section>
 
