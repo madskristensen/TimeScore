@@ -1,6 +1,6 @@
 // Bump VERSION on every release: it names the cache and changing this file is
 // what makes browsers install the new worker and show the "update available" toast.
-var VERSION = "10";
+var VERSION = "11";
 var CACHE_NAME = "timescore-shell-v" + VERSION;
 
 var APP_SHELL = [

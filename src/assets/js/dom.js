@@ -26,7 +26,8 @@
         elmAnnouncer = $("announcer"),
         elmToasts = $("toasts"),
         elmInstallApp = $("installApp"),
-        elmClockToggle = $("clockToggle"),
+        elmClockFace = $("clockFace"),
+        elmClockMode = $("clockMode"),
         elmStreak = $("streak"),
         elmStreakCount = $("streakCount"),
         elmStreakSave = $("streakSave"),
@@ -103,11 +104,17 @@
         return (hour % 12 || 12) + " " + (hour < 12 ? "AM" : "PM");
     }
 
-    // Scales the time down when it would overflow the ring. offsetWidth ignores
-    // transforms, so there's no need to reset the scale before measuring.
-    function applyTimeScale(timeWidth, containerWidth) {
-        var maxWidth = containerWidth * 0.76;
-        var scale = timeWidth > maxWidth ? (maxWidth / timeWidth) : 1;
+    // Scales the time down when its glyph box would reach the ring. The time is
+    // centred in the ring, so its corners must stay inside the ring's inner edge
+    // (radius 103/260 of the container, minus padding). Digits occupy ~0.72em of
+    // the 1em line box. Sizes come from layout (offsetWidth/ResizeObserver ignore
+    // transforms), so there's no need to reset the scale before measuring.
+    function applyTimeScale(timeWidth, containerWidth, timeHeight) {
+        var radius = containerWidth * (103 / 260) - Math.max(8, containerWidth * 0.04);
+        var halfW = timeWidth / 2,
+            halfH = (timeHeight || 0) * 0.38;
+        var reach = Math.sqrt(halfW * halfW + halfH * halfH);
+        var scale = reach > radius ? (radius / reach) : 1;
         var value = "scale(" + scale.toFixed(3) + ")";
 
         if (elmTime.style.transform !== value)
@@ -115,7 +122,7 @@
     }
 
     function fitTimeToRing() {
-        applyTimeScale(elmTime.offsetWidth, elmTimeContainer.clientWidth);
+        applyTimeScale(elmTime.offsetWidth, elmTimeContainer.clientWidth, elmTime.offsetHeight);
     }
 
     // ResizeObserver reports sizes after layout, so fitting the time never forces a
@@ -126,33 +133,56 @@
                     return;
         }
 
-        var sizes = { time: 0, container: 0 };
+        var sizes = { time: 0, timeHeight: 0, container: 0 };
         var observer = new ResizeObserver(function (entries) {
             for (var i = 0; i < entries.length; i++) {
                 var box = entries[i].borderBoxSize && entries[i].borderBoxSize[0];
                 var width = box ? box.inlineSize : entries[i].contentRect.width;
-                if (entries[i].target === elmTime)
+                if (entries[i].target === elmTime) {
                     sizes.time = width;
+                    sizes.timeHeight = box ? box.blockSize : entries[i].contentRect.height;
+                }
                 else
                     sizes.container = width;
             }
 
             if (sizes.time && sizes.container)
-                applyTimeScale(sizes.time, sizes.container);
+                applyTimeScale(sizes.time, sizes.container, sizes.timeHeight);
         });
 
         observer.observe(elmTime);
         observer.observe(elmTimeContainer);
     }
 
-    function renderClockToggle() {
-        var is24 = clockPref === "24";
-        toggleClass(elmClockToggle, "is24", is24);
+    function renderClockMode() {
+        window.GTT.renderMode(clockPref);
+    }
 
-        var segments = elmClockToggle.querySelectorAll(".seg");
-        for (var i = 0; i < segments.length; i++) {
-            segments[i].setAttribute("aria-pressed", segments[i].getAttribute("data-clock") === clockPref ? "true" : "false");
+    // Restarts a one-shot CSS animation class. Reading offsetWidth here is a
+    // deliberate, user-initiated reflow (a click), never on the load path.
+    function replayClass(elm, className, duration) {
+        elm.classList.remove(className);
+        void elm.offsetWidth;
+        elm.classList.add(className);
+        clearTimeout(elm["_" + className]);
+        elm["_" + className] = setTimeout(function () {
+            elm.classList.remove(className);
+        }, duration);
+    }
+
+    function switchClockFormat() {
+        clockPref = clockPref === "24" ? "12" : "24";
+        try {
+            localStorage.setItem(clockPrefKey, clockPref);
         }
+        catch (err) {
+        }
+
+        renderClockMode();
+        renderClock(current);
+        replayClass(elmTime, "switching", 300);
+        replayClass(elmClockMode, "flash", 1200);
+        announce(clockPref === "24" ? "24-hour clock" : "12-hour clock");
     }
 
     /* ---------- Scoring ---------- */
@@ -898,7 +928,7 @@
     observeTimeSize();
     initializeTimeRing();
     startRingAnimation();
-    renderClockToggle();
+    renderClockMode();
     showRules();
     processMinute(current);
 
@@ -975,22 +1005,7 @@
     window.setInterval(onTick, 1000);
     document.addEventListener("visibilitychange", onTick);
 
-    elmClockToggle.addEventListener("click", function (e) {
-        var target = e.target.closest ? e.target.closest(".seg") : null;
-        if (!target || target.getAttribute("data-clock") === clockPref)
-            return;
-
-        clockPref = target.getAttribute("data-clock");
-        try {
-            localStorage.setItem(clockPrefKey, clockPref);
-        }
-        catch (err) {
-        }
-
-        renderClockToggle();
-        renderClock(current);
-        announce(clockPref === "24" ? "24-hour clock" : "12-hour clock");
-    });
+    elmClockFace.addEventListener("click", switchClockFormat);
 
     $("reset").addEventListener("click", function () {
         if (!confirm("This will reset your scores, badges, challenge and collection. Are you sure?"))
