@@ -1,68 +1,3 @@
-@media only screen and (max-width: 500px) {
-    @-ms-viewport {
-        max-width: 310px;
-    }
-}
-
-html {
-    height: 100%;
-    height: -webkit-fill-available;
-    min-height: 100%;
-    position: relative;
-    background-color: #050608;
-}
-
-body {
-    font: 16px/1.5 "Trebuchet MS", Helvetica georgia, sans-serif;
-    text-align: center;
-    background: radial-gradient(circle at 20% 20%, #1f233f 0%, #0d1020 45%, #050608 100%);
-    color: #dfdfdf;
-    margin: 0;
-    padding-top: 1em;
-    padding-top: calc(1em + constant(safe-area-inset-top));
-    padding-top: calc(1em + env(safe-area-inset-top));
-    padding-left: env(safe-area-inset-left);
-    padding-left: constant(safe-area-inset-left);
-    padding-right: env(safe-area-inset-right);
-    padding-right: constant(safe-area-inset-right);
-    padding-bottom: calc(50px + env(safe-area-inset-bottom));
-    padding-bottom: calc(50px + constant(safe-area-inset-bottom));
-    min-height: 100vh;
-    min-height: -webkit-fill-available;
-    min-width: 280px;
-    transition: background 350ms ease, color 250ms ease;
-    -ms-touch-action: manipulation;
-    touch-action: manipulation;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    -webkit-user-select: none;
-    user-select: none;
-}
-
-body:before {
-    content: "";
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    pointer-events: none;
-    background: radial-gradient(circle at 70% 10%, rgba(98, 210, 255, .13), transparent 45%), radial-gradient(circle at 15% 80%, rgba(238, 192, 77, .1), transparent 40%);
-    opacity: .65;
-}
-
-#time {
-    display: inline-block;
-    position: relative;
-    z-index: 2;
-    font-size: clamp(4.4em, 20vw, 6em);
-    margin-top: 0;
-    line-height: 1em;
-    transform-origin: center center;
-    color: #ffffff;
-    text-shadow: 0 0 14px rgba(165, 225, 255, .35), 0 0 30px rgba(238, 192, 77, .14);
-}
-
 #quickActions {
     margin: .1em 0 0;
 }
@@ -224,170 +159,6 @@ footer {
         opacity: .9;
     }
 
-#badges {
-    width: 310px;
-    margin: 0 auto 1em auto;
-}
-
-    #badges #badgeLegend {
-        display: inline-flex;
-        gap: .5em;
-        margin: .1em 0 .6em;
-        font-size: .78em;
-        text-transform: uppercase;
-        letter-spacing: .04em;
-    }
-
-    #badges #badgeLegend span {
-        border-radius: 999px;
-        padding: .22em .55em;
-        border: 1px solid rgba(255, 255, 255, .16);
-        background: rgba(255, 255, 255, .05);
-    }
-
-    #badges #badgeLegend .legendCommon {
-        color: #bfc8dd;
-    }
-
-    #badges #badgeLegend .legendRare {
-        color: #74c3ff;
-        border-color: rgba(60, 181, 255, .45);
-    }
-
-    #badges #badgeLegend .legendLegendary {
-        color: #f8d986;
-        border-color: rgba(238, 192, 77, .55);
-    }
-
-    #badges p {
-        background: url(/assets/img/badge.svg) no-repeat;
-        width: 100px;
-        height: 100px;
-        display: inline-block;
-        position: relative;
-        outline: 0;
-        cursor: default;
-    }
-
-        #badges p:hover:after,
-        #badges p:active:after,
-        #badges p:focus:after {
-            content: attr(aria-label);
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            font-size: 16px;
-            background-color: rgba(0, 0, 0, 0.40);
-            text-shadow: 1px 1px #0c0c0c;
-        }
-
-        #badges p span {
-            position: absolute;
-            bottom: 5px;
-            right: 0;
-            text-align: left;
-            width: 30px;
-            display: block;
-            font-size: .4em;
-            opacity: .8;
-        }
-
-#meter {
-    height: 4px;
-    width: 0;
-    border-radius: 6px;
-    background: linear-gradient(to right, #3cb5ff, #eec04d);
-    box-shadow: 0 0 10px rgba(60, 181, 255, .45);
-    display: none;
-}
-
-#timeContainer {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    width: clamp(220px, 70vw, 280px);
-    height: clamp(220px, 70vw, 280px);
-    margin-bottom: .15em;
-    padding: 0;
-    border-radius: 0;
-    background: transparent;
-    box-shadow: none;
-}
-
-#timeContainer:before {
-    content: "";
-    position: absolute;
-    inset: 16%;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(126, 214, 255, .2) 0%, rgba(75, 121, 220, .08) 40%, rgba(0, 0, 0, 0) 72%);
-    pointer-events: none;
-    z-index: 1;
-}
-
-#timeRing {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    transform: rotate(-90deg);
-}
-
-#timeRing .ringTrack {
-    fill: none;
-    stroke: rgba(120, 146, 197, .24);
-    stroke-width: 6;
-    filter: drop-shadow(0 0 4px rgba(77, 104, 162, .25));
-}
-
-#timeRing .ringTicksMinor,
-#timeRing .ringTicksMajor {
-    fill: none;
-    stroke-linecap: round;
-}
-
-#timeRing .ringTicksMinor {
-    stroke: rgba(167, 203, 255, .22);
-    stroke-width: 1.5;
-    stroke-dasharray: 1.6 9.5;
-}
-
-#timeRing .ringTicksMajor {
-    stroke: rgba(199, 226, 255, .34);
-    stroke-width: 2;
-    stroke-dasharray: 4.2 51.3;
-}
-
-#timeRing .ringHalo {
-    fill: none;
-    stroke: rgba(126, 217, 255, .25);
-    stroke-width: 6;
-    opacity: .28;
-    filter: blur(2px);
-}
-
-#timeRing .ringProgress {
-    fill: none;
-    stroke: url(#ringGradient);
-    stroke-width: 6;
-    stroke-linecap: round;
-    filter: drop-shadow(0 0 6px rgba(96, 196, 255, .55)) drop-shadow(0 0 14px rgba(96, 196, 255, .28));
-}
-
-#timeRing .ringHead {
-    fill: #d8f4ff;
-    filter: drop-shadow(0 0 8px rgba(128, 224, 255, .95));
-    transition: opacity 120ms ease;
-    opacity: .95;
-}
-
-#timeRing .ringHeadTrail {
-    fill: rgba(156, 230, 255, .35);
-    filter: blur(2.4px);
-    opacity: .65;
-}
 
 #timeContainer.minutePulse #timeRing .ringProgress {
     animation: ringPulse 320ms ease-out;
@@ -433,61 +204,10 @@ footer {
     }
 }
 
-#scoreToast {
-    position: absolute;
-    left: 50%;
-    bottom: 18px;
-    transform: translateX(-50%);
-    pointer-events: none;
-    opacity: 0;
-    font-size: 1.05em;
-    font-weight: 700;
-    color: #eec04d;
-    text-shadow: 0 0 12px rgba(238, 192, 77, .45);
-}
 
-#scoreToast.show {
-    animation: scoreToastPop 900ms ease-out forwards;
-}
-
-#currentScore {
-    position: absolute;
-    left: 50%;
-    bottom: 54px;
-    transform: translateX(-50%);
-    display: inline-flex;
-    align-items: baseline;
-    gap: .35em;
-    z-index: 2;
-    color: #f4d98d;
-    font-size: .88em;
-    white-space: nowrap;
-    text-shadow: 0 0 10px rgba(238, 192, 77, .22);
-}
-
-#currentScore.hidden {
+.modal.hidden,
+.hidden {
     display: none;
-}
-
-    #currentScore span {
-        font-weight: 700;
-        color: #fff3c7;
-    }
-
-@keyframes scoreToastPop {
-    0% {
-        opacity: 0;
-        transform: translateX(-50%) translateY(4px) scale(.95);
-    }
-
-    15% {
-        opacity: 1;
-    }
-
-    100% {
-        opacity: 0;
-        transform: translateX(-50%) translateY(-20px) scale(1);
-    }
 }
 
 .modal {
@@ -540,9 +260,6 @@ footer {
         border-radius: 3px;
     }
 
-.hidden {
-    display: none;
-}
 
 /* Streak */
 
@@ -620,46 +337,498 @@ footer {
         color: #eec04d;
     }
 
-/* Badge rarity */
-
-#badges p.rarity-rare {
-    filter: drop-shadow(0 0 6px rgba(60, 181, 255, .6)) drop-shadow(0 0 12px rgba(60, 181, 255, .3));
+/* Content below the clock stays invisible until this stylesheet has loaded
+   (the clock itself is styled by the critical CSS inlined in index.html). */
+#below {
+    visibility: visible;
 }
 
-#badges p.rarity-legendary {
-    filter: drop-shadow(0 0 6px rgba(238, 192, 77, .7)) drop-shadow(0 0 14px rgba(238, 192, 77, .35));
-    animation: legendaryGlow 3s ease-in-out infinite;
+.srOnly {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+button {
+    font: inherit;
+    cursor: pointer;
+}
+
+button:focus-visible,
+a:focus-visible {
+    outline: 2px solid #eec04d;
+    outline-offset: 2px;
+}
+
+#quickActions button.clockToggle {
+    font-size: .85em;
+    padding: .45em .6em;
+    min-width: 3.4em;
+}
+
+/* Streak */
+
+#streak.atRisk #streakIcon {
+    filter: grayscale(.8);
+    opacity: .6;
+}
+
+#streakHint {
+    display: block;
+    font-size: .62em;
+    color: #8b9cc4;
+}
+
+/* Challenge history */
+
+#challengeHistory {
+    display: flex;
+    justify-content: center;
+    gap: .35em;
+    list-style: none;
+    margin: .55em 0 0;
+    padding: 0;
+    width: auto;
+}
+
+    #challengeHistory li {
+        width: 1.55em;
+        height: 1.55em;
+        line-height: 1.55em;
+        border-radius: 50%;
+        font-size: .8em;
+        text-align: center;
+        border: 1px solid #2a3354;
+        color: #5d6a8c;
+        background: rgba(255, 255, 255, .03);
+    }
+
+        #challengeHistory li.done {
+            border-color: #eec04d;
+            color: #eec04d;
+            background: rgba(238, 192, 77, .12);
+        }
+
+#challengeHistoryLabel {
+    display: block;
+    margin-top: .35em;
+    font-size: .75em;
+    color: #8b9cc4;
+}
+
+/* Collection */
+
+#collection {
+    margin: .8em auto;
+    max-width: 340px;
+    background: linear-gradient(180deg, rgba(30, 36, 60, .65), rgba(13, 16, 32, .7));
+    border: 1px solid #2a3354;
+    border-radius: 8px;
+    padding: .7em 1em;
+}
+
+    #collection h2,
+    #badges h2 {
+        margin: 0 0 .25em;
+        font-size: 1em;
+        color: #8b9cc4;
+        text-transform: uppercase;
+        letter-spacing: .06em;
+    }
+
+    #collection .collectionCount {
+        margin: 0 0 .45em;
+        font-size: 1.1em;
+    }
+
+        #collection .collectionCount strong {
+            color: #eec04d;
+        }
+
+.progressTrack {
+    height: 6px;
+    background: rgba(255, 255, 255, .08);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+    .progressTrack > div {
+        height: 100%;
+        width: 0;
+        background: linear-gradient(to right, #3cb5ff, #eec04d);
+        border-radius: 4px;
+        transition: width 400ms ease;
+    }
+
+.linkButton {
+    margin-top: .6em;
+    border: 1px solid #3d4b68;
+    background: linear-gradient(180deg, #182033, #0d111b);
+    color: #dfdfdf;
+    padding: .4em .9em;
+    border-radius: 5px;
+}
+
+    .linkButton:hover {
+        border-color: #eec04d;
+        color: #eec04d;
+    }
+
+#collectionModal .modalContent {
+    max-height: 86vh;
+    overflow-y: auto;
+}
+
+#collectionHours {
+    list-style: none;
+    margin: 0 0 .9em;
+    padding: 0;
+    display: block;
+    width: auto;
+}
+
+    #collectionHours li {
+        display: flex;
+        align-items: flex-start;
+        gap: .5em;
+        padding: .3em 0;
+        border-bottom: 1px solid rgba(87, 104, 144, .2);
+        font-size: .9em;
+    }
+
+    #collectionHours .hourLabel {
+        flex: 0 0 4.2em;
+        color: #aab8d6;
+        font-weight: 700;
+    }
+
+    #collectionHours .hourChips {
+        flex: 1;
+        display: flex;
+        flex-wrap: wrap;
+        gap: .25em;
+    }
+
+    #collectionHours .chip {
+        padding: 0 .4em;
+        border-radius: 999px;
+        background: rgba(238, 192, 77, .16);
+        border: 1px solid rgba(238, 192, 77, .45);
+        color: #ffe7ac;
+        font-size: .9em;
+    }
+
+        #collectionHours .chip.locked {
+            background: rgba(255, 255, 255, .04);
+            border-color: rgba(255, 255, 255, .12);
+            color: #6f7c9c;
+        }
+
+    #collectionHours .hourCount {
+        flex: 0 0 auto;
+        color: #8b9cc4;
+        font-size: .85em;
+    }
+
+/* Badges */
+
+#badges {
+    width: min(340px, 92vw);
+    margin: .8em auto 1em auto;
+}
+
+    #badges #badgeLegend {
+        display: inline-flex;
+        gap: .5em;
+        margin: .1em 0 .6em;
+        font-size: .78em;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+    }
+
+        #badges #badgeLegend span {
+            border-radius: 999px;
+            padding: .22em .55em;
+            border: 1px solid rgba(255, 255, 255, .16);
+            background: rgba(255, 255, 255, .05);
+        }
+
+        #badges #badgeLegend .legendCommon {
+            color: #bfc8dd;
+        }
+
+        #badges #badgeLegend .legendRare {
+            color: #74c3ff;
+            border-color: rgba(60, 181, 255, .45);
+        }
+
+        #badges #badgeLegend .legendLegendary {
+            color: #f8d986;
+            border-color: rgba(238, 192, 77, .55);
+        }
+
+#badgeGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: .5em;
+}
+
+.badge {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: .2em;
+    min-height: 5.8em;
+    padding: .55em .3em .45em;
+    border-radius: 12px;
+    border: 1px solid rgba(191, 200, 221, .35);
+    background: radial-gradient(circle at 50% 30%, rgba(191, 200, 221, .14), rgba(10, 14, 28, .7) 70%);
+    color: #e7ecf8;
+}
+
+    .badge .badgeIcon {
+        font-size: 2em;
+        line-height: 1.1;
+    }
+
+    .badge .badgeName {
+        font-size: .72em;
+        line-height: 1.2;
+        overflow-wrap: anywhere;
+    }
+
+    .badge .badgeCount {
+        position: absolute;
+        top: .3em;
+        right: .4em;
+        font-size: .68em;
+        font-weight: 700;
+        color: #fff3c7;
+        background: rgba(0, 0, 0, .45);
+        border-radius: 999px;
+        padding: 0 .4em;
+    }
+
+    .badge.rarity-rare {
+        border-color: rgba(60, 181, 255, .6);
+        background: radial-gradient(circle at 50% 30%, rgba(60, 181, 255, .22), rgba(10, 14, 28, .7) 70%);
+        box-shadow: 0 0 10px rgba(60, 181, 255, .25);
+    }
+
+    .badge.rarity-legendary {
+        border-color: rgba(238, 192, 77, .75);
+        background: radial-gradient(circle at 50% 30%, rgba(238, 192, 77, .26), rgba(10, 14, 28, .7) 70%);
+        animation: legendaryGlow 3s ease-in-out infinite;
+    }
+
+    .badge.locked {
+        border-style: dashed;
+        background: rgba(255, 255, 255, .025);
+        box-shadow: none;
+        animation: none;
+        color: #6f7c9c;
+    }
+
+        .badge.locked .badgeIcon {
+            filter: grayscale(1) brightness(0);
+            opacity: .45;
+        }
+
+    .badge.selected {
+        outline: 2px solid #eec04d;
+        outline-offset: 1px;
+    }
+
+#badgeDetail {
+    min-height: 2.6em;
+    margin: .6em 0 0;
+    font-size: .9em;
+    color: #c9d3ea;
 }
 
 @keyframes legendaryGlow {
     0%, 100% {
-        filter: drop-shadow(0 0 6px rgba(238, 192, 77, .5)) drop-shadow(0 0 10px rgba(238, 192, 77, .25));
+        box-shadow: 0 0 6px rgba(238, 192, 77, .35);
     }
 
     50% {
-        filter: drop-shadow(0 0 10px rgba(238, 192, 77, .8)) drop-shadow(0 0 20px rgba(238, 192, 77, .45));
+        box-shadow: 0 0 16px rgba(238, 192, 77, .6);
     }
 }
 
-body.celebrate #timeContainer {
-    animation: celebratePulse 450ms ease;
+/* Toasts (badge unlocks, update available, share feedback) */
+
+#toasts {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .4em;
+    pointer-events: none;
+    z-index: 30;
 }
 
-body.celebrate #time {
-    color: #fff8d7;
-    text-shadow: 0 0 16px rgba(255, 220, 110, .55), 0 0 34px rgba(255, 152, 65, .25);
+.toast {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    gap: .6em;
+    max-width: min(92vw, 380px);
+    padding: .6em .9em;
+    border-radius: 12px;
+    border: 1px solid #3d4b68;
+    background: rgba(13, 17, 30, .96);
+    color: #e7ecf8;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, .5);
+    text-align: left;
+    animation: toastIn 320ms cubic-bezier(.2, 1.4, .4, 1);
 }
 
-@keyframes celebratePulse {
+    .toast.leaving {
+        opacity: 0;
+        transform: translateY(10px);
+        transition: opacity 250ms ease, transform 250ms ease;
+    }
+
+    .toast .toastIcon {
+        font-size: 2em;
+        line-height: 1;
+    }
+
+    .toast .toastTitle {
+        display: block;
+        font-size: .72em;
+        text-transform: uppercase;
+        letter-spacing: .06em;
+        color: #8b9cc4;
+    }
+
+    .toast .toastText {
+        display: block;
+        font-weight: 700;
+    }
+
+    .toast button {
+        margin-left: auto;
+        border: 1px solid #eec04d;
+        background: transparent;
+        color: #eec04d;
+        border-radius: 6px;
+        padding: .3em .7em;
+        white-space: nowrap;
+    }
+
+    .toast.rarity-rare {
+        border-color: rgba(60, 181, 255, .7);
+        box-shadow: 0 0 18px rgba(60, 181, 255, .35), 0 8px 28px rgba(0, 0, 0, .5);
+    }
+
+        .toast.rarity-rare .toastTitle {
+            color: #74c3ff;
+        }
+
+    .toast.rarity-legendary {
+        border-color: rgba(238, 192, 77, .85);
+        box-shadow: 0 0 22px rgba(238, 192, 77, .45), 0 8px 28px rgba(0, 0, 0, .5);
+    }
+
+        .toast.rarity-legendary .toastTitle {
+            color: #f8d986;
+        }
+
+    .toast.badgeToast .toastIcon {
+        animation: badgeSpin 700ms ease-out;
+    }
+
+@keyframes toastIn {
     0% {
-        transform: scale(1);
-    }
-
-    35% {
-        transform: scale(1.04);
+        opacity: 0;
+        transform: translateY(16px) scale(.92);
     }
 
     100% {
-        transform: scale(1);
+        opacity: 1;
+        transform: none;
     }
+}
+
+@keyframes badgeSpin {
+    0% {
+        transform: scale(.3) rotate(-30deg);
+    }
+
+    60% {
+        transform: scale(1.25) rotate(8deg);
+    }
+
+    100% {
+        transform: none;
+    }
+}
+
+/* Share */
+
+#sharePreview {
+    display: block;
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto .8em;
+    border-radius: 10px;
+    border: 1px solid #2a3354;
+    aspect-ratio: 1 / 1;
+    background: #0d1020;
+}
+
+.modalButtons {
+    display: grid;
+    gap: .45em;
+}
+
+    .modalButtons a,
+    .modal .modalButtons button {
+        display: block;
+        text-align: center;
+        border: 1px solid #666;
+        background: #161616;
+        color: #dfdfdf;
+        padding: .5em;
+        border-radius: 3px;
+        text-decoration: none;
+        font-size: 1em;
+    }
+
+.modal .modalButtons .primary,
+.modal button.primary {
+    border-color: #eec04d;
+    background: linear-gradient(180deg, #3a2f12, #241d0b);
+    color: #ffe7ac;
+}
+
+.modal .modalNote {
+    font-size: .85em;
+    color: #aab8d6;
+    margin: 0 0 .9em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .badge.rarity-legendary,
+    .toast,
+    .toast .toastIcon {
+        animation: none !important;
+    }
+}
+
+#challengeHistory.hidden {
+    display: none;
 }

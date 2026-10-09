@@ -1,7 +1,12 @@
+/*
+ * A streak day is a calendar day with at least one scored point.
+ * Storage keys are unchanged from the visit-based version, so existing streaks
+ * carry over ("streak:lastVisit" now means "last day with a point").
+ */
 var StreakService = (function () {
 
     var streakKey = "streak:count",
-        lastVisitKey = "streak:lastVisit",
+        lastDayKey = "streak:lastVisit",
         streakSaveKey = "streak:saveAvailable",
         streakSaveWeekKey = "streak:saveWeek";
 
@@ -26,50 +31,63 @@ var StreakService = (function () {
 
     function refreshStreakSave(date) {
         var currentWeek = date.getFullYear() + "-" + getWeekNumber(date);
-        var savedWeek = localStorage.getItem(streakSaveWeekKey);
 
-        if (savedWeek !== currentWeek) {
+        if (localStorage.getItem(streakSaveWeekKey) !== currentWeek) {
             localStorage.setItem(streakSaveKey, "1");
             localStorage.setItem(streakSaveWeekKey, currentWeek);
         }
     }
 
-    function recordVisit(date) {
+    // Call when a minute scores >= 1 point. Returns the streak after recording.
+    function recordScoringDay(date) {
+        if (window.testmode)
+            return getStreak(date);
+
         var today = getDateString(date);
-        var lastVisit = localStorage.getItem(lastVisitKey);
+        var lastDay = localStorage.getItem(lastDayKey);
         var currentStreak = parseInt(localStorage.getItem(streakKey), 10) || 0;
 
         refreshStreakSave(date);
 
-        if (lastVisit === today) {
-            return;
-        }
+        if (lastDay === today)
+            return currentStreak;
 
-        if (!lastVisit) {
-            localStorage.setItem(streakKey, "1");
-            localStorage.setItem(lastVisitKey, today);
-            return;
-        }
-
-        var gap = daysBetween(lastVisit, today);
+        var gap = lastDay ? daysBetween(lastDay, today) : Infinity;
 
         if (gap === 1) {
             currentStreak += 1;
-            localStorage.setItem(streakKey, String(currentStreak));
         } else if (gap === 2 && localStorage.getItem(streakSaveKey) === "1") {
             localStorage.setItem(streakSaveKey, "0");
             currentStreak += 1;
-            localStorage.setItem(streakKey, String(currentStreak));
-        } else if (gap > 1) {
+        } else {
             currentStreak = 1;
-            localStorage.setItem(streakKey, "1");
         }
 
-        localStorage.setItem(lastVisitKey, today);
+        localStorage.setItem(streakKey, String(currentStreak));
+        localStorage.setItem(lastDayKey, today);
+        return currentStreak;
     }
 
-    function getStreak() {
-        return parseInt(localStorage.getItem(streakKey), 10) || 0;
+    // The streak as it stands right now: still alive if the last point was today,
+    // yesterday, or two days ago with a streak save available.
+    function getStreak(date) {
+        var lastDay = localStorage.getItem(lastDayKey);
+        var count = parseInt(localStorage.getItem(streakKey), 10) || 0;
+
+        if (!lastDay || !count)
+            return 0;
+
+        refreshStreakSave(date || new Date());
+        var gap = daysBetween(lastDay, getDateString(date || new Date()));
+
+        if (gap <= 1 || (gap === 2 && hasStreakSave()))
+            return count;
+
+        return 0;
+    }
+
+    function hasScoredToday(date) {
+        return localStorage.getItem(lastDayKey) === getDateString(date || new Date());
     }
 
     function hasStreakSave() {
@@ -77,8 +95,10 @@ var StreakService = (function () {
     }
 
     return {
-        recordVisit: recordVisit,
+        recordScoringDay: recordScoringDay,
         getStreak: getStreak,
-        hasStreakSave: hasStreakSave
+        hasScoredToday: hasScoredToday,
+        hasStreakSave: hasStreakSave,
+        getDateString: getDateString
     };
 });

@@ -3,7 +3,10 @@
 var DailyChallengeService = (function () {
 
     var challengeProgressKey = "challenge:progress",
-        challengeDateKey = "challenge:date";
+        challengeDateKey = "challenge:date",
+        challengeRulesKey = "challenge:rules",
+        challengeHistoryKey = "challenge:history",
+        historyLength = 7;
 
     var challengeTemplates = [
         {
@@ -52,7 +55,7 @@ var DailyChallengeService = (function () {
             id: "product",
             name: "Sum It Up",
             description: "Catch 2 minute-sum times",
-            ruleId: "product",
+            ruleId: "minutesum",
             target: 2
         },
         {
@@ -79,17 +82,59 @@ var DailyChallengeService = (function () {
         return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
     }
 
+    function getTemplate(date) {
+        return challengeTemplates[getDaySeed(date) % challengeTemplates.length];
+    }
+
+    function parseDateString(value) {
+        var parts = String(value).split("-");
+        return new Date(+parts[0], +parts[1] - 1, +parts[2]);
+    }
+
+    function readJson(key, fallback) {
+        try {
+            var value = JSON.parse(localStorage.getItem(key));
+            return value == null ? fallback : value;
+        }
+        catch (e) {
+            return fallback;
+        }
+    }
+
+    // Most recent first: [{ date: "2026-10-7", name, description, completed }]
+    function getHistory() {
+        var history = readJson(challengeHistoryKey, []);
+        return Array.isArray(history) ? history : [];
+    }
+
+    function archiveDay(storedDate) {
+        var template = getTemplate(parseDateString(storedDate));
+        var progress = parseInt(localStorage.getItem(challengeProgressKey), 10) || 0;
+        var history = getHistory().filter(function (h) { return h.date !== storedDate; });
+
+        history.unshift({
+            date: storedDate,
+            name: template.name,
+            description: template.description,
+            completed: progress >= template.target
+        });
+
+        localStorage.setItem(challengeHistoryKey, JSON.stringify(history.slice(0, historyLength)));
+    }
+
     function getChallenge(date) {
-        var seed = getDaySeed(date);
-        var index = seed % challengeTemplates.length;
-        var template = challengeTemplates[index];
+        var template = getTemplate(date);
 
         var today = getDateString(date);
         var storedDate = localStorage.getItem(challengeDateKey);
 
         if (storedDate !== today) {
+            if (storedDate)
+                archiveDay(storedDate);
+
             localStorage.setItem(challengeDateKey, today);
             localStorage.setItem(challengeProgressKey, "0");
+            localStorage.removeItem(challengeRulesKey);
         }
 
         var progress = parseInt(localStorage.getItem(challengeProgressKey), 10) || 0;
@@ -119,7 +164,18 @@ var DailyChallengeService = (function () {
                 gained = challenge.target;
             }
         } else if (challenge.id === "any3") {
-            gained = hits.length;
+            // Count distinct rules matched today, not repeats of the same rule.
+            var matched = readJson(challengeRulesKey, []);
+            if (!Array.isArray(matched))
+                matched = [];
+
+            for (var j = 0; j < hits.length; j++) {
+                if (matched.indexOf(hits[j].id) === -1)
+                    matched.push(hits[j].id);
+            }
+
+            localStorage.setItem(challengeRulesKey, JSON.stringify(matched));
+            gained = matched.length - challenge.progress;
         } else {
             for (var i = 0; i < hits.length; i++) {
                 if (hits[i].id === challenge.ruleId) {
@@ -139,6 +195,7 @@ var DailyChallengeService = (function () {
     }
 
     return {
+        getHistory: getHistory,
         getChallenge: getChallenge,
         recordProgress: recordProgress
     };

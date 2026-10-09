@@ -1,546 +1,912 @@
 /// <reference path="badgeService.js" />
 /// <reference path="highscoreService.js" />
+/// <reference path="streakService.js" />
+/// <reference path="dailyChallengeService.js" />
+/// <reference path="collectionService.js" />
+/// <reference path="shareService.js" />
 /// <reference path="timescore.js" />
 
-var elmTime = document.getElementById("time"),
-    elmTimeContainer = document.getElementById("timeContainer"),
-    rules = document.getElementById("rules"),
-    reset = document.getElementById("reset"),
-    elmBadges = document.getElementById("badges"),
-    elmMeter = document.getElementById("meter"),
-    elmRingProgress = document.getElementById("ringProgress"),
-    elmRingHead = document.getElementById("ringHead"),
-    elmRingHeadTrail = document.getElementById("ringHeadTrail"),
-    elmCurrentScore = document.getElementById("currentScore"),
-    elmCurrentScoreValue = document.getElementById("currentScoreValue"),
-    elmHowToPlay = document.getElementById("howToPlay"),
-    elmInstallApp = document.getElementById("installApp"),
-    elmHelpModal = document.getElementById("helpModal"),
-    elmInstallModal = document.getElementById("installModal"),
-    elmCloseHelp = document.getElementById("closeHelp"),
-    elmCloseInstall = document.getElementById("closeInstall"),
-    elmStreakCount = document.getElementById("streakCount"),
-    elmStreakSave = document.getElementById("streakSave"),
-    elmChallenge = document.getElementById("challenge"),
-    elmChallengeDesc = document.getElementById("challengeDesc"),
-    elmChallengeBar = document.getElementById("challengeBar"),
-    elmChallengeStatus = document.getElementById("challengeStatus"),
-    ts = new TimeScore(),
-    hs = new HighscoreService(),
-    badgeService = new BadgeService(),
-    streakService = new StreakService(),
-    challengeService = null,
-    ruleElementsById = {},
-    elmScoreToast = null,
-    ringCircumference = 0,
-    ringRadius = 106,
-    ringCenter = 130,
-    ringHeadX = ringCenter + ringRadius,
-    ringHeadY = ringCenter,
-    ringTrailX = ringCenter + ringRadius,
-    ringTrailY = ringCenter,
-    lastWholeSecond = null;
+(function () {
 
-var helpSeenKey = "timescoreHelpSeen",
-    installDismissedKey = "timescoreInstallDismissed",
-    deferredInstallPrompt = null,
-    hasEngaged = false,
-    isIOS = /iphone|ipad|ipod/i.test(window.navigator.userAgent);
-
-var reducedMotionQuery = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null,
-    prefersReducedMotion = reducedMotionQuery ? reducedMotionQuery.matches : false;
-
-var current = new Date();
-//current = new Date(2015, 4, 16, 4, 16);
-//current.setHours(7); current.setMinutes(11); //localStorage.clear();
-
-function calculate() {
-
-    var result = ts.getScore(current),
-        points = 0,
-        activeRuleIds = {};
-
-    elmTime.textContent = result.time;
-    fitTimeToRing();
-
-    for (var i = 0; i < result.score.length; i++) {
-
-        var score = result.score[i];
-        points += score.points;
-
-        if (score.points > 0) {
-            activeRuleIds[score.id] = true;
-        }
+    function $(id) {
+        return document.getElementById(id);
     }
 
-    updateRuleStates(activeRuleIds);
-    renderCurrentScore(points);
+    var elmTime = $("time"),
+        elmAmPm = $("ampm"),
+        elmFaceHint = $("faceHint"),
+        elmTimeContainer = $("timeContainer"),
+        elmRules = $("rules"),
+        elmRingProgress = $("ringProgress"),
+        elmRingHead = $("ringHead"),
+        elmRingHeadTrail = $("ringHeadTrail"),
+        elmCurrentScore = $("currentScore"),
+        elmCurrentScoreValue = $("currentScoreValue"),
+        elmAnnouncer = $("announcer"),
+        elmToasts = $("toasts"),
+        elmInstallApp = $("installApp"),
+        elmClockToggle = $("clockToggle"),
+        elmStreak = $("streak"),
+        elmStreakCount = $("streakCount"),
+        elmStreakSave = $("streakSave"),
+        elmStreakHint = $("streakHint"),
+        elmChallenge = $("challenge"),
+        elmChallengeDesc = $("challengeDesc"),
+        elmChallengeBar = $("challengeBar"),
+        elmChallengeStatus = $("challengeStatus"),
+        elmChallengeHistory = $("challengeHistory"),
+        elmBadgeGrid = $("badgeGrid"),
+        elmBadgeDetail = $("badgeDetail"),
+        elmBadgesTitle = $("badgesTitle"),
+        ts = new TimeScore(),
+        hs = new HighscoreService(),
+        badgeService = new BadgeService(),
+        streakService = new StreakService(),
+        challengeService = new DailyChallengeService(),
+        collectionService = new CollectionService(),
+        shareService = new ShareService(),
+        ruleElementsById = {},
+        elmScoreToast = null,
+        ringCircumference = 0,
+        ringRadius = 106,
+        ringCenter = 130,
+        ringHeadX = ringCenter + ringRadius,
+        ringHeadY = ringCenter,
+        ringTrailX = ringCenter + ringRadius,
+        ringTrailY = ringCenter,
+        lastWholeSecond = null,
+        lastResult = null,
+        clockPref = window.GTT.clockPref(),
+        current = new Date(),
+        currentDay = streakService.getDateString(current),
+        selectedBadgeId = null;
 
-    if (points > 0) {
-        triggerCelebration();
-        showScoreToast(points);
+    var helpSeenKey = "timescoreHelpSeen",
+        installDismissedKey = "timescoreInstallDismissed",
+        clockPrefKey = "pref:clock",
+        deferredInstallPrompt = null,
+        hasEngaged = false,
+        isIOS = /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+
+    var reducedMotionQuery = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null,
+        prefersReducedMotion = reducedMotionQuery ? reducedMotionQuery.matches : false;
+
+    var rarityLabels = { common: "Common", rare: "Rare", legendary: "Legendary" };
+
+    /* ---------- Clock ---------- */
+
+    function renderClock(date) {
+        var f = window.GTT.format(date, clockPref);
+        elmTime.textContent = f.time;
+        elmAmPm.textContent = f.suffix;
+        elmFaceHint.textContent = f.hint;
+        fitTimeToRing();
+    }
+
+    function formatKey(key) {
+        var parts = key.split(":");
+        return window.GTT.format(new Date(2000, 0, 1, +parts[0], +parts[1]), clockPref);
+    }
+
+    function formatHourLabel(hour) {
+        if (clockPref === "24")
+            return String(hour).padStart(2, "0") + ":00";
+
+        return (hour % 12 || 12) + " " + (hour < 12 ? "AM" : "PM");
+    }
+
+    function fitTimeToRing() {
+        elmTime.style.transform = "scale(1)";
+
+        var maxWidth = elmTimeContainer.clientWidth * 0.76;
+        var timeWidth = elmTime.getBoundingClientRect().width;
+        var scale = timeWidth > maxWidth ? (maxWidth / timeWidth) : 1;
+
+        elmTime.style.transform = "scale(" + scale.toFixed(3) + ")";
+    }
+
+    function renderClockToggle() {
+        var is24 = clockPref === "24";
+        elmClockToggle.textContent = is24 ? "24h" : "12h";
+        elmClockToggle.setAttribute("aria-pressed", is24 ? "true" : "false");
+        elmClockToggle.setAttribute("aria-label", is24 ? "24-hour clock on. Switch to 12-hour clock" : "12-hour clock on. Switch to 24-hour clock");
+    }
+
+    /* ---------- Scoring ---------- */
+
+    // Handles the current minute. Every side effect (celebration, streak, badges,
+    // collection, challenge) runs only the first time a minute is recorded, so
+    // reloading during a scoring minute never double counts.
+    function processMinute(date) {
+        var result = ts.getScore(date),
+            activeRuleIds = {};
+
+        lastResult = result;
+        renderClock(date);
+
+        for (var i = 0; i < result.score.length; i++) {
+            activeRuleIds[result.score[i].id] = true;
+        }
+
+        updateRuleStates(activeRuleIds);
+        renderCurrentScore(result.points);
+
+        if (result.points <= 0)
+            return;
+
         markEngaged();
-        hs.recordScore(current, points);
-        updateHighscore();
-        updateBadges();
-        updateChallenge(result.score, points);
-    }
-}
 
-function fitTimeToRing() {
-    if (!elmTime || !elmTimeContainer)
-        return;
+        if (!hs.recordScore(date, result.points))
+            return;
 
-    elmTime.style.transform = "scale(1)";
+        var unlocked = [];
+        var momentBadge = null;
 
-    var maxWidth = elmTimeContainer.clientWidth * 0.76;
-    var timeWidth = elmTime.getBoundingClientRect().width;
-    var scale = timeWidth > maxWidth ? (maxWidth / timeWidth) : 1;
-
-    elmTime.style.transform = "scale(" + scale.toFixed(3) + ")";
-}
-
-function initializeScoreFeedback() {
-    if (!elmTimeContainer)
-        return;
-
-    elmScoreToast = document.createElement("span");
-    elmScoreToast.id = "scoreToast";
-    elmScoreToast.className = "scoreToast";
-    elmTimeContainer.appendChild(elmScoreToast);
-}
-
-function showScoreToast(points) {
-    if (!elmScoreToast)
-        return;
-
-    elmScoreToast.textContent = "+" + points;
-    elmScoreToast.className = "scoreToast";
-    void elmScoreToast.offsetWidth;
-    elmScoreToast.className = "scoreToast show";
-}
-
-function renderCurrentScore(points) {
-    if (!elmCurrentScore || !elmCurrentScoreValue)
-        return;
-
-    if (points > 0) {
-        elmCurrentScoreValue.textContent = "+" + points;
-        elmCurrentScore.className = "";
-    } else {
-        elmCurrentScore.className = "hidden";
-    }
-}
-
-function triggerCelebration() {
-    document.body.className = document.body.className.replace(/\bcelebrate\b/g, "").replace(/\s{2,}/g, " ").trim();
-    document.body.className = (document.body.className ? document.body.className + " " : "") + "celebrate";
-
-    window.clearTimeout(triggerCelebration._timer);
-    triggerCelebration._timer = window.setTimeout(function () {
-        document.body.className = document.body.className.replace(/\bcelebrate\b/g, "").replace(/\s{2,}/g, " ").trim();
-    }, 500);
-}
-
-function readFlag(key) {
-    var value = null;
-
-    try {
-        value = window.localStorage.getItem(key);
-    }
-    catch (e) {
-    }
-
-    if (value === null) {
-        value = readCookie(key);
-    }
-
-    return value === "1";
-}
-
-function writeFlag(key, value) {
-    var stringValue = value ? "1" : "0";
-
-    try {
-        window.localStorage.setItem(key, stringValue);
-    }
-    catch (e) {
-    }
-
-    writeCookie(key, stringValue, 3650);
-}
-
-function readCookie(name) {
-    var prefix = name + "=";
-    var pairs = document.cookie ? document.cookie.split(";") : [];
-
-    for (var i = 0; i < pairs.length; i++) {
-        var entry = pairs[i].replace(/^\s+/, "");
-        if (entry.indexOf(prefix) === 0) {
-            return entry.substring(prefix.length);
+        for (var j = 0; j < result.score.length; j++) {
+            if (result.score[j].badge) {
+                momentBadge = result.score[j].badge;
+                var added = badgeService.addBadge(momentBadge);
+                if (added && added.isNew)
+                    unlocked.push(added);
+            }
         }
-    }
 
-    return null;
-}
+        var f = window.GTT.format(date, clockPref);
+        collectionService.record(date, result.points, {
+            time: f.time,
+            suffix: f.suffix,
+            points: result.points,
+            rules: result.score.map(function (h) { return h.rule; }),
+            badge: momentBadge ? { id: momentBadge.id, icon: momentBadge.icon, name: momentBadge.name, rarity: momentBadge.rarity } : null
+        });
 
-function writeCookie(name, value, days) {
-    var expires = "";
+        streakService.recordScoringDay(date);
+        challengeService.recordProgress(date, result.score, result.points);
+        unlocked = unlocked.concat(badgeService.awardTiers(hs.getScore(date).weekly));
 
-    if (typeof days === "number") {
-        var date = new Date();
-        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-        expires = "; expires=" + date.toUTCString();
-    }
+        triggerCelebration();
+        showScoreToast(result.points);
+        announce(f.time + (f.suffix ? " " + f.suffix : "") + ". Plus " + result.points + (result.points === 1 ? " point: " : " points: ") +
+            result.score.map(function (h) { return h.rule; }).join(", ") + ".");
 
-    document.cookie = name + "=" + value + expires + "; path=/; SameSite=Lax";
-}
-
-function isStandalone() {
-    var displayMode = window.matchMedia && window.matchMedia("(display-mode: standalone)").matches;
-    return !!displayMode || window.navigator.standalone === true;
-}
-
-function setModalVisible(modal, show) {
-    if (!modal)
-        return;
-
-    modal.className = show ? "modal" : "modal hidden";
-}
-
-function markEngaged() {
-    if (hasEngaged)
-        return;
-
-    hasEngaged = true;
-    updateInstallButton();
-}
-
-function updateInstallButton() {
-    if (!elmInstallApp)
-        return;
-
-    var shouldShow = hasEngaged && !isStandalone() && !readFlag(installDismissedKey) && (isIOS || !!deferredInstallPrompt);
-    elmInstallApp.style.display = shouldShow ? "inline-block" : "none";
-}
-
-function maybeShowHelpOnFirstVisit() {
-    if (readFlag(helpSeenKey))
-        return;
-
-    writeFlag(helpSeenKey, true);
-    setModalVisible(elmHelpModal, true);
-}
-
-function clearResults() {
-    for (var id in ruleElementsById) {
-        if (ruleElementsById.hasOwnProperty(id)) {
-            ruleElementsById[id].className = "ruleRow muted";
+        for (var k = 0; k < unlocked.length; k++) {
+            showBadgeToast(unlocked[k].badge, k * 900);
         }
+
+        refreshPanels();
     }
-}
 
-function updateRuleStates(activeRuleIds) {
-    for (var id in ruleElementsById) {
-        if (!ruleElementsById.hasOwnProperty(id))
-            continue;
-
-        var row = ruleElementsById[id];
-        if (activeRuleIds[id]) {
-            row.className = "ruleRow active";
+    function renderCurrentScore(points) {
+        if (points > 0) {
+            elmCurrentScoreValue.textContent = "+" + points;
+            elmCurrentScore.className = "";
         } else {
-            row.className = "ruleRow muted";
+            elmCurrentScore.className = "hidden";
         }
     }
-}
 
-function updateHighscore() {
-    var score = hs.getScore(current);
-    document.getElementById("daily").firstElementChild.textContent = score.daily;
-    document.getElementById("weekly").firstElementChild.textContent = score.weekly;
-}
-
-function showRules() {
-
-    for (var name in ts.rules) {
-        var rule = ts.rules[name];
-
-        var li = document.createElement("li");
-        li.className = "ruleRow muted";
-        var pointSpan = document.createElement("span");
-        pointSpan.className = "rulePoints";
-        pointSpan.textContent = `${rule.points}pt`;
-        li.appendChild(pointSpan);
-        var textSpan = document.createElement("span");
-        textSpan.className = "ruleText";
-        textSpan.textContent = rule.rule;
-        li.appendChild(textSpan);
-        li.id = rule.id;
-        ruleElementsById[rule.id] = li;
-
-        rules.appendChild(li);
-    }
-};
-
-function initializeTimeRing() {
-    if (!elmRingProgress)
-        return;
-
-    ringRadius = parseFloat(elmRingProgress.getAttribute("r")) || 106;
-    ringCircumference = 2 * Math.PI * ringRadius;
-    elmRingProgress.style.strokeDasharray = "0 " + ringCircumference;
-    elmRingProgress.style.strokeDashoffset = 0;
-
-    if (elmRingHead) {
-        elmRingHead.setAttribute("cx", ringCenter + ringRadius);
-        elmRingHead.setAttribute("cy", ringCenter);
+    function initializeScoreFeedback() {
+        elmScoreToast = document.createElement("span");
+        elmScoreToast.id = "scoreToast";
+        elmScoreToast.className = "scoreToast";
+        elmScoreToast.setAttribute("aria-hidden", "true");
+        elmTimeContainer.appendChild(elmScoreToast);
     }
 
-    if (elmRingHeadTrail) {
-        elmRingHeadTrail.setAttribute("cx", ringCenter + ringRadius);
-        elmRingHeadTrail.setAttribute("cy", ringCenter);
-    }
-}
-
-function setSecondProgress(seconds) {
-    var secondPercent = Math.max(0, Math.min(seconds / 60, 1));
-    var visibleLength = ringCircumference * secondPercent;
-    var angle = secondPercent * (2 * Math.PI);
-    ringHeadX = ringCenter + Math.cos(angle) * ringRadius;
-    ringHeadY = ringCenter + Math.sin(angle) * ringRadius;
-
-    if (prefersReducedMotion) {
-        ringTrailX = ringHeadX;
-        ringTrailY = ringHeadY;
-    } else {
-        ringTrailX += (ringHeadX - ringTrailX) * 0.2;
-        ringTrailY += (ringHeadY - ringTrailY) * 0.2;
+    function showScoreToast(points) {
+        elmScoreToast.textContent = "+" + points;
+        elmScoreToast.className = "scoreToast";
+        void elmScoreToast.offsetWidth;
+        elmScoreToast.className = "scoreToast show";
     }
 
-    if (elmMeter)
-        elmMeter.style.width = (secondPercent * 100) + "%";
+    function toggleClass(el, name, on) {
+        if (el.classList)
+            el.classList.toggle(name, !!on);
+    }
 
-    if (elmRingProgress && ringCircumference > 0) {
-        elmRingProgress.style.strokeDasharray = visibleLength + " " + ringCircumference;
+    function triggerCelebration() {
+        toggleClass(document.body, "celebrate", false);
+        void document.body.offsetWidth;
+        toggleClass(document.body, "celebrate", true);
+
+        window.clearTimeout(triggerCelebration._timer);
+        triggerCelebration._timer = window.setTimeout(function () {
+            toggleClass(document.body, "celebrate", false);
+        }, 500);
+    }
+
+    function announce(text) {
+        elmAnnouncer.textContent = "";
+        window.setTimeout(function () {
+            elmAnnouncer.textContent = text;
+        }, 50);
+    }
+
+    function showRules() {
+        for (var name in ts.rules) {
+            var rule = ts.rules[name];
+
+            var li = document.createElement("li");
+            li.className = "ruleRow muted";
+            li.id = rule.id;
+            li.title = rule.hint || "";
+
+            var pointSpan = document.createElement("span");
+            pointSpan.className = "rulePoints";
+            pointSpan.textContent = rule.points + "pt";
+            li.appendChild(pointSpan);
+
+            var textSpan = document.createElement("span");
+            textSpan.className = "ruleText";
+            textSpan.textContent = rule.rule;
+            li.appendChild(textSpan);
+
+            ruleElementsById[rule.id] = li;
+            elmRules.appendChild(li);
+        }
+    }
+
+    function updateRuleStates(activeRuleIds) {
+        for (var id in ruleElementsById) {
+            if (ruleElementsById.hasOwnProperty(id)) {
+                ruleElementsById[id].className = activeRuleIds[id] ? "ruleRow active" : "ruleRow muted";
+            }
+        }
+    }
+
+    /* ---------- Panels ---------- */
+
+    function refreshPanels() {
+        updateHighscore();
+        updateStreak();
+        updateChallenge();
+        updateCollection();
+        updateBadges();
+    }
+
+    function updateHighscore() {
+        var score = hs.getScore(current);
+        $("daily").firstElementChild.textContent = score.daily;
+        $("weekly").firstElementChild.textContent = score.weekly;
+    }
+
+    function updateStreak() {
+        var now = new Date();
+        var count = streakService.getStreak(now);
+        var scoredToday = streakService.hasScoredToday(now);
+
+        elmStreakCount.textContent = count;
+        elmStreakSave.className = streakService.hasStreakSave() ? "" : "hidden";
+        elmStreak.className = count > 0 && !scoredToday ? "atRisk" : "";
+
+        if (count === 0)
+            elmStreakHint.textContent = "Score a point to start a streak";
+        else if (!scoredToday)
+            elmStreakHint.textContent = "Score a point today to keep it going";
+        else
+            elmStreakHint.textContent = "";
+    }
+
+    function updateChallenge() {
+        var challenge = challengeService.getChallenge(current);
+
+        elmChallengeDesc.textContent = challenge.description;
+        elmChallengeBar.style.width = Math.min(challenge.progress / challenge.target * 100, 100) + "%";
+
+        if (challenge.completed) {
+            elmChallengeStatus.textContent = "\u2714 Completed!";
+            elmChallenge.className = "challengeComplete";
+        } else {
+            elmChallengeStatus.textContent = challenge.progress + " / " + challenge.target;
+            elmChallenge.className = "";
+        }
+
+        var history = challengeService.getHistory().slice(0, 7).reverse();
+        elmChallengeHistory.innerHTML = "";
+
+        for (var i = 0; i < history.length; i++) {
+            var entry = history[i];
+            var parts = String(entry.date).split("-");
+            var label = new Date(+parts[0], +parts[1] - 1, +parts[2]).toLocaleDateString(undefined, { weekday: "short" });
+            var li = document.createElement("li");
+            li.className = entry.completed ? "done" : "";
+            li.textContent = entry.completed ? "\u2714" : "\u2715";
+            li.title = label + ": " + entry.name + (entry.completed ? " (completed)" : " (missed)");
+            li.setAttribute("aria-label", li.title);
+            elmChallengeHistory.appendChild(li);
+        }
+
+        elmChallengeHistory.className = history.length ? "" : "hidden";
+    }
+
+    function getCollectionProgress() {
+        return collectionService.getProgress(ts.getCollectibleMinutes(current));
+    }
+
+    function updateCollection() {
+        var progress = getCollectionProgress();
+        $("collectedCount").textContent = progress.collected;
+        $("collectibleTotal").textContent = progress.total;
+        $("collectionBar").style.width = (progress.total ? progress.collected / progress.total * 100 : 0) + "%";
+    }
+
+    function renderCollectionModal() {
+        var progress = getCollectionProgress();
+        var list = $("collectionHours");
+        list.innerHTML = "";
+
+        $("collectionModalLead").textContent = progress.collected + " of " + progress.total + " scoring times collected · " +
+            collectionService.getLifetimePoints() + " lifetime points";
+
+        for (var h = 0; h < 24; h++) {
+            var bucket = progress.byHour[h];
+            var li = document.createElement("li");
+
+            var label = document.createElement("span");
+            label.className = "hourLabel";
+            label.textContent = formatHourLabel(h);
+            li.appendChild(label);
+
+            var chips = document.createElement("span");
+            chips.className = "hourChips";
+
+            for (var i = 0; i < bucket.collected.length; i++) {
+                var f = formatKey(bucket.collected[i]);
+                var chip = document.createElement("span");
+                chip.className = "chip";
+                chip.textContent = f.time;
+                chips.appendChild(chip);
+            }
+
+            var locked = bucket.total - bucket.collected.length;
+            if (locked > 0) {
+                var lockedChip = document.createElement("span");
+                lockedChip.className = "chip locked";
+                lockedChip.textContent = "🔒 " + locked;
+                lockedChip.setAttribute("aria-label", locked + " still locked");
+                chips.appendChild(lockedChip);
+            }
+
+            li.appendChild(chips);
+
+            var count = document.createElement("span");
+            count.className = "hourCount";
+            count.textContent = bucket.collected.length + "/" + bucket.total;
+            li.appendChild(count);
+
+            list.appendChild(li);
+        }
+    }
+
+    function updateBadges() {
+        var all = badgeService.getAllBadges();
+        var earned = all.filter(function (b) { return b.count > 0; }).length;
+
+        elmBadgesTitle.textContent = "Badges · " + earned + " of " + all.length;
+        elmBadgeGrid.innerHTML = "";
+
+        for (var i = 0; i < all.length; i++) {
+            elmBadgeGrid.appendChild(createBadgeButton(all[i]));
+        }
+    }
+
+    function createBadgeButton(badge) {
+        var isEarned = badge.count > 0;
+        var rarity = badge.rarity || "common";
+        var button = document.createElement("button");
+        button.type = "button";
+        button.id = "badge-" + badge.id;
+        button.className = "badge rarity-" + rarity + (isEarned ? "" : " locked") + (selectedBadgeId === badge.id ? " selected" : "");
+
+        var icon = document.createElement("span");
+        icon.className = "badgeIcon";
+        icon.setAttribute("aria-hidden", "true");
+        icon.textContent = badge.icon || "🏅";
+        button.appendChild(icon);
+
+        var name = document.createElement("span");
+        name.className = "badgeName";
+        name.textContent = isEarned ? badge.name : "Locked";
+        button.appendChild(name);
+
+        if (isEarned && badge.count > 1) {
+            var count = document.createElement("span");
+            count.className = "badgeCount";
+            count.textContent = "\u00d7" + badge.count;
+            button.appendChild(count);
+        }
+
+        button.setAttribute("aria-label", isEarned
+            ? badge.name + ", " + rarityLabels[rarity] + " badge" + (badge.count > 1 ? ", earned " + badge.count + " times" : "")
+            : "Locked " + rarityLabels[rarity] + " badge");
+
+        button.addEventListener("click", function () {
+            selectedBadgeId = badge.id;
+            var buttons = elmBadgeGrid.querySelectorAll(".badge");
+            for (var i = 0; i < buttons.length; i++) {
+                toggleClass(buttons[i], "selected", buttons[i] === button);
+            }
+
+            elmBadgeDetail.textContent = isEarned
+                ? (badge.icon + " " + badge.name + " (" + rarityLabels[rarity] + "): " + (/[.!?]$/.test(badge.description) ? badge.description : badge.description + ".") + (badge.count > 1 ? " Earned " + badge.count + " times." : ""))
+                : ("A locked " + rarityLabels[rarity].toLowerCase() + " badge. Keep watching the clock to discover it.");
+        });
+
+        return button;
+    }
+
+    /* ---------- Toasts ---------- */
+
+    // options: { id, icon, title, text, actionLabel, onAction, duration (ms, 0 = sticky), className, delay }
+    function showToast(options) {
+        var render = function () {
+            if (options.id && $(options.id))
+                return;
+
+            var toast = document.createElement("div");
+            toast.className = "toast" + (options.className ? " " + options.className : "");
+            toast.setAttribute("role", "status");
+            if (options.id)
+                toast.id = options.id;
+
+            if (options.icon) {
+                var icon = document.createElement("span");
+                icon.className = "toastIcon";
+                icon.setAttribute("aria-hidden", "true");
+                icon.textContent = options.icon;
+                toast.appendChild(icon);
+            }
+
+            var body = document.createElement("span");
+            var title = document.createElement("span");
+            title.className = "toastTitle";
+            title.textContent = options.title || "";
+            body.appendChild(title);
+            var text = document.createElement("span");
+            text.className = "toastText";
+            text.textContent = options.text || "";
+            body.appendChild(text);
+            toast.appendChild(body);
+
+            var dismiss = function () {
+                toggleClass(toast, "leaving", true);
+                window.setTimeout(function () {
+                    if (toast.parentNode)
+                        toast.parentNode.removeChild(toast);
+                }, 260);
+            };
+
+            if (options.actionLabel) {
+                var action = document.createElement("button");
+                action.type = "button";
+                action.textContent = options.actionLabel;
+                action.addEventListener("click", function () {
+                    dismiss();
+                    if (options.onAction)
+                        options.onAction();
+                });
+                toast.appendChild(action);
+            }
+
+            elmToasts.appendChild(toast);
+
+            var duration = options.duration === undefined ? 4500 : options.duration;
+            if (duration > 0)
+                window.setTimeout(dismiss, duration);
+        };
+
+        if (options.delay)
+            window.setTimeout(render, options.delay);
+        else
+            render();
+    }
+
+    window.showToast = showToast;
+
+    function showBadgeToast(badge, delay) {
+        var rarity = badge.rarity || "common";
+        showToast({
+            icon: badge.icon || "🏅",
+            title: rarityLabels[rarity] + " badge unlocked",
+            text: badge.name,
+            className: "badgeToast rarity-" + rarity,
+            duration: 5000,
+            delay: delay
+        });
+    }
+
+    /* ---------- Ring ---------- */
+
+    function initializeTimeRing() {
+        ringRadius = parseFloat(elmRingProgress.getAttribute("r")) || 106;
+        ringCircumference = 2 * Math.PI * ringRadius;
+        elmRingProgress.style.strokeDasharray = "0 " + ringCircumference;
         elmRingProgress.style.strokeDashoffset = 0;
     }
 
-    if (elmRingHeadTrail) {
+    function setSecondProgress(seconds) {
+        var secondPercent = Math.max(0, Math.min(seconds / 60, 1));
+        var visibleLength = ringCircumference * secondPercent;
+        var angle = secondPercent * (2 * Math.PI);
+        ringHeadX = ringCenter + Math.cos(angle) * ringRadius;
+        ringHeadY = ringCenter + Math.sin(angle) * ringRadius;
+
+        if (prefersReducedMotion) {
+            ringTrailX = ringHeadX;
+            ringTrailY = ringHeadY;
+        } else {
+            ringTrailX += (ringHeadX - ringTrailX) * 0.2;
+            ringTrailY += (ringHeadY - ringTrailY) * 0.2;
+        }
+
+        elmRingProgress.style.strokeDasharray = visibleLength + " " + ringCircumference;
+        elmRingProgress.style.strokeDashoffset = 0;
+
         elmRingHeadTrail.setAttribute("cx", ringTrailX);
         elmRingHeadTrail.setAttribute("cy", ringTrailY);
         elmRingHeadTrail.style.opacity = secondPercent > 0.003 ? "0.65" : "0.25";
-    }
 
-    if (elmRingHead) {
         elmRingHead.setAttribute("cx", ringHeadX);
         elmRingHead.setAttribute("cy", ringHeadY);
         elmRingHead.style.opacity = secondPercent > 0.003 ? "0.95" : "0.35";
     }
-}
 
-function triggerMinutePulse() {
-    if (!elmTimeContainer)
-        return;
+    function triggerMinutePulse() {
+        toggleClass(elmTimeContainer, "minutePulse", false);
+        void elmTimeContainer.offsetWidth;
+        toggleClass(elmTimeContainer, "minutePulse", true);
 
-    elmTimeContainer.className = elmTimeContainer.className.replace(/\bminutePulse\b/g, "").replace(/\s{2,}/g, " ").trim();
-    elmTimeContainer.className = (elmTimeContainer.className ? elmTimeContainer.className + " " : "") + "minutePulse";
+        window.clearTimeout(triggerMinutePulse._timer);
+        triggerMinutePulse._timer = window.setTimeout(function () {
+            toggleClass(elmTimeContainer, "minutePulse", false);
+        }, 360);
+    }
 
-    window.clearTimeout(triggerMinutePulse._timer);
-    triggerMinutePulse._timer = window.setTimeout(function () {
-        elmTimeContainer.className = elmTimeContainer.className.replace(/\bminutePulse\b/g, "").replace(/\s{2,}/g, " ").trim();
-    }, 360);
-}
+    function startRingAnimation() {
+        function secondsNow(now) {
+            return prefersReducedMotion ? now.getSeconds() : now.getSeconds() + (now.getMilliseconds() / 1000);
+        }
 
-function startRingAnimation() {
-    function frame() {
+        function schedule() {
+            if (prefersReducedMotion)
+                window.setTimeout(frame, 250);
+            else
+                window.requestAnimationFrame(frame);
+        }
+
+        function frame() {
+            var now = new Date();
+            var wholeSeconds = now.getSeconds();
+
+            if (!prefersReducedMotion && lastWholeSecond !== null && wholeSeconds < lastWholeSecond) {
+                triggerMinutePulse();
+            }
+
+            lastWholeSecond = wholeSeconds;
+            setSecondProgress(secondsNow(now));
+            schedule();
+        }
+
         var now = new Date();
-        var seconds = prefersReducedMotion ? now.getSeconds() : now.getSeconds() + (now.getMilliseconds() / 1000);
-        var wholeSeconds = now.getSeconds();
+        lastWholeSecond = now.getSeconds();
+        ringTrailX = ringCenter + Math.cos(now.getSeconds() / 60 * 2 * Math.PI) * ringRadius;
+        ringTrailY = ringCenter + Math.sin(now.getSeconds() / 60 * 2 * Math.PI) * ringRadius;
+        setSecondProgress(secondsNow(now));
+        schedule();
+    }
 
-        if (!prefersReducedMotion && lastWholeSecond !== null && wholeSeconds < lastWholeSecond) {
-            triggerMinutePulse();
+    /* ---------- Modals (focus trap + Escape) ---------- */
+
+    var openModalStack = [];
+
+    function focusableIn(container) {
+        return Array.prototype.filter.call(
+            container.querySelectorAll("button, [href], input, select, textarea, [tabindex]:not([tabindex='-1'])"),
+            function (el) { return !el.disabled && el.offsetParent !== null; });
+    }
+
+    function openModal(modal) {
+        if (!modal.classList.contains("hidden"))
+            return;
+
+        openModalStack.push({ modal: modal, returnFocus: document.activeElement });
+        modal.classList.remove("hidden");
+
+        var focusable = focusableIn(modal);
+        if (focusable.length)
+            focusable[0].focus();
+    }
+
+    function closeModal(modal) {
+        if (modal.classList.contains("hidden"))
+            return;
+
+        modal.classList.add("hidden");
+
+        for (var i = openModalStack.length - 1; i >= 0; i--) {
+            if (openModalStack[i].modal === modal) {
+                var entry = openModalStack.splice(i, 1)[0];
+                if (entry.returnFocus && entry.returnFocus.focus)
+                    entry.returnFocus.focus();
+                break;
+            }
         }
 
-        lastWholeSecond = wholeSeconds;
-        setSecondProgress(seconds);
+        if (modal.id === "helpModal")
+            writeFlag(helpSeenKey, true);
 
-        if (prefersReducedMotion) {
-            window.setTimeout(frame, 250);
-        } else {
-            window.requestAnimationFrame(frame);
+        if (modal.id === "installModal") {
+            writeFlag(installDismissedKey, true);
+            updateInstallButton();
         }
     }
 
-    var now = new Date();
-    var seconds = prefersReducedMotion ? now.getSeconds() : now.getSeconds() + (now.getMilliseconds() / 1000);
-    lastWholeSecond = now.getSeconds();
-    setSecondProgress(seconds);
+    document.addEventListener("keydown", function (e) {
+        var top = openModalStack[openModalStack.length - 1];
+        if (!top)
+            return;
 
-    if (prefersReducedMotion) {
-        window.setTimeout(frame, 250);
-    } else {
-        window.requestAnimationFrame(frame);
-    }
-}
-
-function updateBadges() {
-
-    var badges = badgeService.getBadges();
-    var badgesText = badges.length === 1 ? " badge" : " badges";
-
-    var title = elmBadges.querySelector("h2");
-    var legend = document.getElementById("badgeLegend");
-
-    title.textContent = badges.length + badgesText;
-    elmBadges.innerHTML = title.outerHTML + (legend ? legend.outerHTML : "");
-
-    for (var i = 0; i < badges.length; i++) {
-        var badge = badges[i];
-
-        var img = document.createElement("p")
-        img.setAttribute("aria-label", badge.description);
-        img.id = badge.id;
-        img.tabIndex = 1;
-        img.className = "rarity-" + (badge.rarity || "common");
-
-        if (badge.level > 1) {
-            var span = document.createElement("span");
-            span.textContent = badge.level + "x";
-            img.appendChild(span);
-        }
-
-        elmBadges.appendChild(img);
-    }
-}
-
-function updateStreak() {
-    streakService.recordVisit(new Date());
-    var count = streakService.getStreak();
-    elmStreakCount.textContent = count;
-
-    if (streakService.hasStreakSave()) {
-        elmStreakSave.className = "";
-    } else {
-        elmStreakSave.className = "hidden";
-    }
-}
-
-function initChallenge() {
-    try {
-        var service = getChallengeService();
-        if (!service) {
-            renderChallengeFallback();
+        if (e.key === "Escape" || e.key === "Esc") {
+            e.preventDefault();
+            closeModal(top.modal);
             return;
         }
 
-        var challenge = service.getChallenge(current);
-        renderChallenge(challenge);
-    }
-    catch (e) {
-        renderChallengeFallback();
-    }
-}
+        if (e.key === "Tab") {
+            var focusable = focusableIn(top.modal);
+            if (!focusable.length) {
+                e.preventDefault();
+                return;
+            }
 
-function updateChallenge(hits, totalPoints) {
-    try {
-        var service = getChallengeService();
-        if (!service)
-            return;
+            var first = focusable[0], last = focusable[focusable.length - 1];
+            if (e.shiftKey && (document.activeElement === first || !top.modal.contains(document.activeElement))) {
+                e.preventDefault();
+                last.focus();
+            } else if (!e.shiftKey && (document.activeElement === last || !top.modal.contains(document.activeElement))) {
+                e.preventDefault();
+                first.focus();
+            }
+        }
+    });
 
-        var challenge = service.recordProgress(current, hits, totalPoints);
-        renderChallenge(challenge);
+    // Tapping the dimmed backdrop closes a modal too.
+    Array.prototype.forEach.call(document.querySelectorAll(".modal"), function (modal) {
+        modal.addEventListener("click", function (e) {
+            if (e.target === modal)
+                closeModal(modal);
+        });
+    });
+
+    /* ---------- Share ---------- */
+
+    var preparedShare = null;
+
+    function getShareData() {
+        var progress = getCollectionProgress();
+        var base = {
+            streak: streakService.getStreak(new Date()),
+            collected: progress.collected,
+            total: progress.total
+        };
+
+        if (lastResult && lastResult.points > 0) {
+            var f = window.GTT.format(current, clockPref);
+            var badgeHit = lastResult.score.filter(function (h) { return h.badge; })[0];
+            return Object.assign(base, {
+                time: f.time,
+                suffix: f.suffix,
+                points: lastResult.points,
+                rules: lastResult.score.map(function (h) { return h.rule; }),
+                badge: badgeHit ? badgeHit.badge : null
+            });
+        }
+
+        var last = collectionService.getLast();
+        if (last && last.points > 0) {
+            return Object.assign(base, {
+                time: last.time,
+                suffix: last.suffix,
+                points: last.points,
+                rules: last.rules || [],
+                badge: last.badge || null
+            });
+        }
+
+        var now = window.GTT.format(current, clockPref);
+        return Object.assign(base, { time: now.time, suffix: now.suffix, points: 0, rules: [], badge: null });
     }
-    catch (e) {
-        renderChallengeFallback();
+
+    function openShare() {
+        var data = getShareData();
+        var modal = $("shareModal");
+
+        $("shareLead").textContent = data.points > 0
+            ? "Your " + data.time + (data.suffix ? " " + data.suffix : "") + " catch, worth +" + data.points + " points."
+            : "Invite a friend to game the time.";
+
+        preparedShare = null;
+        $("shareNow").disabled = true;
+
+        shareService.prepare(data).then(function (prepared) {
+            preparedShare = prepared;
+            $("sharePreview").src = prepared.dataUrl;
+            $("sharePreview").alt = prepared.text;
+            $("shareDownload").href = prepared.dataUrl;
+            $("shareNow").disabled = false;
+            $("shareNow").textContent = navigator.share ? "Share" : "Copy link";
+            $("shareCopy").className = navigator.share ? "" : "hidden";
+        });
+
+        openModal(modal);
     }
-}
 
-function getChallengeService() {
-    if (challengeService)
-        return challengeService;
+    function shareFeedback(outcome) {
+        if (outcome === "copied")
+            showToast({ icon: "📋", title: "Copied", text: "Share text copied to clipboard", duration: 2500 });
+    }
 
-    if (typeof DailyChallengeService !== "function")
+    /* ---------- Install ---------- */
+
+    function readFlag(key) {
+        var value = null;
+
+        try {
+            value = window.localStorage.getItem(key);
+        }
+        catch (e) {
+        }
+
+        if (value === null)
+            value = readCookie(key);
+
+        return value === "1";
+    }
+
+    function writeFlag(key, value) {
+        var stringValue = value ? "1" : "0";
+
+        try {
+            window.localStorage.setItem(key, stringValue);
+        }
+        catch (e) {
+        }
+
+        writeCookie(key, stringValue, 3650);
+    }
+
+    function readCookie(name) {
+        var prefix = name + "=";
+        var pairs = document.cookie ? document.cookie.split(";") : [];
+
+        for (var i = 0; i < pairs.length; i++) {
+            var entry = pairs[i].replace(/^\s+/, "");
+            if (entry.indexOf(prefix) === 0)
+                return entry.substring(prefix.length);
+        }
+
         return null;
-
-    challengeService = new DailyChallengeService();
-    return challengeService;
-}
-
-function renderChallengeFallback() {
-    if (!elmChallengeDesc || !elmChallengeBar || !elmChallengeStatus)
-        return;
-
-    elmChallengeDesc.textContent = "Challenge unavailable";
-    elmChallengeBar.style.width = "0%";
-    elmChallengeStatus.textContent = "Refresh to retry";
-    elmChallenge.className = "";
-}
-
-function renderChallenge(challenge) {
-    elmChallengeDesc.textContent = challenge.description;
-    var pct = Math.min(challenge.progress / challenge.target * 100, 100);
-    elmChallengeBar.style.width = pct + "%";
-
-    if (challenge.completed) {
-        elmChallengeStatus.textContent = "\u2714 Completed!";
-        elmChallenge.className = "challengeComplete";
-    } else {
-        elmChallengeStatus.textContent = challenge.progress + " / " + challenge.target;
-        elmChallenge.className = "";
     }
-}
 
-if (reducedMotionQuery) {
-    var onReducedMotionChange = function (e) {
-        prefersReducedMotion = !!e.matches;
-        ringTrailX = ringHeadX;
-        ringTrailY = ringHeadY;
-    };
-
-    if (typeof reducedMotionQuery.addEventListener === "function") {
-        reducedMotionQuery.addEventListener("change", onReducedMotionChange);
-    } else if (typeof reducedMotionQuery.addListener === "function") {
-        reducedMotionQuery.addListener(onReducedMotionChange);
+    function writeCookie(name, value, days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        document.cookie = name + "=" + value + "; expires=" + date.toUTCString() + "; path=/; SameSite=Lax";
     }
-}
 
-initializeScoreFeedback();
-showRules();
-initializeTimeRing();
-startRingAnimation();
-calculate();
-updateHighscore();
-updateBadges();
-updateStreak();
-initChallenge();
-setTimeout(markEngaged, 45000);
-setTimeout(maybeShowHelpOnFirstVisit, 1200);
-
-window.addEventListener("resize", fitTimeToRing);
-
-setInterval(function () {
-
-    var date = new Date();
-
-    if (document.hidden)
-        return;
-
-    if (date.getHours() != current.getHours() || date.getMinutes() != current.getMinutes()) {
-        current = date;
-        calculate();
+    function isStandalone() {
+        var displayMode = window.matchMedia && window.matchMedia("(display-mode: standalone)").matches;
+        return !!displayMode || window.navigator.standalone === true;
     }
-}, 1000);
 
-reset.addEventListener("click", function (e) {
-    e.preventDefault();
+    function markEngaged() {
+        if (hasEngaged)
+            return;
 
-    if (confirm("This will reset the score. Are you sure?")) {
+        hasEngaged = true;
+        updateInstallButton();
+    }
+
+    function updateInstallButton() {
+        var shouldShow = hasEngaged && !isStandalone() && !readFlag(installDismissedKey) && (isIOS || !!deferredInstallPrompt);
+        elmInstallApp.className = shouldShow ? "" : "hidden";
+    }
+
+    /* ---------- Wiring ---------- */
+
+    function onTick() {
+        var date = new Date();
+
+        if (document.hidden)
+            return;
+
+        var day = streakService.getDateString(date);
+        if (day !== currentDay) {
+            // Midnight while the app is open: new challenge, streak status and 24h totals.
+            currentDay = day;
+            current = date;
+            refreshPanels();
+        }
+
+        if (date.getHours() !== current.getHours() || date.getMinutes() !== current.getMinutes()) {
+            current = date;
+            processMinute(current);
+        }
+    }
+
+    if (reducedMotionQuery) {
+        var onReducedMotionChange = function (e) {
+            prefersReducedMotion = !!e.matches;
+            ringTrailX = ringHeadX;
+            ringTrailY = ringHeadY;
+        };
+
+        if (typeof reducedMotionQuery.addEventListener === "function")
+            reducedMotionQuery.addEventListener("change", onReducedMotionChange);
+        else if (typeof reducedMotionQuery.addListener === "function")
+            reducedMotionQuery.addListener(onReducedMotionChange);
+    }
+
+    // 1. Everything needed for the clock itself, synchronously.
+    initializeScoreFeedback();
+    initializeTimeRing();
+    startRingAnimation();
+    renderClockToggle();
+    showRules();
+    processMinute(current);
+
+    // 2. Storage-heavy panels only after the clock has been painted:
+    //    requestAnimationFrame runs right before the first paint, and the
+    //    timeout queued from it runs right after that paint.
+    function afterFirstPaint(fn) {
+        if (window.requestAnimationFrame && !document.hidden)
+            window.requestAnimationFrame(function () { window.setTimeout(fn, 0); });
+        else
+            window.setTimeout(fn, 0);
+    }
+
+    afterFirstPaint(function () {
+        updateHighscore();          // also migrates legacy score keys
+        collectionService.migrate();
+        refreshPanels();
+    });
+
+    window.setTimeout(markEngaged, 45000);
+    window.setTimeout(function () {
+        if (!readFlag(helpSeenKey)) {
+            writeFlag(helpSeenKey, true);
+            openModal($("helpModal"));
+        }
+    }, 1200);
+
+    window.setInterval(onTick, 1000);
+    document.addEventListener("visibilitychange", onTick);
+    window.addEventListener("resize", fitTimeToRing);
+
+    elmClockToggle.addEventListener("click", function () {
+        clockPref = clockPref === "24" ? "12" : "24";
+        try {
+            localStorage.setItem(clockPrefKey, clockPref);
+        }
+        catch (e) {
+        }
+
+        renderClockToggle();
+        renderClock(current);
+        announce(clockPref === "24" ? "24-hour clock" : "12-hour clock");
+    });
+
+    $("reset").addEventListener("click", function () {
+        if (!confirm("This will reset your scores, badges, challenge and collection. Are you sure?"))
+            return;
+
+        var keep = {};
+        ["streak:count", "streak:lastVisit", "streak:saveAvailable", "streak:saveWeek", clockPrefKey].forEach(function (key) {
+            keep[key] = localStorage.getItem(key);
+        });
         var helpSeen = readFlag(helpSeenKey);
         var installDismissed = readFlag(installDismissedKey);
-        var streakCount = localStorage.getItem("streak:count");
-        var streakLast = localStorage.getItem("streak:lastVisit");
-        var streakSave = localStorage.getItem("streak:saveAvailable");
-        var streakSaveWeek = localStorage.getItem("streak:saveWeek");
 
         try {
             localStorage.clear();
@@ -551,37 +917,46 @@ reset.addEventListener("click", function (e) {
         writeFlag(helpSeenKey, helpSeen);
         writeFlag(installDismissedKey, installDismissed);
 
-        if (streakCount) localStorage.setItem("streak:count", streakCount);
-        if (streakLast) localStorage.setItem("streak:lastVisit", streakLast);
-        if (streakSave) localStorage.setItem("streak:saveAvailable", streakSave);
-        if (streakSaveWeek) localStorage.setItem("streak:saveWeek", streakSaveWeek);
+        for (var key in keep) {
+            if (keep[key] !== null)
+                localStorage.setItem(key, keep[key]);
+        }
 
-        updateHighscore();
-        updateBadges();
-    }
-});
-
-if (elmHowToPlay) {
-    elmHowToPlay.addEventListener("click", function () {
-        setModalVisible(elmHelpModal, true);
+        localStorage.setItem("collection:migrated", "1");
+        refreshPanels();
     });
-}
 
-if (elmCloseHelp) {
-    elmCloseHelp.addEventListener("click", function () {
-        writeFlag(helpSeenKey, true);
-        setModalVisible(elmHelpModal, false);
+    $("howToPlay").addEventListener("click", function () { openModal($("helpModal")); });
+    $("closeHelp").addEventListener("click", function () { closeModal($("helpModal")); });
+    $("closeInstall").addEventListener("click", function () { closeModal($("installModal")); });
+    $("openCollection").addEventListener("click", function () {
+        renderCollectionModal();
+        openModal($("collectionModal"));
     });
-}
+    $("closeCollection").addEventListener("click", function () { closeModal($("collectionModal")); });
+    $("shareButton").addEventListener("click", openShare);
+    $("closeShare").addEventListener("click", function () { closeModal($("shareModal")); });
 
-if (elmInstallApp) {
+    $("shareNow").addEventListener("click", function () {
+        if (!preparedShare)
+            return;
+
+        shareService.share(preparedShare).then(shareFeedback);
+    });
+
+    $("shareCopy").addEventListener("click", function () {
+        if (!preparedShare)
+            return;
+
+        shareService.copy(preparedShare).then(shareFeedback);
+    });
+
     elmInstallApp.addEventListener("click", function () {
         if (deferredInstallPrompt) {
             deferredInstallPrompt.prompt();
             deferredInstallPrompt.userChoice.then(function (choice) {
-                if (!choice || choice.outcome !== "accepted") {
+                if (!choice || choice.outcome !== "accepted")
                     writeFlag(installDismissedKey, true);
-                }
 
                 deferredInstallPrompt = null;
                 updateInstallButton();
@@ -589,30 +964,29 @@ if (elmInstallApp) {
             return;
         }
 
-        if (isIOS) {
-            setModalVisible(elmInstallModal, true);
-        }
+        if (isIOS)
+            openModal($("installModal"));
     });
-}
 
-if (elmCloseInstall) {
-    elmCloseInstall.addEventListener("click", function () {
-        writeFlag(installDismissedKey, true);
-        setModalVisible(elmInstallModal, false);
+    window.addEventListener("beforeinstallprompt", function (e) {
+        e.preventDefault();
+        deferredInstallPrompt = e;
         updateInstallButton();
     });
-}
 
-window.addEventListener("beforeinstallprompt", function (e) {
-    e.preventDefault();
-    deferredInstallPrompt = e;
-    updateInstallButton();
-});
+    window.addEventListener("appinstalled", function () {
+        writeFlag(installDismissedKey, true);
+        deferredInstallPrompt = null;
+        updateInstallButton();
+    });
 
-window.addEventListener("appinstalled", function () {
-    writeFlag(installDismissedKey, true);
-    deferredInstallPrompt = null;
-    updateInstallButton();
-});
+    document.addEventListener("touchstart", function () { }, { passive: true });
 
-document.addEventListener("touchstart", function () { });
+    // Test/screenshot hook: lets the headless checks drive a specific minute.
+    window.GTT.simulate = function (date) {
+        current = date;
+        currentDay = streakService.getDateString(date);
+        processMinute(date);
+    };
+
+})();

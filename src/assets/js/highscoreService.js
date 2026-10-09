@@ -1,18 +1,23 @@
-/// <reference path="badgeService.js" />
-
 var HighscoreService = function () {
 
-    var _score,
-        badgeService = new BadgeService(),
-        scorePrefix = "score:";
+    var scorePrefix = "score:";
 
+    // Returns true only the first time a given minute is recorded, which makes
+    // every per-minute side effect (celebration, badges, challenge) idempotent.
     function recordScore(date, points) {
 
-        if (isRecorded(date) || window.testmode)
-            return;
+        if (window.testmode || isRecorded(date))
+            return false;
 
         var key = getStorageKey(cleanDate(date));
-        localStorage.setItem(key, points);
+        try {
+            localStorage.setItem(key, points);
+        }
+        catch (e) {
+            return false;
+        }
+
+        return true;
     }
 
     function cleanDate(date) {
@@ -93,19 +98,6 @@ var HighscoreService = function () {
             }
         });
 
-        if (weekly >= 1000)
-            badgeService.addBadge(badgeService.badges.timegamer)
-        else if (weekly >= 500)
-            badgeService.addBadge(badgeService.badges.timelord)
-        else if (weekly >= 100)
-            badgeService.addBadge(badgeService.badges.timebandit)
-        else if (weekly >= 50)
-            badgeService.addBadge(badgeService.badges.timetraveller)
-        else if (weekly >= 10)
-            badgeService.addBadge(badgeService.badges.adventurer)
-        else if (weekly > 0)
-            badgeService.addBadge(badgeService.badges.newbie)
-
         return {
             daily: daily,
             weekly: weekly
@@ -113,6 +105,7 @@ var HighscoreService = function () {
     }
 
     return {
+        getStorageKey: getStorageKey,
         recordScore: recordScore,
         getScore: getScore,
         isRecorded: isRecorded

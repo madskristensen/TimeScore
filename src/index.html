@@ -1,52 +1,290 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Game The Time</title>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1, minimal-ui, viewport-fit=cover" />
-    <meta name="description" content="TimeScore - because not all time is equal" />
-    <meta name="author" content="Mads Kristensen (madskristensen.net)" />
-    <link rel="stylesheet" href="assets/css/site.css" />
+    <title>Game The Time</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#050608" />
+    <meta name="color-scheme" content="dark" />
+    <style>
+html {
+height: 100%;
+height: -webkit-fill-available;
+min-height: 100%;
+position: relative;
+background-color: #050608;
+}
+body {
+font: 16px/1.5 "Trebuchet MS", -apple-system, system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+text-align: center;
+background: radial-gradient(circle at 20% 20%, #1f233f 0%, #0d1020 45%, #050608 100%);
+color: #dfdfdf;
+margin: 0;
+padding-top: 1em;
+padding-top: calc(1em + constant(safe-area-inset-top));
+padding-top: calc(1em + env(safe-area-inset-top));
+padding-left: env(safe-area-inset-left);
+padding-left: constant(safe-area-inset-left);
+padding-right: env(safe-area-inset-right);
+padding-right: constant(safe-area-inset-right);
+padding-bottom: calc(50px + env(safe-area-inset-bottom));
+padding-bottom: calc(50px + constant(safe-area-inset-bottom));
+min-height: 100vh;
+min-height: -webkit-fill-available;
+min-width: 280px;
+transition: background 350ms ease, color 250ms ease;
+-ms-touch-action: manipulation;
+touch-action: manipulation;
+-moz-user-select: none;
+-ms-user-select: none;
+-webkit-user-select: none;
+user-select: none;
+}
+body:before {
+content: "";
+position: fixed;
+top: 0;
+right: 0;
+bottom: 0;
+left: 0;
+pointer-events: none;
+background: radial-gradient(circle at 70% 10%, rgba(98, 210, 255, .13), transparent 45%), radial-gradient(circle at 15% 80%, rgba(238, 192, 77, .1), transparent 40%);
+opacity: .65;
+}
+#time {
+display: inline-block;
+position: relative;
+z-index: 2;
+font-size: clamp(4.4em, 20vw, 6em);
+margin-top: 0;
+line-height: 1em;
+transform-origin: center center;
+color: #ffffff;
+text-shadow: 0 0 14px rgba(165, 225, 255, .35), 0 0 30px rgba(238, 192, 77, .14);
+}
+#timeContainer {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+position: relative;
+width: clamp(220px, 70vw, 280px);
+height: clamp(220px, 70vw, 280px);
+margin-bottom: .15em;
+padding: 0;
+border-radius: 0;
+background: transparent;
+box-shadow: none;
+}
+#timeContainer:before {
+content: "";
+position: absolute;
+inset: 16%;
+border-radius: 50%;
+background: radial-gradient(circle, rgba(126, 214, 255, .2) 0%, rgba(75, 121, 220, .08) 40%, rgba(0, 0, 0, 0) 72%);
+pointer-events: none;
+z-index: 1;
+}
+#timeRing {
+position: absolute;
+inset: 0;
+width: 100%;
+height: 100%;
+transform: rotate(-90deg);
+}
+#timeRing .ringTrack {
+fill: none;
+stroke: rgba(120, 146, 197, .24);
+stroke-width: 6;
+filter: drop-shadow(0 0 4px rgba(77, 104, 162, .25));
+}
+#timeRing .ringTicksMinor,
+#timeRing .ringTicksMajor {
+fill: none;
+stroke-linecap: round;
+}
+#timeRing .ringTicksMinor {
+stroke: rgba(167, 203, 255, .22);
+stroke-width: 1.5;
+stroke-dasharray: 1.6 9.5;
+}
+#timeRing .ringTicksMajor {
+stroke: rgba(199, 226, 255, .34);
+stroke-width: 2;
+stroke-dasharray: 4.2 51.3;
+}
+#timeRing .ringHalo {
+fill: none;
+stroke: rgba(126, 217, 255, .25);
+stroke-width: 6;
+opacity: .28;
+filter: blur(2px);
+}
+#timeRing .ringProgress {
+fill: none;
+stroke: url(#ringGradient);
+stroke-width: 6;
+stroke-linecap: round;
+filter: drop-shadow(0 0 6px rgba(96, 196, 255, .55)) drop-shadow(0 0 14px rgba(96, 196, 255, .28));
+}
+#timeRing .ringHead {
+fill: #d8f4ff;
+filter: drop-shadow(0 0 8px rgba(128, 224, 255, .95));
+transition: opacity 120ms ease;
+opacity: .95;
+}
+#timeRing .ringHeadTrail {
+fill: rgba(156, 230, 255, .35);
+filter: blur(2.4px);
+opacity: .65;
+}
+#scoreToast {
+position: absolute;
+left: 50%;
+bottom: 18px;
+transform: translateX(-50%);
+pointer-events: none;
+opacity: 0;
+font-size: 1.05em;
+font-weight: 700;
+color: #eec04d;
+text-shadow: 0 0 12px rgba(238, 192, 77, .45);
+}
+#scoreToast.show {
+animation: scoreToastPop 900ms ease-out forwards;
+}
+#currentScore {
+position: absolute;
+left: 50%;
+bottom: 54px;
+transform: translateX(-50%);
+display: inline-flex;
+align-items: baseline;
+gap: .35em;
+z-index: 2;
+color: #f4d98d;
+font-size: .88em;
+white-space: nowrap;
+text-shadow: 0 0 10px rgba(238, 192, 77, .22);
+}
+#currentScore.hidden {
+display: none;
+}
+#currentScore span {
+font-weight: 700;
+color: #fff3c7;
+}
+@keyframes scoreToastPop {
+0% {
+opacity: 0;
+transform: translateX(-50%) translateY(4px) scale(.95);
+}
+15% {
+opacity: 1;
+}
+100% {
+opacity: 0;
+transform: translateX(-50%) translateY(-20px) scale(1);
+}
+}
+body.celebrate #timeContainer {
+animation: celebratePulse 450ms ease;
+}
+body.celebrate #time {
+color: #fff8d7;
+text-shadow: 0 0 16px rgba(255, 220, 110, .55), 0 0 34px rgba(255, 152, 65, .25);
+}
+@keyframes celebratePulse {
+0% {
+transform: scale(1);
+}
+35% {
+transform: scale(1.04);
+}
+100% {
+transform: scale(1);
+}
+}
+#below{visibility:hidden}
+.hidden{display:none}
+#clockFace{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center}
+#ampm{font-size:.95em;font-weight:700;letter-spacing:.12em;color:#9fb2de;min-height:1.2em;margin-top:.15em}
+#faceHint{font-size:.72em;color:#8b9cc4;min-height:1.1em}
+    </style>
+    <script>
+        /* Shared by the inline first paint below and dom.js. */
+        window.GTT = {
+            clockPref: function () {
+                try {
+                    var saved = localStorage.getItem("pref:clock");
+                    if (saved === "12" || saved === "24") return saved;
+                } catch (e) { }
+                try {
+                    var o = new Intl.DateTimeFormat(undefined, { hour: "numeric" }).resolvedOptions();
+                    if (o.hourCycle) return (o.hourCycle === "h23" || o.hourCycle === "h24") ? "24" : "12";
+                    if (typeof o.hour12 === "boolean") return o.hour12 ? "12" : "24";
+                } catch (e) { }
+                return "12";
+            },
+            format: function (date, pref) {
+                var h = date.getHours(), m = ("0" + date.getMinutes()).slice(-2), h12 = h % 12 || 12;
+                var face = h12 + ":" + m;
+                if (pref === "24") return { time: ("0" + h).slice(-2) + ":" + m, suffix: "", face: face, hint: (h === 0 || h > 12) ? "scores as " + face : "" };
+                return { time: face, suffix: h < 12 ? "AM" : "PM", face: face, hint: "" };
+            }
+        };
+    </script>
+    <link rel="preload" href="/assets/css/site.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <noscript><link rel="stylesheet" href="/assets/css/site.css" /></noscript>
 
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content="Game The Time" />
-    <meta name="twitter:description" content="The most addictive online temporal game" />
-    <meta name="twitter:image" content="favicon/apple-touch-icon-120x120.png" />
-    <meta name="twitter:url" content="http://gamethetime.com" />
+    <meta name="description" content="Game The Time - how many points is right now worth? Catch special times, keep your streak and collect badges." />
+    <meta name="author" content="Mads Kristensen (madskristensen.net)" />
+    <link rel="canonical" href="https://gamethetime.fun/" />
 
     <meta property="og:site_name" content="Game The Time" />
     <meta property="og:title" content="Game The Time" />
-    <meta property="og:description" content="The most addictive online temporal game" />
+    <meta property="og:description" content="The most addictive online temporal game. Not all time is equal." />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="http://gamethetime.com" />
-    <meta property="og:image" content="favicon/mstile-310x310.png" />
+    <meta property="og:url" content="https://gamethetime.fun/" />
+    <meta property="og:image" content="https://gamethetime.fun/assets/img/share-card.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Game The Time - a clock showing 11:11 worth 12 points" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Game The Time" />
+    <meta name="twitter:description" content="The most addictive online temporal game. Not all time is equal." />
+    <meta name="twitter:image" content="https://gamethetime.fun/assets/img/share-card.png" />
 
-    <link rel="apple-touch-icon" sizes="57x57" href="/favicon/apple-touch-icon-57x57.png" />
-    <link rel="apple-touch-icon" sizes="60x60" href="/favicon/apple-touch-icon-60x60.png" />
-    <link rel="apple-touch-icon" sizes="72x72" href="/favicon/apple-touch-icon-72x72.png" />
-    <link rel="apple-touch-icon" sizes="76x76" href="/favicon/apple-touch-icon-76x76.png" />
-    <link rel="apple-touch-icon" sizes="114x114" href="/favicon/apple-touch-icon-114x114.png" />
-    <link rel="apple-touch-icon" sizes="120x120" href="/favicon/apple-touch-icon-120x120.png" />
-    <link rel="apple-touch-icon" sizes="144x144" href="/favicon/apple-touch-icon-144x144.png" />
-    <link rel="apple-touch-icon" sizes="152x152" href="/favicon/apple-touch-icon-152x152.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon-180x180.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="icon" type="image/png" href="/favicon/favicon-32x32.png" sizes="32x32" />
-    <link rel="icon" type="image/png" href="/favicon/android-chrome-192x192.png" sizes="192x192" />
-    <link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/png" href="/favicon/favicon-16x16.png" sizes="16x16" />
-    <link rel="manifest" href="/favicon/manifest.json" />
+    <link rel="icon" type="image/png" href="/favicon/android-chrome-192x192.png" sizes="192x192" />
     <link rel="shortcut icon" href="/favicon/favicon.ico" />
-    <meta name="msapplication-TileColor" content="#00aba9" />
-    <meta name="msapplication-TileImage" content="/favicon/mstile-144x144.png" />
-    <meta name="msapplication-config" content="/favicon/browserconfig.xml" />
-    <meta name="theme-color" content="#000000" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon-180x180.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="/favicon/apple-touch-icon-152x152.png" />
+    <link rel="apple-touch-icon" sizes="120x120" href="/favicon/apple-touch-icon-120x120.png" />
+    <meta name="apple-mobile-web-app-title" content="Game The Time" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <link rel="apple-touch-startup-image" media="screen and (device-width: 440px) and (device-height: 956px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/assets/img/startup/launch-1320x2868.png" />
+    <link rel="apple-touch-startup-image" media="screen and (device-width: 402px) and (device-height: 874px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/assets/img/startup/launch-1206x2622.png" />
+    <link rel="apple-touch-startup-image" media="screen and (device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/assets/img/startup/launch-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="screen and (device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/assets/img/startup/launch-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="screen and (device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/assets/img/startup/launch-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="screen and (device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/assets/img/startup/launch-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/assets/img/startup/launch-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/assets/img/startup/launch-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/assets/img/startup/launch-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="screen and (device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/assets/img/startup/launch-750x1334.png" />
+    <link rel="apple-touch-startup-image" media="screen and (device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/assets/img/startup/launch-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="screen and (device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/assets/img/startup/launch-640x1136.png" />
+    <meta name="msapplication-TileColor" content="#00aba9" />
+    <meta name="msapplication-config" content="/favicon/browserconfig.xml" />
 </head>
 <body>
 
-    <div role="main">
+    <main>
+        <h1 class="srOnly">Game The Time</h1>
         <div id="timeContainer">
             <svg id="timeRing" viewBox="0 0 260 260" role="presentation" aria-hidden="true" focusable="false">
                 <defs>
@@ -64,90 +302,166 @@
                 <circle id="ringHeadTrail" class="ringHeadTrail" cx="130" cy="24" r="6.2"></circle>
                 <circle id="ringHead" class="ringHead" cx="130" cy="24" r="4.3"></circle>
             </svg>
-            <span id="time">0:00</span>
-            <div id="currentScore" class="hidden" aria-live="polite">
+            <div id="clockFace">
+                <span id="time"></span>
+                <span id="ampm"></span>
+                <span id="faceHint"></span>
+            </div>
+            <script>
+                (function () {
+                    var f = GTT.format(new Date(), GTT.clockPref());
+                    document.getElementById("time").textContent = f.time;
+                    document.getElementById("ampm").textContent = f.suffix;
+                    document.getElementById("faceHint").textContent = f.hint;
+                })();
+            </script>
+            <div id="currentScore" class="hidden">
                 Time score: <span id="currentScoreValue">+0</span>
             </div>
-            <aside id="meter" role="presentation" aria-hidden="true"></aside>
         </div>
 
-        <div id="quickActions">
-            <button id="installApp" type="button" style="display:none">Save to home screen</button>
-        </div>
+        <div id="below">
+            <div id="announcer" class="srOnly" role="status" aria-live="polite" aria-atomic="true"></div>
 
-        <ul id="rules" role="list"></ul>
-
-        <div id="highscore">
-            <span id="daily">Today: <span>0</span></span>
-            <span id="weekly">This week: <span>0</span></span>
-        </div>
-
-        <div id="streak">
-            <span id="streakIcon">🔥</span>
-            <span id="streakCount">0</span> day streak
-            <span id="streakSave" class="hidden" title="Streak save available this week">🛡️</span>
-        </div>
-
-        <div id="challenge">
-            <h3>Daily Challenge</h3>
-            <p id="challengeDesc">Loading...</p>
-            <div id="challengeProgress">
-                <div id="challengeBar"></div>
+            <div id="quickActions">
+                <button id="shareButton" type="button">Share</button>
+                <button id="clockToggle" type="button" class="clockToggle" aria-pressed="false" aria-label="Use 24-hour clock">12h</button>
+                <button id="installApp" type="button" class="hidden">Save to home screen</button>
             </div>
-            <span id="challengeStatus"></span>
-        </div>
 
-        <div id="badges">
-            <h2>Badges</h2>
-            <div id="badgeLegend">
-                <span class="legendCommon">Common</span>
-                <span class="legendRare">Rare</span>
-                <span class="legendLegendary">Legendary</span>
+            <h2 class="srOnly">Rules</h2>
+            <ul id="rules"></ul>
+
+            <div id="highscore">
+                <span id="daily">Last 24h: <span>0</span></span>
+                <span id="weekly">Last 7 days: <span>0</span></span>
             </div>
-        </div>
 
-        <div id="helpModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
-            <div class="modalContent">
-                <h2 id="helpTitle">How to play</h2>
-                <p class="modalLead">Watch the clock and earn points when the time matches one or more rules.</p>
-                <ol>
-                    <li>Keep this page open and let each minute roll over.</li>
-                    <li>When a rule matches, your time score increases automatically.</li>
-                    <li>Stack matches in the same minute to get higher scores and unlock badges.</li>
-                </ol>
-                <button id="closeHelp" type="button">Got it</button>
+            <div id="streak">
+                <span id="streakIcon" aria-hidden="true">🔥</span>
+                <span id="streakCount">0</span> day streak
+                <span id="streakSave" class="hidden" title="Streak save available this week" aria-label="Streak save available this week" role="img">🛡️</span>
+                <span id="streakHint"></span>
             </div>
-        </div>
 
-        <div id="installModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="installTitle">
-            <div class="modalContent">
-                <h2 id="installTitle">Save to home screen</h2>
-                <p class="modalLead">Get one-tap access and jump straight into the game.</p>
-                <ol>
-                    <li>Tap the <strong>Share</strong> button in Safari.</li>
-                    <li>Select <strong>Add to Home Screen</strong>.</li>
-                    <li>Tap <strong>Add</strong> to finish.</li>
-                </ol>
-                <button id="closeInstall" type="button">Not now</button>
+            <section id="challenge" aria-labelledby="challengeTitle">
+                <h3 id="challengeTitle">Daily Challenge</h3>
+                <p id="challengeDesc">Loading...</p>
+                <div id="challengeProgress">
+                    <div id="challengeBar"></div>
+                </div>
+                <span id="challengeStatus"></span>
+                <ol id="challengeHistory" aria-label="Recent challenges"></ol>
+            </section>
+
+            <section id="collection" aria-labelledby="collectionTitle">
+                <h2 id="collectionTitle">Collection</h2>
+                <p class="collectionCount"><strong id="collectedCount">0</strong> of <span id="collectibleTotal">0</span> times collected</p>
+                <div class="progressTrack"><div id="collectionBar"></div></div>
+                <button id="openCollection" type="button" class="linkButton">View collection</button>
+            </section>
+
+            <section id="badges" aria-labelledby="badgesTitle">
+                <h2 id="badgesTitle">Badges</h2>
+                <div id="badgeLegend" aria-hidden="true">
+                    <span class="legendCommon">Common</span>
+                    <span class="legendRare">Rare</span>
+                    <span class="legendLegendary">Legendary</span>
+                </div>
+                <div id="badgeGrid" role="list"></div>
+                <p id="badgeDetail" aria-live="polite"></p>
+            </section>
+
+            <footer>
+                <button id="reset" type="button" class="footerButton">Reset score</button> |
+                <button id="howToPlay" type="button" class="footerButton">How to play</button>
+            </footer>
+        </div>
+    </main>
+
+    <div id="toasts"></div>
+
+    <div id="helpModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+        <div class="modalContent">
+            <h2 id="helpTitle">How to play</h2>
+            <p class="modalLead">Watch the clock and earn points when the time matches one or more rules.</p>
+            <ol>
+                <li>Keep this page open and let each minute roll over.</li>
+                <li>When a rule matches, your time score increases automatically.</li>
+                <li>Stack matches in the same minute to get higher scores and unlock badges.</li>
+                <li>Score at least one point a day to keep your streak alive.</li>
+            </ol>
+            <p class="modalNote">Rules are judged on the 12-hour clock face, so most patterns score twice a day (AM and PM). A few special moments, like 13:37 or midnight, only happen once a day.</p>
+            <button id="closeHelp" type="button">Got it</button>
+        </div>
+    </div>
+
+    <div id="installModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="installTitle">
+        <div class="modalContent">
+            <h2 id="installTitle">Save to home screen</h2>
+            <p class="modalLead">Get one-tap access and jump straight into the game.</p>
+            <ol>
+                <li>Tap the <strong>Share</strong> button in Safari.</li>
+                <li>Select <strong>Add to Home Screen</strong>.</li>
+                <li>Tap <strong>Add</strong> to finish.</li>
+            </ol>
+            <button id="closeInstall" type="button">Not now</button>
+        </div>
+    </div>
+
+    <div id="collectionModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="collectionModalTitle">
+        <div class="modalContent">
+            <h2 id="collectionModalTitle">Your collection</h2>
+            <p class="modalLead" id="collectionModalLead"></p>
+            <ul id="collectionHours"></ul>
+            <button id="closeCollection" type="button">Close</button>
+        </div>
+    </div>
+
+    <div id="shareModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="shareTitle">
+        <div class="modalContent">
+            <h2 id="shareTitle">Share your time</h2>
+            <p class="modalLead" id="shareLead"></p>
+            <img id="sharePreview" alt="" width="320" height="320" />
+            <div class="modalButtons">
+                <button id="shareNow" type="button" class="primary">Share</button>
+                <a id="shareDownload" href="#" download="game-the-time.png">Save image</a>
+                <button id="shareCopy" type="button">Copy text</button>
+                <button id="closeShare" type="button">Close</button>
             </div>
         </div>
     </div>
 
-    <footer>
-        <a href="#" id="reset">Reset score</a> |
-        <button id="howToPlay" type="button" class="footerButton">How to play</button> |
-        Share
-        <a href="http://twitter.com/intent/tweet?text=Time+Score+-+The+most+addictive+online+temporal+game+http%3a%2f%2fgamethetime.com" target="_blank"><img src="assets/img/twitter.svg" width="16" height="16" alt="Twitter" /></a>
-        <a href="https://www.facebook.com/sharer/sharer.php?u=http%3a%2f%2fgamethetime.com" target="_blank"><img src="/assets/img/facebook.svg" width="16" height="16" alt="Facebook" /></a>
-    </footer>
-
-    <script src="assets/js/badgeService.js"></script>
-    <script src="assets/js/highscoreService.js"></script>
-    <script src="assets/js/streakService.js"></script>
-    <script src="assets/js/dailyChallengeService.js"></script>
-    <script src="assets/js/timescore.js"></script>
-    <script src="assets/js/dom.js"></script>
-    <script src="assets/js/serviceWorkerHandler.js"></script>
-
+    <script>
+        /* The game scripts load after the clock has been painted, in order. */
+        (function () {
+            var files = [
+                "/assets/js/badgeService.js",
+                "/assets/js/highscoreService.js",
+                "/assets/js/streakService.js",
+                "/assets/js/dailyChallengeService.js",
+                "/assets/js/collectionService.js",
+                "/assets/js/shareService.js",
+                "/assets/js/timescore.js",
+                "/assets/js/dom.js",
+                "/assets/js/serviceWorkerHandler.js"
+            ], done = false;
+            function load() {
+                if (done) return;
+                done = true;
+                for (var i = 0; i < files.length; i++) {
+                    var s = document.createElement("script");
+                    s.src = files[i];
+                    s.async = false;
+                    document.head.appendChild(s);
+                }
+            }
+            function start() {
+                if (window.requestAnimationFrame) requestAnimationFrame(function () { setTimeout(load, 0); });
+                setTimeout(load, 250); // fallback when no frame is rendered (hidden tab)
+            }
+            if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start); else start();
+        })();
+    </script>
 </body>
 </html>
