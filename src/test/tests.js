@@ -282,3 +282,37 @@ QUnit.module("Collection storage", storageHooks, function () {
         assert.ok(c.getTimes()["12:34"]);
     });
 });
+
+QUnit.module("First paint", function () {
+    QUnit.test("the inline scoring map in index.html matches the rules engine", function (assert) {
+        var done = assert.async();
+        fetch("../index.html", { cache: "no-store" }).then(function (r) { return r.text(); }).then(function (html) {
+            var map = (html.match(/scoringMap: "([^"]+)"/) || [])[1];
+            assert.ok(map, "scoringMap found");
+            var bits = atob(map), mismatches = [];
+
+            for (var m = 0; m < 1440; m++) {
+                var d = new Date(2001, 1, 1, Math.floor(m / 60), m % 60);
+                var hits = ts.getScore(d).score.filter(function (h) {
+                    return h.id !== "today" && !(h.badge && h.badge.id === "currentyear");
+                });
+                var inMap = ((bits.charCodeAt(m >> 3) >> (m & 7)) & 1) === 1;
+                if (inMap !== hits.length > 0)
+                    mismatches.push(ts.getMinuteKey(d));
+            }
+
+            var bytes = [];
+            for (var b = 0; b < 180; b++) bytes.push(0);
+            for (var k = 0; k < 1440; k++) {
+                var dk = new Date(2001, 1, 1, Math.floor(k / 60), k % 60);
+                if (ts.getScore(dk).score.some(function (h) { return h.id !== "today" && !(h.badge && h.badge.id === "currentyear"); }))
+                    bytes[k >> 3] |= 1 << (k & 7);
+            }
+            var expected = btoa(String.fromCharCode.apply(null, bytes));
+
+            assert.deepEqual(mismatches, [], "minutes that disagree with the engine");
+            assert.equal(map, expected, "if the rules change, paste this value into scoringMap in index.html");
+            done();
+        });
+    });
+});

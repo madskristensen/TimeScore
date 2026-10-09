@@ -205,6 +205,15 @@ transform: scale(1);
 }
 }
 #below{visibility:hidden}
+#timeRing .ringGold{stroke:url(#ringGradientGold);opacity:0;filter:drop-shadow(0 0 6px rgba(238,192,77,.6)) drop-shadow(0 0 16px rgba(238,192,77,.3))}
+#timeRing #ringProgress,#timeRing .ringGold{transition:opacity 700ms ease}
+#timeRing .ringHead,#timeRing .ringHeadTrail,#timeRing .ringHalo{transition:fill 700ms ease,stroke 700ms ease,opacity 120ms ease}
+#timeContainer.scoring #ringProgress{opacity:0}
+#timeContainer.scoring .ringGold{opacity:1}
+#timeContainer.scoring #timeRing .ringHead{fill:#fff1c4;filter:drop-shadow(0 0 8px rgba(238,192,77,.95))}
+#timeContainer.scoring #timeRing .ringHeadTrail{fill:rgba(244,207,104,.4)}
+#timeContainer.scoring #timeRing .ringHalo{stroke:rgba(238,192,77,.35)}
+@media (prefers-reduced-motion:reduce){#timeRing #ringProgress,#timeRing .ringGold,#timeRing .ringHead,#timeRing .ringHeadTrail,#timeRing .ringHalo{transition:none}}
 .hidden{display:none}
 #clockFace{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center}
 #ampm{font-size:.95em;font-weight:700;letter-spacing:.12em;color:#9fb2de;min-height:1.2em;margin-top:.15em}
@@ -224,6 +233,17 @@ transform: scale(1);
                     if (typeof o.hour12 === "boolean") return o.hour12 ? "12" : "24";
                 } catch (e) { }
                 return "12";
+            },
+            // Bitmap of the minutes (00:00-23:59) that score on any day. Generated from the
+            // rules in timescore.js and checked by the tests, so the first paint can show a
+            // gold ring before the game scripts load. "Today in time" and the current-year
+            // moment depend on the date and are checked separately.
+            scoringMap: "ARAgAZQAATLAAAsIIIAABRzQCi/EsJIAB660ggIrEWBAgQURwBECDKywokIrwYABBRJESBGIMKzwgggrAQEGFEgQIRSgwIACKSaEAwQYUCBBhBCAAAQiBAkYARAgAZQAATLAAAoIIoAABRzQSi/EsJIAB660ggIrEWBQoQURQBECDKy0okIrwYABBRJEWBGIMKzwgggrAQEGFEgQIRSgwIACKSaEAwQYUCBBhBCAAAQiBAkY",
+            isScoring: function (date) {
+                var h = date.getHours(), m = date.getMinutes(), i = h * 60 + m, y = String(date.getFullYear());
+                if (date.getMonth() + 1 === (h % 12 || 12) && date.getDate() === m) return true;
+                if (h === parseInt(y.substring(0, 2), 10) && m === parseInt(y.substring(2, 4), 10)) return true;
+                try { return (atob(this.scoringMap).charCodeAt(i >> 3) >> (i & 7) & 1) === 1; } catch (e) { return false; }
             },
             format: function (date, pref) {
                 var h = date.getHours(), m = ("0" + date.getMinutes()).slice(-2), h12 = h % 12 || 12;
@@ -293,12 +313,18 @@ transform: scale(1);
                         <stop offset="45%" stop-color="#64c7ff"></stop>
                         <stop offset="100%" stop-color="#3aa4ff"></stop>
                     </linearGradient>
+                    <linearGradient id="ringGradientGold" x1="130" y1="24" x2="130" y2="236" gradientUnits="userSpaceOnUse">
+                        <stop offset="0%" stop-color="#fff1c4"></stop>
+                        <stop offset="50%" stop-color="#f4cf68"></stop>
+                        <stop offset="100%" stop-color="#e0a432"></stop>
+                    </linearGradient>
                 </defs>
                 <circle class="ringTrack" cx="130" cy="130" r="106"></circle>
                 <circle class="ringTicksMinor" cx="130" cy="130" r="106"></circle>
                 <circle class="ringTicksMajor" cx="130" cy="130" r="106"></circle>
                 <circle class="ringHalo" cx="130" cy="130" r="106"></circle>
                 <circle id="ringProgress" class="ringProgress" cx="130" cy="130" r="106"></circle>
+                <circle id="ringProgressGold" class="ringProgress ringGold" cx="130" cy="130" r="106"></circle>
                 <circle id="ringHeadTrail" class="ringHeadTrail" cx="130" cy="24" r="6.2"></circle>
                 <circle id="ringHead" class="ringHead" cx="130" cy="24" r="4.3"></circle>
             </svg>
@@ -309,7 +335,17 @@ transform: scale(1);
             </div>
             <script>
                 (function () {
-                    var f = GTT.format(new Date(), GTT.clockPref());
+                    var now = new Date(), f = GTT.format(now, GTT.clockPref());
+                    var r = 106, c = 2 * Math.PI * r, p = (now.getSeconds() + now.getMilliseconds() / 1000) / 60, a = p * 2 * Math.PI;
+                    var dash = (c * p) + " " + c;
+                    document.getElementById("ringProgress").style.strokeDasharray = dash;
+                    document.getElementById("ringProgressGold").style.strokeDasharray = dash;
+                    ["ringHead", "ringHeadTrail"].forEach(function (id) {
+                        var el = document.getElementById(id);
+                        el.setAttribute("cx", 130 + Math.cos(a) * r);
+                        el.setAttribute("cy", 130 + Math.sin(a) * r);
+                    });
+                    if (GTT.isScoring(now)) document.getElementById("timeContainer").className = "scoring";
                     document.getElementById("time").textContent = f.time;
                     document.getElementById("ampm").textContent = f.suffix;
                     document.getElementById("faceHint").textContent = f.hint;
@@ -324,9 +360,19 @@ transform: scale(1);
             <div id="announcer" class="srOnly" role="status" aria-live="polite" aria-atomic="true"></div>
 
             <div id="quickActions">
-                <button id="shareButton" type="button">Share</button>
-                <button id="clockToggle" type="button" class="clockToggle" aria-pressed="false" aria-label="Use 24-hour clock">12h</button>
-                <button id="installApp" type="button" class="hidden">Save to home screen</button>
+                <div id="clockToggle" class="pill segmented" role="group" aria-label="Clock format">
+                    <span class="segThumb" aria-hidden="true"></span>
+                    <button type="button" class="seg" data-clock="12" aria-pressed="true" aria-label="12-hour clock">12h</button>
+                    <button type="button" class="seg" data-clock="24" aria-pressed="false" aria-label="24-hour clock">24h</button>
+                </div>
+                <button id="shareButton" type="button" class="pill pillButton">
+                    <svg class="pillIcon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3v12M12 3l-4.5 4.5M12 3l4.5 4.5" /><path d="M5 12.5V18a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5.5" /></svg>
+                    <span>Share</span>
+                </button>
+                <button id="installApp" type="button" class="pill pillButton hidden">
+                    <svg class="pillIcon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5" /><path d="M5 19h14" /></svg>
+                    <span>Install</span>
+                </button>
             </div>
 
             <h2 class="srOnly">Rules</h2>
@@ -354,13 +400,6 @@ transform: scale(1);
                 <ol id="challengeHistory" aria-label="Recent challenges"></ol>
             </section>
 
-            <section id="collection" aria-labelledby="collectionTitle">
-                <h2 id="collectionTitle">Collection</h2>
-                <p class="collectionCount"><strong id="collectedCount">0</strong> of <span id="collectibleTotal">0</span> times collected</p>
-                <div class="progressTrack"><div id="collectionBar"></div></div>
-                <button id="openCollection" type="button" class="linkButton">View collection</button>
-            </section>
-
             <section id="badges" aria-labelledby="badgesTitle">
                 <h2 id="badgesTitle">Badges</h2>
                 <div id="badgeLegend" aria-hidden="true">
@@ -370,6 +409,13 @@ transform: scale(1);
                 </div>
                 <div id="badgeGrid" role="list"></div>
                 <p id="badgeDetail" aria-live="polite"></p>
+            </section>
+
+            <section id="collection" aria-labelledby="collectionTitle">
+                <h2 id="collectionTitle">Collection</h2>
+                <p class="collectionCount"><strong id="collectedCount">0</strong> of <span id="collectibleTotal">0</span> times collected</p>
+                <div class="progressTrack"><div id="collectionBar"></div></div>
+                <button id="openCollection" type="button" class="linkButton">View collection</button>
             </section>
 
             <footer>
