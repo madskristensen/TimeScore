@@ -78,10 +78,17 @@
 
     function renderClock(date) {
         var f = window.GTT.format(date, clockPref);
-        elmTime.textContent = f.time;
-        elmAmPm.textContent = f.suffix;
-        elmFaceHint.textContent = f.hint;
-        fitTimeToRing();
+        // Only touch the DOM when the text actually changes: rewriting the same
+        // text creates a new LCP candidate and forces a fresh layout.
+        if (elmTime.textContent !== f.time) {
+            elmTime.textContent = f.time;
+            if (!window.ResizeObserver)
+                fitTimeToRing();
+        }
+        if (elmAmPm.textContent !== f.suffix)
+            elmAmPm.textContent = f.suffix;
+        if (elmFaceHint.textContent !== f.hint)
+            elmFaceHint.textContent = f.hint;
     }
 
     function formatKey(key) {
@@ -96,14 +103,46 @@
         return (hour % 12 || 12) + " " + (hour < 12 ? "AM" : "PM");
     }
 
-    function fitTimeToRing() {
-        elmTime.style.transform = "scale(1)";
-
-        var maxWidth = elmTimeContainer.clientWidth * 0.76;
-        var timeWidth = elmTime.getBoundingClientRect().width;
+    // Scales the time down when it would overflow the ring. offsetWidth ignores
+    // transforms, so there's no need to reset the scale before measuring.
+    function applyTimeScale(timeWidth, containerWidth) {
+        var maxWidth = containerWidth * 0.76;
         var scale = timeWidth > maxWidth ? (maxWidth / timeWidth) : 1;
+        var value = "scale(" + scale.toFixed(3) + ")";
 
-        elmTime.style.transform = "scale(" + scale.toFixed(3) + ")";
+        if (elmTime.style.transform !== value)
+            elmTime.style.transform = value;
+    }
+
+    function fitTimeToRing() {
+        applyTimeScale(elmTime.offsetWidth, elmTimeContainer.clientWidth);
+    }
+
+    // ResizeObserver reports sizes after layout, so fitting the time never forces a
+    // synchronous reflow (it fires on first layout, text changes and resizes).
+    function observeTimeSize() {
+        if (!window.ResizeObserver) {
+            fitTimeToRing();
+                    return;
+        }
+
+        var sizes = { time: 0, container: 0 };
+        var observer = new ResizeObserver(function (entries) {
+            for (var i = 0; i < entries.length; i++) {
+                var box = entries[i].borderBoxSize && entries[i].borderBoxSize[0];
+                var width = box ? box.inlineSize : entries[i].contentRect.width;
+                if (entries[i].target === elmTime)
+                    sizes.time = width;
+                else
+                    sizes.container = width;
+            }
+
+            if (sizes.time && sizes.container)
+                applyTimeScale(sizes.time, sizes.container);
+        });
+
+        observer.observe(elmTime);
+        observer.observe(elmTimeContainer);
     }
 
     function renderClockToggle() {
@@ -856,6 +895,7 @@
 
     // 1. Everything needed for the clock itself, synchronously.
     initializeScoreFeedback();
+    observeTimeSize();
     initializeTimeRing();
     startRingAnimation();
     renderClockToggle();
@@ -873,9 +913,55 @@
     }
 
     afterFirstPaint(function () {
-        updateHighscore();          // also migrates legacy score keys
-        collectionService.migrate();
-        refreshPanels();
+        try {
+            updateHighscore();          // also migrates legacy score keys
+            collectionService.migrate();
+            refreshPanels();
+        }
+        finally {
+            // Reveal the panels only once they hold real content, so nothing below the
+            // clock shifts while it fills in (site.css also has to be loaded).
+            document.body.classList.add("ready");
+            restoreScroll();
+        }
+    });
+
+    // Scroll restoration is manual (set in index.html): a reload returns to exactly
+    // where the player was once the full layout exists; any other visit starts at the top.
+    var scrollKey = "gtt:scrollY";
+
+    function isReload() {
+        try {
+            var nav = performance.getEntriesByType && performance.getEntriesByType("navigation")[0];
+            if (nav)
+                return nav.type === "reload";
+            return performance.navigation && performance.navigation.type === 1;
+        }
+        catch (e) {
+            return false;
+        }
+    }
+
+    function restoreScroll() {
+        var y = 0;
+        try {
+            if (isReload())
+                y = parseInt(sessionStorage.getItem(scrollKey), 10) || 0;
+            sessionStorage.removeItem(scrollKey);
+        }
+        catch (e) {
+        }
+
+        if (window.scrollY !== y)
+            window.scrollTo(0, y);
+    }
+
+    window.addEventListener("pagehide", function () {
+        try {
+            sessionStorage.setItem(scrollKey, String(Math.round(window.scrollY)));
+        }
+        catch (e) {
+        }
     });
 
     window.setTimeout(markEngaged, 45000);
@@ -888,7 +974,6 @@
 
     window.setInterval(onTick, 1000);
     document.addEventListener("visibilitychange", onTick);
-    window.addEventListener("resize", fitTimeToRing);
 
     elmClockToggle.addEventListener("click", function (e) {
         var target = e.target.closest ? e.target.closest(".seg") : null;

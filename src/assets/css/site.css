@@ -314,7 +314,7 @@ footer {
 
 /* Content below the clock stays invisible until this stylesheet has loaded
    (the clock itself is styled by the critical CSS inlined in index.html). */
-#below {
+body.ready #below {
     visibility: visible;
 }
 
@@ -350,6 +350,7 @@ a:focus-visible {
 
 #streakHint {
     display: block;
+    min-height: 1.5em;
     font-size: .62em;
     color: #8b9cc4;
 }
