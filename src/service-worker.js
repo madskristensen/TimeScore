@@ -1,6 +1,6 @@
 // Bump VERSION on every release: it names the cache and changing this file is
 // what makes browsers install the new worker and show the "update available" toast.
-var VERSION = "9";
+var VERSION = "10";
 var CACHE_NAME = "timescore-shell-v" + VERSION;
 
 var APP_SHELL = [
@@ -17,6 +17,7 @@ var APP_SHELL = [
     "/assets/js/serviceWorkerHandler.js",
     "/manifest.webmanifest",
     "/favicon/favicon.ico",
+    "/favicon/icon.svg",
     "/favicon/favicon-16x16.png",
     "/favicon/favicon-32x32.png",
     "/favicon/android-chrome-192x192.png",
