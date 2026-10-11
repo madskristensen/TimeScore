@@ -127,6 +127,28 @@ footer {
         text-decoration: underline;
     }
 
+    /* Quiet cross-links to the family's other sites */
+    #familyFooter {
+        margin: 14px auto 0;
+        padding: 0 1em;
+        max-width: 40em;
+        font-size: .8em;
+        line-height: 1.7;
+        color: #8b9cc4;
+    }
+
+        #familyFooter a {
+            color: inherit;
+            text-decoration-color: rgba(139, 156, 196, .45);
+            text-underline-offset: 2px;
+            white-space: nowrap;
+        }
+
+            #familyFooter a:hover,
+            #familyFooter a:focus-visible {
+                color: #dfe7fa;
+            }
+
     footer img {
         position: relative;
         top: 2px;
