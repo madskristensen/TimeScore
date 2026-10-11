@@ -316,3 +316,38 @@ QUnit.module("First paint", function () {
         });
     });
 });
+
+QUnit.module("Share");
+
+(function () {
+    var prepared = { file: { name: "game-the-time.png" }, text: "I caught 10:00 AM for +3 points on Game The Time ⏰", url: "https://gamethetime.fun/" };
+
+    function fakeNav(canShareFiles, hasShare) {
+        var nav = { calls: [] };
+        if (hasShare)
+            nav.share = function (data) { nav.calls.push(data); return Promise.resolve(); };
+        nav.canShare = function () { return canShareFiles; };
+        return nav;
+    }
+
+    QUnit.test("Sharing the image omits the URL so no link preview is generated", function (assert) {
+        var nav = fakeNav(true, true);
+        return new ShareService().share(prepared, nav).then(function (outcome) {
+            assert.equal(outcome, "shared-image");
+            var data = nav.calls[0];
+            assert.deepEqual(data.files, [prepared.file], "image attached");
+            assert.notOk("url" in data, "no url field");
+            assert.equal(data.text.indexOf("gamethetime.fun"), -1, "no link in text");
+            assert.equal(data.text, prepared.text);
+        });
+    });
+
+    QUnit.test("Text-only share keeps the URL when the image can't be shared", function (assert) {
+        var nav = fakeNav(false, true);
+        return new ShareService().share(prepared, nav).then(function (outcome) {
+            assert.equal(outcome, "shared-link");
+            assert.equal(nav.calls[0].url, prepared.url);
+            assert.notOk(nav.calls[0].files, "no files");
+        });
+    });
+}());

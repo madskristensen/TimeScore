@@ -177,16 +177,19 @@ var ShareService = (function () {
     }
 
     // Returns a promise resolving to "shared-image", "shared-link", "copied" or "cancelled".
-    function share(prepared) {
+    function share(prepared, nav) {
+        nav = nav || navigator;
         var files = prepared.file ? [prepared.file] : null;
 
-        if (files && navigator.canShare && navigator.canShare({ files: files })) {
-            return navigator.share({ files: files, title: "Game The Time", text: prepared.text + " " + prepared.url })
+        if (files && nav.canShare && nav.canShare({ files: files })) {
+            // No url and no link in the text: iMessage and others would add a large
+            // link preview next to the card, which already shows gamethetime.fun.
+            return nav.share({ files: files, title: "Game The Time", text: prepared.text })
                 .then(function () { return "shared-image"; }, function () { return "cancelled"; });
         }
 
-        if (navigator.share) {
-            return navigator.share({ title: "Game The Time", text: prepared.text, url: prepared.url })
+        if (nav.share) {
+            return nav.share({ title: "Game The Time", text: prepared.text, url: prepared.url })
                 .then(function () { return "shared-link"; }, function () { return "cancelled"; });
         }
 
