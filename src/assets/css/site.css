@@ -129,17 +129,19 @@ footer {
 
     /* Quiet cross-links to the family's other sites */
     #familyFooter {
-        margin: 14px auto 0;
+        margin: 1.25rem auto 0;
         padding: 0 1em;
-        max-width: 40em;
-        font-size: .8em;
+        max-width: 44em;
+        font-size: .75em;
         line-height: 1.7;
-        color: #8b9cc4;
+        /* Dim but still AA contrast (~4.8:1); a plain opacity would fail it. */
+        color: #737f9c;
     }
 
         #familyFooter a {
             color: inherit;
-            text-decoration-color: rgba(139, 156, 196, .45);
+            text-decoration: underline;
+            text-decoration-color: rgba(115, 127, 156, .4);
             text-underline-offset: 2px;
             white-space: nowrap;
         }
