@@ -1,0 +1,55 @@
+name: Deploy to Azure
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://gamethetime.fun
+    steps:
+      - uses: actions/checkout@v4
+
+      # The site is the static src/ folder (what Kudu deployed from the solution),
+      # including Web.config. The QUnit test page is left out.
+      - name: Package site
+        run: |
+          mkdir -p _site
+          rsync -a --exclude 'test/' src/ _site/
+          test -f _site/Web.config
+          test -f _site/index.html
+          test -f _site/service-worker.js
+          echo "VERSION=$(grep -oP 'var VERSION = "\K[0-9]+' src/service-worker.js)" >> "$GITHUB_ENV"
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: timescore
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: _site
+
+      - name: Verify live service worker version
+        run: |
+          echo "Expecting VERSION $VERSION"
+          for i in $(seq 1 18); do
+            live=$(curl -fsS -H 'Cache-Control: no-cache' "https://gamethetime.fun/service-worker.js?v=$GITHUB_SHA-$i" | grep -oP 'var VERSION = "\K[0-9]+' || true)
+            echo "Attempt $i: live VERSION ${live:-unknown}"
+            if [ "$live" = "$VERSION" ]; then
+              echo "Live site serves VERSION $VERSION"
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "::error::Live service-worker.js did not reach VERSION $VERSION within 3 minutes"
+          exit 1
